@@ -1,3 +1,63 @@
-/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&display=swap');
+@import 'tailwindcss';
 
-@import "tailwindcss";
+:root {
+  color-scheme: light;
+  --font-sans: 'Inter', sans-serif;
+  --font-display: 'Manrope', sans-serif;
+
+  --ncm-bg: #fafafa;
+  --ncm-bg-muted: #f1f5f9;
+  --ncm-sidebar-bg: #eef2ef;
+  --ncm-sidebar-rail: #e4ebe6;
+  --ncm-surface: #ffffff;
+  --ncm-surface-strong: #ffffff;
+  --ncm-surface-soft: #f8fafc;
+  --ncm-border: rgba(24, 24, 27, 0.08);
+  --ncm-border-strong: rgba(24, 24, 27, 0.16);
+  --ncm-text: #14231c;
+  --ncm-text-muted: #5f6f66;
+  --ncm-text-soft: #7d8d84;
+  --ncm-primary: #247a52;
+  --ncm-primary-strong: #1b5c3e;
+  --ncm-primary-soft: #e6f3eb;
+  --ncm-success: #198754;
+  --ncm-warning: #b7791f;
+  --ncm-danger: #c2413b;
+  --ncm-shadow-soft: 0 8px 24px rgba(15, 23, 42, 0.05);
+  --ncm-shadow-card: 0 18px 36px rgba(15, 23, 42, 0.06);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--ncm-bg);
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--font-sans);
+  color: var(--ncm-text);
+  background: var(--ncm-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-display);
+}

@@ -1,0 +1,13 @@
+:host {
+  display: block;
+}
+
+aside {
+  max-height: 100vh;
+}
+
+main,
+aside,
+header {
+  will-change: transform;
+}
