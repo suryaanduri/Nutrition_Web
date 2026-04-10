@@ -32,6 +32,21 @@ interface TrendPoint {
   value: number;
 }
 
+interface QuickEntryStat {
+  label: string;
+  value: string;
+}
+
+interface InsightItem {
+  title: string;
+  detail: string;
+}
+
+interface ActionSignal {
+  label: string;
+  value: string;
+}
+
 @Component({
   selector: 'app-member-detail',
   standalone: true,
@@ -58,6 +73,12 @@ export class MemberDetail {
     program: 'PCOS Reset Intensive',
     joinedOn: 'Joined 12 Jan 2026'
   };
+
+  readonly quickEntryStats: QuickEntryStat[] = [
+    { label: 'Last saved', value: '7 min ago' },
+    { label: 'Coach mode', value: 'Live consult' },
+    { label: 'Today target', value: 'Close follow-up' }
+  ];
 
   readonly metricCards: MetricCard[] = [
     {
@@ -182,6 +203,27 @@ export class MemberDetail {
     { label: 'Call now', icon: 'phone' as const },
     { label: 'Open feed note', icon: 'feed' as const },
     { label: 'Mark follow-up complete', icon: 'approvals' as const }
+  ];
+
+  readonly insightItems: InsightItem[] = [
+    {
+      title: 'Weight down 1.8 kg this month',
+      detail: 'Pace remains healthy and aligned with the current nutrition phase.'
+    },
+    {
+      title: 'Body fat trending in the right direction',
+      detail: 'Reduction is gradual but consistent across the last four check-ins.'
+    },
+    {
+      title: 'Follow-up consistency: high',
+      detail: 'Minor dip appeared last week, so today’s evaluation should reset momentum.'
+    }
+  ];
+
+  readonly actionSignals: ActionSignal[] = [
+    { label: 'Attention score', value: 'High' },
+    { label: 'Follow-up gap', value: '6 days' },
+    { label: 'Momentum', value: 'Recoverable' }
   ];
 
   readonly weightPoints = computed(() => this.weightData[this.selectedRange()]);

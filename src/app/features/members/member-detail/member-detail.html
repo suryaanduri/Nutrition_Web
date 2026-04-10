@@ -43,7 +43,7 @@
         </button>
         <button
           type="button"
-          class="inline-flex items-center justify-center rounded-2xl bg-[var(--ncm-primary)] px-5 py-3 text-sm font-semibold text-white shadow-[0_16px_28px_rgba(36,122,82,0.22)] transition duration-200 hover:-translate-y-0.5 hover:bg-[var(--ncm-primary-strong)] hover:shadow-[0_20px_34px_rgba(36,122,82,0.28)] active:translate-y-0"
+          class="inline-flex items-center justify-center rounded-2xl bg-[var(--ncm-primary)] px-5 py-3 text-sm font-semibold text-white shadow-[0_16px_28px_rgba(36,122,82,0.22)] transition duration-200 hover:-translate-y-0.5 hover:bg-[var(--ncm-primary-strong)] hover:shadow-[0_20px_34px_rgba(36,122,82,0.28)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[rgba(36,122,82,0.14)] active:translate-y-0"
         >
           + Add Evaluation
         </button>
@@ -76,7 +76,14 @@
                 {{ member.summary }}
               </p>
 
-              <div class="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+              <div
+                class="mt-4 inline-flex max-w-full items-center gap-2 rounded-2xl border border-[rgba(183,121,31,0.16)] bg-[rgba(255,247,237,0.9)] px-3 py-2 text-sm text-[var(--ncm-warning)]"
+              >
+                <span class="h-2.5 w-2.5 rounded-full bg-[var(--ncm-warning)]"></span>
+                Follow-up momentum softened after a strong first month. Today is the right intervention point.
+              </div>
+
+              <div class="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
                 <div>
                   <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--ncm-text-soft)]">
                     Contact
@@ -143,26 +150,33 @@
       <section class="grid gap-4 md:grid-cols-2 2xl:grid-cols-4">
         @for (card of metricCards; track card.label) {
           <article
-            class="rounded-2xl border bg-white p-6 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:shadow-md"
+            class="rounded-[28px] border bg-white p-6 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:shadow-md"
             [ngClass]="{
               'border-[rgba(36,122,82,0.16)] ring-1 ring-[rgba(36,122,82,0.08)] bg-[linear-gradient(180deg,#ffffff_0%,#f4fbf7_100%)]':
                 card.emphasized,
               'border-[color:var(--ncm-border)]': !card.emphasized
             }"
           >
-            <p class="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--ncm-text-soft)]">
-              {{ card.label }}
-            </p>
-            <p class="mt-3 text-3xl font-extrabold tracking-[-0.05em] text-[var(--ncm-text)]">
-              {{ card.value }}
-            </p>
-            <span
-              class="mt-3 inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold"
-              [ngClass]="badgeClass(card.trendType)"
-            >
-              {{ card.trend }}
-            </span>
-            <p class="mt-3 text-sm leading-6 text-[var(--ncm-text-muted)]">{{ card.helper }}</p>
+            <div class="flex h-full flex-col justify-between gap-5">
+              <div>
+                <p class="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--ncm-text-soft)]">
+                  {{ card.label }}
+                </p>
+                <p class="mt-3 text-3xl font-extrabold tracking-[-0.05em] text-[var(--ncm-text)]">
+                  {{ card.value }}
+                </p>
+              </div>
+
+              <div class="space-y-3">
+                <span
+                  class="inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold"
+                  [ngClass]="badgeClass(card.trendType)"
+                >
+                  {{ card.trend }}
+                </span>
+                <p class="text-sm leading-6 text-[var(--ncm-text-muted)]">{{ card.helper }}</p>
+              </div>
+            </div>
           </article>
         }
       </section>
@@ -199,17 +213,24 @@
 
         <div class="mt-6 grid gap-5 xl:grid-cols-[minmax(0,1fr)_280px]">
           <div class="space-y-5">
-            <article class="rounded-2xl border border-[color:var(--ncm-border)] bg-[var(--ncm-surface-soft)] p-5">
-              <div class="flex items-center justify-between gap-3">
+            <article class="rounded-[28px] border border-[color:var(--ncm-border)] bg-[var(--ncm-surface-soft)] p-5 transition duration-200 hover:shadow-sm">
+              <div class="flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <p class="text-sm font-semibold text-[var(--ncm-text)]">Weight trend</p>
                   <p class="mt-1 text-xs text-[var(--ncm-text-soft)]">Minimal view for consultation speed</p>
                 </div>
-                <span class="text-sm font-semibold text-[var(--ncm-success)]">-1.8 kg this month</span>
+                <div class="flex items-center gap-2">
+                  <span class="inline-flex items-center rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-100">
+                    ↓ 1.8 kg
+                  </span>
+                  <span class="text-sm font-semibold text-[var(--ncm-success)]">This month</span>
+                </div>
               </div>
 
-              <div class="mt-5 overflow-hidden rounded-2xl bg-white px-3 py-3">
+              <div class="mt-5 overflow-hidden rounded-[24px] border border-[rgba(24,24,27,0.05)] bg-white px-3 py-3">
                 <svg viewBox="0 0 360 140" class="h-40 w-full">
+                  <line x1="0" y1="24" x2="360" y2="24" stroke="rgba(24,24,27,0.04)" />
+                  <line x1="0" y1="72" x2="360" y2="72" stroke="rgba(24,24,27,0.04)" />
                   <line x1="0" y1="120" x2="360" y2="120" stroke="rgba(24,24,27,0.08)" />
                   <path
                     [attr.d]="weightPath()"
@@ -229,19 +250,37 @@
                   }
                 </div>
               </div>
+
+              <div class="mt-4 flex items-center justify-between rounded-2xl bg-white px-4 py-3">
+                <div>
+                  <p class="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--ncm-text-soft)]">Current</p>
+                  <p class="mt-1 text-lg font-bold text-[var(--ncm-text)]">{{ metricCards[0].value }}</p>
+                </div>
+                <div class="text-right">
+                  <p class="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--ncm-text-soft)]">Target pace</p>
+                  <p class="mt-1 text-sm font-semibold text-[var(--ncm-primary-strong)]">Healthy reduction</p>
+                </div>
+              </div>
             </article>
 
-            <article class="rounded-2xl border border-[color:var(--ncm-border)] bg-[var(--ncm-surface-soft)] p-5">
-              <div class="flex items-center justify-between gap-3">
+            <article class="rounded-[28px] border border-[color:var(--ncm-border)] bg-[var(--ncm-surface-soft)] p-5 transition duration-200 hover:shadow-sm">
+              <div class="flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <p class="text-sm font-semibold text-[var(--ncm-text)]">Body fat trend</p>
                   <p class="mt-1 text-xs text-[var(--ncm-text-soft)]">Consistent reduction over selected range</p>
                 </div>
-                <span class="text-sm font-semibold text-[var(--ncm-success)]">Direction: positive</span>
+                <div class="flex items-center gap-2">
+                  <span class="inline-flex items-center rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-100">
+                    ↓ 0.8%
+                  </span>
+                  <span class="text-sm font-semibold text-[var(--ncm-success)]">Direction positive</span>
+                </div>
               </div>
 
-              <div class="mt-5 overflow-hidden rounded-2xl bg-white px-3 py-3">
+              <div class="mt-5 overflow-hidden rounded-[24px] border border-[rgba(24,24,27,0.05)] bg-white px-3 py-3">
                 <svg viewBox="0 0 360 140" class="h-40 w-full">
+                  <line x1="0" y1="24" x2="360" y2="24" stroke="rgba(24,24,27,0.04)" />
+                  <line x1="0" y1="72" x2="360" y2="72" stroke="rgba(24,24,27,0.04)" />
                   <line x1="0" y1="120" x2="360" y2="120" stroke="rgba(24,24,27,0.08)" />
                   <path
                     [attr.d]="bodyFatPath()"
@@ -261,34 +300,35 @@
                   }
                 </div>
               </div>
+
+              <div class="mt-4 flex items-center justify-between rounded-2xl bg-white px-4 py-3">
+                <div>
+                  <p class="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--ncm-text-soft)]">Current</p>
+                  <p class="mt-1 text-lg font-bold text-[var(--ncm-text)]">{{ metricCards[1].value }}</p>
+                </div>
+                <div class="text-right">
+                  <p class="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--ncm-text-soft)]">Coach read</p>
+                  <p class="mt-1 text-sm font-semibold text-[var(--ncm-primary-strong)]">Composition improving</p>
+                </div>
+              </div>
             </article>
           </div>
 
           <aside
-            class="rounded-2xl border border-[rgba(36,122,82,0.14)] bg-[linear-gradient(180deg,#ffffff_0%,#f4fbf7_100%)] p-5"
+            class="rounded-[28px] border border-[rgba(36,122,82,0.14)] bg-[linear-gradient(180deg,#ffffff_0%,#f4fbf7_100%)] p-5 shadow-sm transition duration-200 hover:shadow-md"
           >
             <p class="text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--ncm-text-soft)]">
               Insight summary
             </p>
-            <div class="mt-4 space-y-4">
-              <div>
-                <p class="text-sm font-semibold text-[var(--ncm-text)]">Weight down 1.8 kg this month</p>
-                <p class="mt-1 text-sm leading-6 text-[var(--ncm-text-muted)]">
-                  Pace remains healthy and aligned with the current nutrition phase.
-                </p>
-              </div>
-              <div>
-                <p class="text-sm font-semibold text-[var(--ncm-text)]">Body fat trending in the right direction</p>
-                <p class="mt-1 text-sm leading-6 text-[var(--ncm-text-muted)]">
-                  Reduction is gradual but consistent across the last four check-ins.
-                </p>
-              </div>
-              <div>
-                <p class="text-sm font-semibold text-[var(--ncm-text)]">Follow-up consistency: high</p>
-                <p class="mt-1 text-sm leading-6 text-[var(--ncm-text-muted)]">
-                  Minor dip appeared last week, so today’s evaluation should reset momentum.
-                </p>
-              </div>
+            <div class="mt-4 space-y-3">
+              @for (item of insightItems; track item.title) {
+                <div class="rounded-2xl border border-white/80 bg-white/80 p-4">
+                  <p class="text-sm font-semibold text-[var(--ncm-text)]">{{ item.title }}</p>
+                  <p class="mt-1 text-sm leading-6 text-[var(--ncm-text-muted)]">
+                    {{ item.detail }}
+                  </p>
+                </div>
+              }
             </div>
           </aside>
         </div>
@@ -308,45 +348,65 @@
             </p>
           </div>
 
-          <span
-            class="inline-flex items-center rounded-full bg-[var(--ncm-surface-soft)] px-3 py-1.5 text-xs font-semibold text-[var(--ncm-text-muted)]"
-          >
-            Live consult ready
-          </span>
+          <div class="flex flex-wrap gap-2">
+            @for (stat of quickEntryStats; track stat.label) {
+              <span
+                class="inline-flex items-center rounded-full bg-[var(--ncm-surface-soft)] px-3 py-1.5 text-xs font-semibold text-[var(--ncm-text-muted)]"
+              >
+                {{ stat.label }}: {{ stat.value }}
+              </span>
+            }
+          </div>
         </div>
 
-        <div class="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-[1fr_1fr_1fr_minmax(0,1.3fr)]">
+        <div class="mt-6 rounded-[28px] border border-[rgba(36,122,82,0.08)] bg-[linear-gradient(180deg,#fcfefd_0%,#f4fbf7_100%)] p-4 sm:p-5">
+          <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-[1fr_1fr_1fr_minmax(0,1.3fr)]">
           <label class="flex flex-col gap-2">
             <span class="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--ncm-text-soft)]">
               Weight
             </span>
-            <input
-              type="text"
-              value="68.4"
-              class="rounded-2xl border border-[color:var(--ncm-border)] bg-[var(--ncm-surface-soft)] px-4 py-3 text-sm font-semibold text-[var(--ncm-text)] outline-none transition duration-200 focus:border-[rgba(36,122,82,0.2)] focus:bg-white focus:shadow-[0_0_0_4px_rgba(36,122,82,0.08)]"
-            />
+            <div class="relative">
+              <input
+                type="text"
+                value="68.4"
+                class="w-full rounded-2xl border border-[color:var(--ncm-border)] bg-white px-4 py-3.5 pr-12 text-sm font-semibold text-[var(--ncm-text)] outline-none transition duration-200 hover:border-[rgba(36,122,82,0.14)] focus:border-[rgba(36,122,82,0.2)] focus:shadow-[0_0_0_4px_rgba(36,122,82,0.08)]"
+              />
+              <span class="pointer-events-none absolute inset-y-0 right-4 flex items-center text-sm font-semibold text-[var(--ncm-text-soft)]">
+                kg
+              </span>
+            </div>
           </label>
 
           <label class="flex flex-col gap-2">
             <span class="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--ncm-text-soft)]">
               Body Fat %
             </span>
-            <input
-              type="text"
-              value="31.2"
-              class="rounded-2xl border border-[color:var(--ncm-border)] bg-[var(--ncm-surface-soft)] px-4 py-3 text-sm font-semibold text-[var(--ncm-text)] outline-none transition duration-200 focus:border-[rgba(36,122,82,0.2)] focus:bg-white focus:shadow-[0_0_0_4px_rgba(36,122,82,0.08)]"
-            />
+            <div class="relative">
+              <input
+                type="text"
+                value="31.2"
+                class="w-full rounded-2xl border border-[color:var(--ncm-border)] bg-white px-4 py-3.5 pr-10 text-sm font-semibold text-[var(--ncm-text)] outline-none transition duration-200 hover:border-[rgba(36,122,82,0.14)] focus:border-[rgba(36,122,82,0.2)] focus:shadow-[0_0_0_4px_rgba(36,122,82,0.08)]"
+              />
+              <span class="pointer-events-none absolute inset-y-0 right-4 flex items-center text-sm font-semibold text-[var(--ncm-text-soft)]">
+                %
+              </span>
+            </div>
           </label>
 
           <label class="flex flex-col gap-2">
             <span class="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--ncm-text-soft)]">
               Visceral Fat
             </span>
-            <input
-              type="text"
-              value="8.4"
-              class="rounded-2xl border border-[color:var(--ncm-border)] bg-[var(--ncm-surface-soft)] px-4 py-3 text-sm font-semibold text-[var(--ncm-text)] outline-none transition duration-200 focus:border-[rgba(36,122,82,0.2)] focus:bg-white focus:shadow-[0_0_0_4px_rgba(36,122,82,0.08)]"
-            />
+            <div class="relative">
+              <input
+                type="text"
+                value="8.4"
+                class="w-full rounded-2xl border border-[color:var(--ncm-border)] bg-white px-4 py-3.5 pr-14 text-sm font-semibold text-[var(--ncm-text)] outline-none transition duration-200 hover:border-[rgba(36,122,82,0.14)] focus:border-[rgba(36,122,82,0.2)] focus:shadow-[0_0_0_4px_rgba(36,122,82,0.08)]"
+              />
+              <span class="pointer-events-none absolute inset-y-0 right-4 flex items-center text-sm font-semibold text-[var(--ncm-text-soft)]">
+                score
+              </span>
+            </div>
           </label>
 
           <label class="flex flex-col gap-2">
@@ -355,9 +415,10 @@
             </span>
             <textarea
               rows="3"
-              class="rounded-2xl border border-[color:var(--ncm-border)] bg-[var(--ncm-surface-soft)] px-4 py-3 text-sm text-[var(--ncm-text)] outline-none transition duration-200 focus:border-[rgba(36,122,82,0.2)] focus:bg-white focus:shadow-[0_0_0_4px_rgba(36,122,82,0.08)]"
+              class="rounded-2xl border border-[color:var(--ncm-border)] bg-white px-4 py-3 text-sm text-[var(--ncm-text)] outline-none transition duration-200 hover:border-[rgba(36,122,82,0.14)] focus:border-[rgba(36,122,82,0.2)] focus:shadow-[0_0_0_4px_rgba(36,122,82,0.08)]"
             >Good adherence overall. Slight appetite drop this week.</textarea>
           </label>
+        </div>
         </div>
 
         <div class="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -367,13 +428,13 @@
           <div class="flex flex-wrap gap-3">
             <button
               type="button"
-              class="inline-flex items-center justify-center rounded-2xl border border-[color:var(--ncm-border)] bg-white px-4 py-3 text-sm font-semibold text-[var(--ncm-text)] shadow-sm transition duration-200 hover:-translate-y-0.5 hover:bg-[var(--ncm-surface-soft)] hover:shadow-md active:translate-y-0"
+              class="inline-flex items-center justify-center rounded-2xl border border-[color:var(--ncm-border)] bg-white px-4 py-3 text-sm font-semibold text-[var(--ncm-text)] shadow-sm transition duration-200 hover:-translate-y-0.5 hover:bg-[var(--ncm-surface-soft)] hover:shadow-md focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[rgba(24,24,27,0.08)] active:translate-y-0"
             >
               Save & Add Another
             </button>
             <button
               type="button"
-              class="inline-flex items-center justify-center rounded-2xl bg-[var(--ncm-primary)] px-5 py-3 text-sm font-semibold text-white shadow-[0_16px_28px_rgba(36,122,82,0.22)] transition duration-200 hover:-translate-y-0.5 hover:bg-[var(--ncm-primary-strong)] hover:shadow-[0_20px_34px_rgba(36,122,82,0.28)] active:translate-y-0"
+              class="inline-flex items-center justify-center rounded-2xl bg-[var(--ncm-primary)] px-5 py-3 text-sm font-semibold text-white shadow-[0_16px_28px_rgba(36,122,82,0.22)] transition duration-200 hover:-translate-y-0.5 hover:bg-[var(--ncm-primary-strong)] hover:shadow-[0_20px_34px_rgba(36,122,82,0.28)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[rgba(36,122,82,0.14)] active:translate-y-0"
             >
               Save Evaluation
             </button>
@@ -401,34 +462,42 @@
         <div class="mt-6 space-y-4">
           @for (item of history; track item.id) {
             <article
-              class="rounded-2xl border p-5 transition duration-200 hover:-translate-y-0.5 hover:shadow-md"
+              class="relative rounded-[28px] border p-5 transition duration-200 hover:-translate-y-0.5 hover:shadow-md"
               [ngClass]="{
                 'border-[rgba(36,122,82,0.16)] bg-[linear-gradient(180deg,#ffffff_0%,#f4fbf7_100%)] ring-1 ring-[rgba(36,122,82,0.08)]':
                   item.highlighted,
                 'border-[color:var(--ncm-border)] bg-white': !item.highlighted
               }"
             >
+              <span
+                class="absolute bottom-5 left-5 top-5 w-px bg-[linear-gradient(180deg,rgba(36,122,82,0.18)_0%,rgba(36,122,82,0.03)_100%)]"
+              ></span>
               <div class="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
-                <div class="min-w-0">
+                <div class="min-w-0 pl-5">
                   <div class="flex flex-wrap items-center gap-3">
                     <h4 class="text-base font-bold text-[var(--ncm-text)]">{{ item.date }}</h4>
                     <span class="inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold" [ngClass]="badgeClass(item.trendType)">
                       {{ item.trend }}
                     </span>
+                    @if (item.highlighted) {
+                      <span class="inline-flex items-center rounded-full bg-[var(--ncm-primary-soft)] px-2.5 py-1 text-xs font-semibold text-[var(--ncm-primary-strong)]">
+                        Latest
+                      </span>
+                    }
                   </div>
 
-                  <div class="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm">
+                  <div class="mt-4 grid gap-3 sm:grid-cols-3">
                     <div>
-                      <span class="text-[var(--ncm-text-soft)]">Weight</span>
-                      <span class="ml-2 font-semibold text-[var(--ncm-text)]">{{ item.weight }}</span>
+                      <p class="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--ncm-text-soft)]">Weight</p>
+                      <p class="mt-1 font-semibold text-[var(--ncm-text)]">{{ item.weight }}</p>
                     </div>
                     <div>
-                      <span class="text-[var(--ncm-text-soft)]">Body fat</span>
-                      <span class="ml-2 font-semibold text-[var(--ncm-text)]">{{ item.bodyFat }}</span>
+                      <p class="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--ncm-text-soft)]">Body fat</p>
+                      <p class="mt-1 font-semibold text-[var(--ncm-text)]">{{ item.bodyFat }}</p>
                     </div>
                     <div>
-                      <span class="text-[var(--ncm-text-soft)]">Visceral fat</span>
-                      <span class="ml-2 font-semibold text-[var(--ncm-text)]">{{ item.visceralFat }}</span>
+                      <p class="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--ncm-text-soft)]">Visceral fat</p>
+                      <p class="mt-1 font-semibold text-[var(--ncm-text)]">{{ item.visceralFat }}</p>
                     </div>
                   </div>
 
@@ -438,10 +507,12 @@
                 </div>
 
                 <div class="flex flex-col items-start gap-3 xl:items-end">
-                  <p class="text-sm text-[var(--ncm-text-muted)]">Entered by {{ item.enteredBy }}</p>
+                  <div class="rounded-2xl bg-[var(--ncm-surface-soft)] px-3 py-2 text-sm text-[var(--ncm-text-muted)]">
+                    Entered by <span class="font-semibold text-[var(--ncm-text)]">{{ item.enteredBy }}</span>
+                  </div>
                   <button
                     type="button"
-                    class="inline-flex items-center justify-center rounded-2xl border border-[color:var(--ncm-border)] bg-white px-4 py-2.5 text-sm font-semibold text-[var(--ncm-text)] shadow-sm transition duration-200 hover:-translate-y-0.5 hover:bg-[var(--ncm-surface-soft)] hover:shadow-md active:translate-y-0"
+                    class="inline-flex items-center justify-center rounded-2xl border border-[color:var(--ncm-border)] bg-white px-4 py-2.5 text-sm font-semibold text-[var(--ncm-text)] shadow-sm transition duration-200 hover:-translate-y-0.5 hover:bg-[var(--ncm-surface-soft)] hover:shadow-md focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[rgba(24,24,27,0.08)] active:translate-y-0"
                   >
                     View full record
                   </button>
@@ -457,10 +528,15 @@
       <div
         class="rounded-[30px] border border-[rgba(20,35,28,0.08)] bg-[linear-gradient(180deg,#1c3127_0%,#14231c_100%)] p-6 text-white shadow-[0_24px_44px_rgba(20,35,28,0.24)] transition duration-200 hover:shadow-[0_28px_52px_rgba(20,35,28,0.28)]"
       >
-        <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-white/55">
-          Attention status
-        </p>
-        <h3 class="mt-3 text-2xl font-extrabold tracking-[-0.05em] text-white">
+        <div class="flex items-center justify-between gap-3">
+          <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-white/55">
+            Attention status
+          </p>
+          <span class="inline-flex items-center rounded-full bg-[rgba(255,255,255,0.08)] px-2.5 py-1 text-xs font-semibold text-[#c7ecd5]">
+            Coach priority
+          </span>
+        </div>
+        <h3 class="mt-4 text-2xl font-extrabold tracking-[-0.05em] text-white">
           Missed follow-up and fat-loss pace slowed
         </h3>
         <p class="mt-3 text-sm leading-7 text-white/72">
@@ -468,14 +544,23 @@
           should feel timely and confident.
         </p>
 
+        <div class="mt-5 grid grid-cols-3 gap-2">
+          @for (signal of actionSignals; track signal.label) {
+            <div class="rounded-2xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] px-3 py-3">
+              <p class="text-[10px] font-semibold uppercase tracking-[0.16em] text-white/45">{{ signal.label }}</p>
+              <p class="mt-2 text-sm font-semibold text-white">{{ signal.value }}</p>
+            </div>
+          }
+        </div>
+
         <div class="mt-6 space-y-3">
-          <div class="rounded-2xl border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.06)] p-4">
+          <div class="rounded-[24px] border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.06)] p-4">
             <p class="text-xs font-semibold uppercase tracking-[0.16em] text-[#b6e3c7]">Next best action</p>
             <p class="mt-2 text-sm leading-6 text-white/80">
               Review adherence blockers, save a fresh evaluation, and send a same-day follow-up message.
             </p>
           </div>
-          <div class="rounded-2xl border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.06)] p-4">
+          <div class="rounded-[24px] border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.06)] p-4">
             <p class="text-xs font-semibold uppercase tracking-[0.16em] text-[#b6e3c7]">Coach note</p>
             <p class="mt-2 text-sm leading-6 text-white/80">
               Appetite variability and sleep inconsistency may explain the small plateau.
@@ -483,11 +568,18 @@
           </div>
         </div>
 
-        <div class="mt-6 space-y-3">
+        <button
+          type="button"
+          class="mt-6 inline-flex w-full items-center justify-center rounded-[24px] bg-white px-4 py-3.5 text-sm font-semibold text-[#163126] shadow-[0_18px_34px_rgba(6,18,12,0.22)] transition duration-200 hover:-translate-y-0.5 hover:bg-[#f3fbf6] hover:shadow-[0_22px_40px_rgba(6,18,12,0.28)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[rgba(255,255,255,0.12)] active:translate-y-0"
+        >
+          Save evaluation and send follow-up
+        </button>
+
+        <div class="mt-4 space-y-3">
           @for (action of quickActions; track action.label) {
             <button
               type="button"
-              class="inline-flex w-full items-center justify-between rounded-2xl border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.06)] px-4 py-3 text-left text-sm font-semibold text-white transition duration-200 hover:-translate-y-0.5 hover:bg-[rgba(255,255,255,0.08)]"
+              class="inline-flex w-full items-center justify-between rounded-[24px] border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.06)] px-4 py-3 text-left text-sm font-semibold text-white transition duration-200 hover:-translate-y-0.5 hover:bg-[rgba(255,255,255,0.08)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[rgba(255,255,255,0.12)]"
             >
               <span class="flex items-center gap-3">
                 <span
