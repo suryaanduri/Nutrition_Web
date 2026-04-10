@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, output, signal } from '@angular/core';
 import { IconComponent } from '../../shared/ui/icon/icon.component';
 
 type MemberStatus = 'Active' | 'Needs attention' | 'Inactive';
@@ -33,6 +33,8 @@ interface MemberRecord {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MembersListScreenComponent {
+  readonly memberSelected = output<string>();
+
   protected readonly statusOptions: StatusFilter[] = [
     'All status',
     'Active',
@@ -201,6 +203,10 @@ export class MembersListScreenComponent {
 
   protected setSort(value: SortFilter): void {
     this.selectedSort.set(value);
+  }
+
+  protected openMember(memberId: string): void {
+    this.memberSelected.emit(memberId);
   }
 }
 

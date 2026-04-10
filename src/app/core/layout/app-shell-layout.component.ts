@@ -9,6 +9,7 @@ import {
 import { IconComponent } from '../../shared/ui/icon/icon.component';
 import { DashboardScreenComponent } from '../../features/dashboard/dashboard-screen.component';
 import { MembersListScreenComponent } from '../../features/members/members-list-screen.component';
+import { MemberDetail } from '../../features/members/member-detail/member-detail';
 
 type NavKey = 'dashboard' | 'members' | 'evaluations' | 'feed' | 'approvals' | 'chat';
 
@@ -22,7 +23,13 @@ interface NavItem {
 @Component({
   selector: 'app-shell-layout',
   standalone: true,
-  imports: [CommonModule, IconComponent, DashboardScreenComponent, MembersListScreenComponent],
+  imports: [
+    CommonModule,
+    IconComponent,
+    DashboardScreenComponent,
+    MembersListScreenComponent,
+    MemberDetail
+  ],
   templateUrl: './app-shell-layout.component.html',
   styleUrl: './app-shell-layout.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -67,15 +74,25 @@ export class AppShellLayoutComponent {
   protected readonly sidebarCollapsed = signal(false);
   protected readonly mobileNavOpen = signal(false);
   protected readonly isMobile = signal(false);
+  protected readonly selectedMemberId = signal<string | null>(null);
 
   protected readonly currentNav = computed(
     () => this.navItems.find((item) => item.key === this.activeNav()) ?? this.navItems[0]
   );
 
-  protected readonly pageTitle = computed(() => this.currentNav().label);
-  protected readonly pageDescription = computed(() => this.currentNav().description);
+  protected readonly pageTitle = computed(() =>
+    this.isMemberDetail() ? 'Member Detail' : this.currentNav().label
+  );
+  protected readonly pageDescription = computed(() =>
+    this.isMemberDetail()
+      ? 'Progress, evaluations, adherence, and next best actions for this member'
+      : this.currentNav().description
+  );
   protected readonly isDashboard = computed(() => this.activeNav() === 'dashboard');
   protected readonly isMembers = computed(() => this.activeNav() === 'members');
+  protected readonly isMemberDetail = computed(
+    () => this.activeNav() === 'members' && this.selectedMemberId() !== null
+  );
   protected readonly desktopSidebarWidth = computed(() => (this.sidebarCollapsed() ? 96 : 288));
 
   constructor() {
@@ -89,9 +106,24 @@ export class AppShellLayoutComponent {
 
   protected selectNavItem(key: NavKey): void {
     this.activeNav.set(key);
+    if (key !== 'members') {
+      this.selectedMemberId.set(null);
+    }
     if (this.isMobile()) {
       this.mobileNavOpen.set(false);
     }
+  }
+
+  protected openMemberDetail(memberId: string): void {
+    this.activeNav.set('members');
+    this.selectedMemberId.set(memberId);
+    if (this.isMobile()) {
+      this.mobileNavOpen.set(false);
+    }
+  }
+
+  protected closeMemberDetail(): void {
+    this.selectedMemberId.set(null);
   }
 
   protected toggleSidebar(): void {

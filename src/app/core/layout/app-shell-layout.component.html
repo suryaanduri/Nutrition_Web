@@ -179,8 +179,8 @@
               <button
                 type="button"
                 class="mt-1 hidden h-11 w-11 items-center justify-center rounded-2xl border border-[color:var(--ncm-border)] bg-white text-[var(--ncm-text)] shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-[color:var(--ncm-border-strong)] hover:bg-[var(--ncm-surface-soft)] hover:shadow-md active:translate-y-0 lg:inline-flex"
-                aria-label="Collapse navigation"
-                (click)="toggleSidebar()"
+                [attr.aria-label]="isMemberDetail() ? 'Back to members list' : 'Collapse navigation'"
+                (click)="isMemberDetail() ? closeMemberDetail() : toggleSidebar()"
               >
                 <span class="transition" [class.rotate-180]="sidebarCollapsed()">
                   <ncm-icon name="chevron-left" [size]="18" />
@@ -252,8 +252,10 @@
       <main class="flex-1 px-4 py-4 sm:px-6 lg:px-8 lg:py-6">
         @if (isDashboard()) {
           <app-dashboard-screen />
+        } @else if (isMemberDetail()) {
+          <app-member-detail />
         } @else if (isMembers()) {
-          <app-members-list-screen />
+          <app-members-list-screen (memberSelected)="openMemberDetail($event)" />
         } @else {
           <section class="rounded-[32px] border border-[color:var(--ncm-border)] bg-white p-8 shadow-[var(--ncm-shadow-soft)] transition duration-200 hover:shadow-md">
             <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--ncm-text-soft)]">
