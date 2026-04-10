@@ -252,6 +252,8 @@
       <main class="flex-1 px-4 py-4 sm:px-6 lg:px-8 lg:py-6">
         @if (isDashboard()) {
           <app-dashboard-screen />
+        } @else if (isMembers()) {
+          <app-members-list-screen />
         } @else {
           <section class="rounded-[32px] border border-[color:var(--ncm-border)] bg-white p-8 shadow-[var(--ncm-shadow-soft)] transition duration-200 hover:shadow-md">
             <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--ncm-text-soft)]">

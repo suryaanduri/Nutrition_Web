@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import { IconComponent } from '../../shared/ui/icon/icon.component';
 import { DashboardScreenComponent } from '../../features/dashboard/dashboard-screen.component';
+import { MembersListScreenComponent } from '../../features/members/members-list-screen.component';
 
 type NavKey = 'dashboard' | 'members' | 'evaluations' | 'feed' | 'approvals' | 'chat';
 
@@ -21,7 +22,7 @@ interface NavItem {
 @Component({
   selector: 'app-shell-layout',
   standalone: true,
-  imports: [CommonModule, IconComponent, DashboardScreenComponent],
+  imports: [CommonModule, IconComponent, DashboardScreenComponent, MembersListScreenComponent],
   templateUrl: './app-shell-layout.component.html',
   styleUrl: './app-shell-layout.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -74,6 +75,7 @@ export class AppShellLayoutComponent {
   protected readonly pageTitle = computed(() => this.currentNav().label);
   protected readonly pageDescription = computed(() => this.currentNav().description);
   protected readonly isDashboard = computed(() => this.activeNav() === 'dashboard');
+  protected readonly isMembers = computed(() => this.activeNav() === 'members');
   protected readonly desktopSidebarWidth = computed(() => (this.sidebarCollapsed() ? 96 : 288));
 
   constructor() {
