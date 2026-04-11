@@ -1,0 +1,255 @@
+<section class="flex min-h-full flex-col rounded-[28px] border border-[color:var(--ncm-border)] bg-white p-5 shadow-sm lg:p-6">
+  <div class="flex items-start justify-between gap-4">
+    <div>
+      <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--ncm-text-soft)]">
+        Evaluation
+      </p>
+      <h3 class="mt-2 text-lg font-extrabold tracking-[-0.03em] text-[var(--ncm-text)]">
+        Add visit metrics
+      </h3>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <span
+        class="inline-flex items-center rounded-full bg-[var(--ncm-surface-soft)] px-3 py-1.5 text-xs font-semibold text-[var(--ncm-text-muted)]"
+      >
+        {{ currentDate() }}
+      </span>
+      @if (savedPulse()) {
+        <span
+          class="inline-flex items-center rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-100"
+        >
+          Evaluation added
+        </span>
+      }
+    </div>
+  </div>
+
+  <div class="mt-5 rounded-[28px] border border-[rgba(36,122,82,0.08)] bg-[linear-gradient(180deg,#fcfefd_0%,#f4fbf7_100%)] p-3">
+    <div class="grid gap-3 [grid-template-columns:repeat(auto-fit,minmax(160px,1fr))]">
+      @for (metric of defaultMetrics(); track metric.key) {
+        <article
+          class="rounded-[24px] border bg-white p-3.5 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:shadow-md"
+          [ngClass]="{
+            'border-[rgba(36,122,82,0.18)] shadow-[0_0_0_4px_rgba(36,122,82,0.08)]': activeField() === metric.key,
+            'border-[rgba(24,24,27,0.06)]': activeField() !== metric.key,
+            'ring-1 ring-[rgba(36,122,82,0.08)] bg-[linear-gradient(180deg,#ffffff_0%,#f9fcfa_100%)]': metric.key === 'weight'
+          }"
+        >
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--ncm-text-soft)]">
+                {{ metric.label }}
+              </p>
+              <p class="mt-1 text-xs text-[var(--ncm-text-soft)]">{{ metric.previousText }}</p>
+            </div>
+          </div>
+
+          <div class="mt-4 rounded-[22px] bg-[var(--ncm-surface-soft)] p-3">
+            <div class="text-center">
+              <input
+                type="text"
+                inputmode="decimal"
+                [attr.data-focus]="metric.key"
+                class="w-full border-0 bg-transparent text-center text-[2.65rem] font-extrabold leading-none tracking-[-0.08em] text-[var(--ncm-text)] outline-none"
+                [value]="metric.currentValue"
+                (input)="updateMetric(metric.key, $any($event.target).value)"
+                (focus)="setActiveField(metric.key)"
+              />
+              <span class="mt-2 inline-flex rounded-full bg-white px-3 py-1 text-xs font-semibold text-[var(--ncm-text-soft)]">
+                {{ metric.unit }}
+              </span>
+              <div class="mt-3 flex justify-center">
+                <span
+                  class="inline-flex items-center rounded-full px-3 py-1 text-[11px] font-semibold"
+                  [ngClass]="{
+                    'bg-[var(--ncm-primary-soft)] text-[var(--ncm-primary-strong)]': metricChanged(metric.key),
+                    'bg-white text-[var(--ncm-text-soft)]': !metricChanged(metric.key)
+                  }"
+                >
+                  {{ metricChanged(metric.key) ? metric.trend : 'No change' }}
+                </span>
+              </div>
+            </div>
+
+            <div class="mt-3 grid grid-cols-2 gap-2.5">
+              <button
+                type="button"
+                class="inline-flex h-12 items-center justify-center rounded-2xl border border-[rgba(24,24,27,0.06)] bg-white text-[1.35rem] font-medium leading-none text-[var(--ncm-text)] transition duration-150 hover:-translate-y-0.5 hover:border-[rgba(36,122,82,0.12)] hover:shadow-sm active:translate-y-0 active:scale-[0.98]"
+                (click)="adjustMetric(metric.key, -(snapshot().values[metric.key].step ?? 0.1))"
+              >
+                <span class="mr-2">-</span>
+                <span class="text-sm font-semibold tracking-[-0.02em]">{{ snapshot().values[metric.key].step ?? 0.1 }}</span>
+              </button>
+              <button
+                type="button"
+                class="inline-flex h-12 items-center justify-center rounded-2xl border border-[rgba(24,24,27,0.06)] bg-white text-[1.35rem] font-medium leading-none text-[var(--ncm-text)] transition duration-150 hover:-translate-y-0.5 hover:border-[rgba(36,122,82,0.12)] hover:shadow-sm active:translate-y-0 active:scale-[0.98]"
+                (click)="adjustMetric(metric.key, snapshot().values[metric.key].step ?? 0.1)"
+              >
+                <span class="mr-2">+</span>
+                <span class="text-sm font-semibold tracking-[-0.02em]">{{ snapshot().values[metric.key].step ?? 0.1 }}</span>
+              </button>
+            </div>
+          </div>
+        </article>
+      }
+    </div>
+
+    <article
+      class="mt-3 rounded-[24px] border bg-white p-3.5 shadow-sm transition duration-200 hover:shadow-md"
+      [ngClass]="{
+        'border-[rgba(36,122,82,0.18)] shadow-[0_0_0_4px_rgba(36,122,82,0.08)]': activeField() === 'notes',
+        'border-[rgba(24,24,27,0.06)]': activeField() !== 'notes'
+      }"
+    >
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--ncm-text-soft)]">
+            Notes
+          </p>
+          <p class="mt-1 text-xs text-[var(--ncm-text-soft)]">Optional</p>
+        </div>
+
+        <button
+          type="button"
+          class="inline-flex items-center justify-center rounded-2xl border border-[color:var(--ncm-border)] bg-white px-4 py-2.5 text-sm font-semibold text-[var(--ncm-text)] shadow-sm transition duration-200 hover:-translate-y-0.5 hover:bg-[var(--ncm-surface-soft)] hover:shadow-md"
+          (click)="toggleExpanded()"
+        >
+          {{ expanded() ? '− Collapse extra metrics' : '+ Add more metrics' }}
+        </button>
+      </div>
+
+      <textarea
+        rows="3"
+        data-focus="notes"
+        class="mt-3 w-full rounded-[20px] border border-[color:var(--ncm-border)] bg-[var(--ncm-surface-soft)] px-4 py-3 text-sm leading-6 text-[var(--ncm-text)] outline-none transition duration-200 hover:border-[rgba(36,122,82,0.14)] focus:border-[rgba(36,122,82,0.2)] focus:bg-white focus:shadow-[0_0_0_4px_rgba(36,122,82,0.08)]"
+        [value]="notes()"
+        placeholder="Energy, appetite, adherence, sleep, or follow-up note"
+        (input)="updateNotes($any($event.target).value)"
+        (focus)="setActiveField('notes')"
+      ></textarea>
+    </article>
+
+    <div
+      class="grid overflow-hidden transition-[grid-template-rows,opacity,margin,transform] duration-300 ease-out"
+      [ngClass]="{
+        'mt-3 grid-rows-[1fr] opacity-100 translate-y-0': expanded(),
+        'grid-rows-[0fr] opacity-0 -translate-y-2': !expanded()
+      }"
+    >
+      <div class="min-h-0">
+        <div class="rounded-[24px] border border-[rgba(24,24,27,0.06)] bg-white p-3.5 shadow-sm">
+          <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--ncm-text-soft)]">
+                Additional metrics
+              </p>
+              <p class="mt-1 text-sm text-[var(--ncm-text-muted)]">Optional fields</p>
+            </div>
+          </div>
+
+          <div class="mt-4 grid gap-3 [grid-template-columns:repeat(auto-fit,minmax(180px,1fr))]">
+            @for (metric of advancedMetrics(); track metric.key) {
+              <article
+                class="rounded-[22px] border p-3.5 transition duration-200 hover:shadow-sm"
+                [ngClass]="{
+                  'border-[rgba(36,122,82,0.18)] bg-[linear-gradient(180deg,#ffffff_0%,#f4fbf7_100%)]': activeField() === metric.key,
+                  'border-[rgba(24,24,27,0.06)] bg-[var(--ncm-surface-soft)]': activeField() !== metric.key
+                }"
+              >
+                <div class="flex items-start justify-between gap-3">
+                  <div>
+                    <p class="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--ncm-text-soft)]">
+                      {{ metric.label }}
+                    </p>
+                    <p class="mt-1 text-xs text-[var(--ncm-text-soft)]">{{ metric.previousText }}</p>
+                  </div>
+                </div>
+
+                <div class="mt-3 rounded-[18px] bg-white p-3">
+                  <input
+                    type="text"
+                    [attr.data-focus]="metric.key"
+                    class="w-full border-0 bg-transparent text-xl font-bold tracking-[-0.04em] text-[var(--ncm-text)] outline-none"
+                    [value]="metric.currentValue"
+                    (input)="updateMetric(metric.key, $any($event.target).value)"
+                    (focus)="setActiveField(metric.key)"
+                  />
+                  @if (metric.unit) {
+                    <span class="mt-3 inline-flex rounded-full bg-[var(--ncm-surface-soft)] px-3 py-1 text-xs font-semibold text-[var(--ncm-text-soft)]">
+                      {{ metric.unit }}
+                    </span>
+                  }
+                </div>
+              </article>
+            }
+
+            <article class="rounded-[22px] border border-[rgba(24,24,27,0.06)] bg-[var(--ncm-surface-soft)] p-3.5 transition duration-200 hover:shadow-sm">
+              <div class="flex items-start justify-between gap-3">
+                <div>
+                  <p class="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--ncm-text-soft)]">
+                    {{ derivedBmiMetric().label }}
+                  </p>
+                  <p class="mt-1 text-xs text-[var(--ncm-text-soft)]">{{ derivedBmiMetric().previousText }}</p>
+                </div>
+              </div>
+
+              <div class="mt-3 rounded-[18px] border border-[rgba(36,122,82,0.1)] bg-white px-4 py-3.5">
+                <p class="text-xl font-bold tracking-[-0.04em] text-[var(--ncm-text)]">{{ derivedBmiMetric().currentValue }}</p>
+                <p class="mt-2 text-xs text-[var(--ncm-text-soft)]">Auto-calculated</p>
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sticky bottom-0 mt-5 border-t border-[color:var(--ncm-border)] bg-white/95 pt-4 backdrop-blur supports-[backdrop-filter]:bg-white/90">
+    <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+    <p class="text-sm text-[var(--ncm-text-muted)]">
+      Weight and body fat are required.
+    </p>
+
+    <div class="grid gap-3 sm:grid-cols-3">
+      @if (expanded()) {
+        <button
+          type="button"
+          class="inline-flex items-center justify-center rounded-2xl border border-[color:var(--ncm-border)] bg-white px-4 py-3 text-sm font-semibold text-[var(--ncm-text-muted)] shadow-sm transition duration-200 hover:-translate-y-0.5 hover:bg-[var(--ncm-surface-soft)] hover:shadow-md"
+          (click)="toggleExpanded()"
+        >
+          Collapse extra metrics
+        </button>
+      } @else {
+        <button
+          type="button"
+          class="inline-flex items-center justify-center rounded-2xl border border-[color:var(--ncm-border)] bg-white px-4 py-3 text-sm font-semibold text-[var(--ncm-text-muted)] shadow-sm transition duration-200 hover:-translate-y-0.5 hover:bg-[var(--ncm-surface-soft)] hover:shadow-md"
+          (click)="reset()"
+        >
+          Clear changes
+        </button>
+      }
+
+      <button
+        type="button"
+        class="inline-flex items-center justify-center rounded-2xl border border-[color:var(--ncm-border)] bg-white px-4 py-3 text-sm font-semibold text-[var(--ncm-text)] shadow-sm transition duration-200 hover:-translate-y-0.5 hover:bg-[var(--ncm-surface-soft)] hover:shadow-md"
+        [class.opacity-50]="!canSave()"
+        [disabled]="!canSave()"
+        (click)="save(true)"
+      >
+        Save & Add Another
+      </button>
+
+      <button
+        type="button"
+        class="inline-flex items-center justify-center rounded-2xl bg-[var(--ncm-primary)] px-5 py-3.5 text-sm font-semibold text-white shadow-[0_16px_28px_rgba(36,122,82,0.22)] transition duration-200 hover:-translate-y-0.5 hover:bg-[var(--ncm-primary-strong)] hover:shadow-[0_20px_34px_rgba(36,122,82,0.28)]"
+        [class.opacity-50]="!canSave()"
+        [disabled]="!canSave()"
+        (click)="save(false)"
+      >
+        Save Evaluation
+      </button>
+    </div>
+    </div>
+  </div>
+</section>

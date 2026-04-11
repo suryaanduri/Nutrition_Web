@@ -2,9 +2,10 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
 import { IconComponent } from '../../../shared/ui/icon/icon.component';
 import {
-  QuickAddEvaluationPanelComponent,
-  QuickAddEvaluationPayload
-} from './quick-add-evaluation-panel.component';
+  MemberEvaluationPayload,
+  MemberEvaluationSnapshot
+} from './member-evaluation-panel.component';
+import { MemberEvaluationWorkspaceComponent } from './member-evaluation-workspace.component';
 
 type RangeKey = '7D' | '30D' | '90D';
 type TrendType = 'up' | 'down' | 'neutral';
@@ -49,7 +50,7 @@ interface ActionSignal {
 @Component({
   selector: 'app-member-detail',
   standalone: true,
-  imports: [CommonModule, IconComponent, QuickAddEvaluationPanelComponent],
+  imports: [CommonModule, IconComponent, MemberEvaluationWorkspaceComponent],
   templateUrl: './member-detail.html',
   styleUrl: './member-detail.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -60,6 +61,7 @@ export class MemberDetail {
   readonly selectedRange = signal<RangeKey>('30D');
   readonly showSaveToast = signal(false);
   readonly saveToastMessage = signal('Evaluation added');
+  readonly isEvaluationWorkspaceOpen = signal(false);
 
   readonly rangeOptions: RangeKey[] = ['7D', '30D', '90D'];
 
@@ -76,6 +78,24 @@ export class MemberDetail {
     program: 'PCOS Reset Intensive',
     joinedOn: 'Joined 12 Jan 2026'
   };
+
+  readonly evaluationSnapshot = signal<MemberEvaluationSnapshot>({
+    date: '10 Apr 2026',
+    heightCm: 164,
+    lastFullAssessmentDate: '2026-03-01',
+    notes: 'Good adherence overall. Slight appetite drop this week.',
+    values: {
+      weight: { label: 'Weight', value: 68.4, unit: 'kg', step: 0.1 },
+      bodyFat: { label: 'Body Fat %', value: 31.2, unit: '%', step: 0.1 },
+      visceralFat: { label: 'Visceral Fat', value: 8.4, unit: 'score', step: 0.1 },
+      skeletalMuscle: { label: 'Skeletal Muscle', value: 26.8, unit: 'kg', step: 0.1 },
+      bmr: { label: 'BMR', value: 1380, unit: 'kcal', step: 10 },
+      bodyAge: { label: 'Body Age', value: 31, unit: 'yrs', step: 1 },
+      trunkSubcutaneousFat: { label: 'Trunk Subcutaneous Fat', value: 16.4, unit: '%', step: 0.1 },
+      refNo: { label: 'Ref No', value: 'REF-3128' },
+      invitedBy: { label: 'Invited By', value: 'Dr. Neha Patel' }
+    }
+  });
 
   readonly weightData = signal<Record<RangeKey, TrendPoint[]>>({
     '7D': [
@@ -199,6 +219,15 @@ export class MemberDetail {
     const value = Number.parseFloat(this.latestEvaluation().visceralFat);
     return Number.isFinite(value) ? value : null;
   });
+  readonly evaluationSummary = computed(() => {
+    const latest = this.latestEvaluation();
+    return [
+      { label: 'Last captured', value: latest.date },
+      { label: 'Weight', value: latest.weight },
+      { label: 'Body fat', value: latest.bodyFat },
+      { label: 'Visceral fat', value: latest.visceralFat }
+    ];
+  });
 
   readonly metricCards = computed<MetricCard[]>(() => {
     const latest = this.latestEvaluation();
@@ -267,15 +296,24 @@ export class MemberDetail {
     this.selectedRange.set(range);
   }
 
-  handleEvaluationSaved(payload: QuickAddEvaluationPayload): void {
+  openEvaluationWorkspace(): void {
+    this.isEvaluationWorkspaceOpen.set(true);
+  }
+
+  closeEvaluationWorkspace(): void {
+    this.isEvaluationWorkspaceOpen.set(false);
+  }
+
+  handleEvaluationSaved(payload: MemberEvaluationPayload): void {
     const previous = this.history()[0];
     const nextEntry: EvaluationHistoryItem = {
       id: this.history().length + 1,
       date: this.formatEvaluationDate(new Date()),
-      weight: `${payload.weight.toFixed(1)} kg`,
-      bodyFat: `${payload.bodyFat.toFixed(1)}%`,
-      visceralFat: payload.visceralFat === null ? 'Not recorded' : payload.visceralFat.toFixed(1),
-      notes: payload.notes || 'Quick entry saved during live consultation.',
+      weight: `${Number(payload.values.weight).toFixed(1)} kg`,
+      bodyFat: `${Number(payload.values.bodyFat).toFixed(1)}%`,
+      visceralFat:
+        payload.values.visceralFat === null ? 'Not recorded' : Number(payload.values.visceralFat).toFixed(1),
+      notes: payload.notes || 'Evaluation saved during live consultation.',
       enteredBy: this.member.coach,
       trend: this.historyTrendLabel(previous, payload),
       trendType: this.historyTrendType(previous, payload),
@@ -290,8 +328,38 @@ export class MemberDetail {
       }))
     ]);
 
-    this.weightData.update((series) => this.updateSeries(series, payload.weight, 'Now'));
-    this.bodyFatData.update((series) => this.updateSeries(series, payload.bodyFat, 'Now'));
+    this.weightData.update((series) => this.updateSeries(series, Number(payload.values.weight), 'Now'));
+    this.bodyFatData.update((series) => this.updateSeries(series, Number(payload.values.bodyFat), 'Now'));
+    this.evaluationSnapshot.update((snapshot) => ({
+      ...snapshot,
+      date: payload.date,
+      lastFullAssessmentDate:
+        payload.values.skeletalMuscle !== null ||
+        payload.values.bmr !== null ||
+        payload.values.bodyAge !== null ||
+        payload.values.trunkSubcutaneousFat !== null
+          ? new Date().toISOString().slice(0, 10)
+          : snapshot.lastFullAssessmentDate,
+      notes: payload.notes,
+      values: {
+        ...snapshot.values,
+        weight: { ...snapshot.values.weight, value: payload.values.weight as number },
+        bodyFat: { ...snapshot.values.bodyFat, value: payload.values.bodyFat as number },
+        visceralFat: { ...snapshot.values.visceralFat, value: payload.values.visceralFat as number | null },
+        skeletalMuscle: {
+          ...snapshot.values.skeletalMuscle,
+          value: payload.values.skeletalMuscle as number | null
+        },
+        bmr: { ...snapshot.values.bmr, value: payload.values.bmr as number | null },
+        bodyAge: { ...snapshot.values.bodyAge, value: payload.values.bodyAge as number | null },
+        trunkSubcutaneousFat: {
+          ...snapshot.values.trunkSubcutaneousFat,
+          value: payload.values.trunkSubcutaneousFat as number | null
+        },
+        refNo: { ...snapshot.values.refNo, value: payload.values.refNo as string | null },
+        invitedBy: { ...snapshot.values.invitedBy, value: payload.values.invitedBy as string | null }
+      }
+    }));
 
     this.saveToastMessage.set('Evaluation added');
     this.showSaveToast.set(true);
@@ -301,6 +369,7 @@ export class MemberDetail {
     }
 
     this.toastTimer = setTimeout(() => this.showSaveToast.set(false), 2200);
+    this.closeEvaluationWorkspace();
   }
 
   badgeClass(type: TrendType): string {
@@ -339,14 +408,14 @@ export class MemberDetail {
 
   private historyTrendLabel(
     previous: EvaluationHistoryItem | undefined,
-    payload: QuickAddEvaluationPayload
+    payload: MemberEvaluationPayload
   ): string {
     if (!previous) {
       return 'Saved';
     }
 
-    const weightDelta = payload.weight - this.valueFromMetric(previous.weight);
-    const bodyFatDelta = payload.bodyFat - this.valueFromMetric(previous.bodyFat);
+    const weightDelta = Number(payload.values.weight) - this.valueFromMetric(previous.weight);
+    const bodyFatDelta = Number(payload.values.bodyFat) - this.valueFromMetric(previous.bodyFat);
 
     if (weightDelta < 0 || bodyFatDelta < 0) {
       return 'Improving';
@@ -361,14 +430,14 @@ export class MemberDetail {
 
   private historyTrendType(
     previous: EvaluationHistoryItem | undefined,
-    payload: QuickAddEvaluationPayload
+    payload: MemberEvaluationPayload
   ): TrendType {
     if (!previous) {
       return 'neutral';
     }
 
-    const weightDelta = payload.weight - this.valueFromMetric(previous.weight);
-    const bodyFatDelta = payload.bodyFat - this.valueFromMetric(previous.bodyFat);
+    const weightDelta = Number(payload.values.weight) - this.valueFromMetric(previous.weight);
+    const bodyFatDelta = Number(payload.values.bodyFat) - this.valueFromMetric(previous.bodyFat);
 
     if (weightDelta < 0 || bodyFatDelta < 0) {
       return 'up';
