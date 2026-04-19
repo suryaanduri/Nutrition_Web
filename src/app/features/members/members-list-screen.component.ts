@@ -189,20 +189,20 @@ export class MembersListScreenComponent {
     this.query.set(value);
   }
 
-  protected setStatus(value: StatusFilter): void {
-    this.selectedStatus.set(value);
+  protected setStatus(value: string): void {
+    this.selectedStatus.set(value as StatusFilter);
   }
 
-  protected setGoal(value: GoalFilter): void {
-    this.selectedGoal.set(value);
+  protected setGoal(value: string): void {
+    this.selectedGoal.set(value as GoalFilter);
   }
 
-  protected setVisit(value: VisitFilter): void {
-    this.selectedVisit.set(value);
+  protected setVisit(value: string): void {
+    this.selectedVisit.set(value as VisitFilter);
   }
 
-  protected setSort(value: SortFilter): void {
-    this.selectedSort.set(value);
+  protected setSort(value: string): void {
+    this.selectedSort.set(value as SortFilter);
   }
 
   protected resetFilters(): void {

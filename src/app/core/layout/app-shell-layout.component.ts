@@ -134,7 +134,7 @@ export class AppShellLayoutComponent {
   protected readonly currentEvaluationPreset = computed(() =>
     getEvaluationEditorPreset(this.evaluationEditorMode() ?? 'add', this.selectedEvaluationId())
   );
-  protected readonly desktopSidebarWidth = computed(() => 288);
+  protected readonly desktopSidebarWidth = computed(() => (this.sidebarCollapsed() ? 96 : 288));
 
   constructor() {
     this.syncViewportState();
@@ -196,7 +196,10 @@ export class AppShellLayoutComponent {
   protected toggleSidebar(): void {
     if (this.isMobile()) {
       this.mobileNavOpen.update((value) => !value);
+      return;
     }
+
+    this.sidebarCollapsed.update((value) => !value);
   }
 
   protected closeMobileNav(): void {
