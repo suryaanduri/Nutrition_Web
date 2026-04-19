@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import { IconComponent } from '../../shared/ui/icon/icon.component';
 import { DashboardScreenComponent } from '../../features/dashboard/dashboard-screen.component';
+import { ChatInboxScreenComponent } from '../../features/chat/chat-inbox-screen.component';
 import { EvaluationEditorScreenComponent } from '../../features/evaluations/evaluation-editor-screen.component';
 import { EvaluationsListScreenComponent } from '../../features/evaluations/evaluations-list-screen.component';
 import { getEvaluationEditorPreset } from '../../features/evaluations/evaluations.data';
@@ -16,6 +17,7 @@ import { MembersListScreenComponent } from '../../features/members/members-list-
 import { MemberDetail } from '../../features/members/member-detail/member-detail';
 
 type NavKey = 'dashboard' | 'members' | 'evaluations' | 'feed' | 'approvals' | 'chat';
+type HeaderVariant = 'overview' | 'workspace';
 
 interface NavItem {
   key: NavKey;
@@ -30,6 +32,7 @@ interface NavItem {
   imports: [
     CommonModule,
     IconComponent,
+    ChatInboxScreenComponent,
     DashboardScreenComponent,
     EvaluationEditorScreenComponent,
     EvaluationsListScreenComponent,
@@ -109,11 +112,18 @@ export class AppShellLayoutComponent {
   protected readonly isMembers = computed(() => this.activeNav() === 'members');
   protected readonly isEvaluations = computed(() => this.activeNav() === 'evaluations');
   protected readonly isFeed = computed(() => this.activeNav() === 'feed');
+  protected readonly isChat = computed(() => this.activeNav() === 'chat');
   protected readonly isEvaluationEditor = computed(
     () => this.activeNav() === 'evaluations' && this.evaluationEditorMode() !== null
   );
   protected readonly isMemberDetail = computed(
     () => this.activeNav() === 'members' && this.selectedMemberId() !== null
+  );
+  protected readonly isWorkspaceScreen = computed(
+    () => this.isEvaluationEditor() || this.isFeed() || this.isChat()
+  );
+  protected readonly headerVariant = computed<HeaderVariant>(() =>
+    this.isWorkspaceScreen() ? 'workspace' : 'overview'
   );
   protected readonly currentEvaluationPreset = computed(() =>
     getEvaluationEditorPreset(this.evaluationEditorMode() ?? 'add', this.selectedEvaluationId())

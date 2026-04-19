@@ -1,0 +1,25 @@
+<div
+  class="flex"
+  [ngClass]="{
+    'justify-start': message().sender === 'member',
+    'justify-end': message().sender === 'coach'
+  }"
+>
+  <article
+    class="max-w-[78%] rounded-[16px] border px-3 py-2 shadow-sm"
+    [ngClass]="{
+      'border-[color:var(--ncm-border)] bg-white': message().sender === 'member',
+      'border-[rgba(36,122,82,0.16)] bg-[linear-gradient(180deg,#ffffff_0%,#f4fbf7_100%)]': message().sender === 'coach'
+    }"
+  >
+    <div class="flex items-center gap-1.5">
+      <p class="text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--ncm-text-soft)]">
+        {{ message().senderLabel }}
+      </p>
+      <span class="text-[10px] text-[var(--ncm-text-soft)]">{{ message().time }}</span>
+    </div>
+    <p class="mt-1 whitespace-pre-line text-[13px] leading-5 text-[var(--ncm-text-muted)]">
+      {{ message().body }}
+    </p>
+  </article>
+</div>

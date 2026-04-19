@@ -1,0 +1,299 @@
+<div class="h-full min-h-0">
+  @if (feedback()) {
+    <div class="fixed right-4 top-24 z-30 sm:right-6 lg:right-8">
+      <div
+        class="rounded-2xl border bg-white px-4 py-3 text-sm font-semibold shadow-[0_18px_34px_rgba(15,23,42,0.08)]"
+        [ngClass]="{
+          'border-emerald-100 text-emerald-700': feedback()!.tone === 'success',
+          'border-rose-100 text-rose-700': feedback()!.tone === 'error'
+        }"
+      >
+        {{ feedback()!.message }}
+      </div>
+    </div>
+  }
+
+  @if (inboxState() === 'loading') {
+    <section
+      class="h-full rounded-[28px] border border-[color:var(--ncm-border)] bg-white p-4 shadow-sm lg:p-5"
+      aria-hidden="true"
+    >
+      <div class="grid h-full gap-4 xl:grid-cols-[320px_minmax(0,1fr)_320px]">
+        <div class="space-y-3">
+          @for (_ of skeletonRows; track $index) {
+            <div class="h-20 animate-pulse rounded-[20px] bg-[var(--ncm-surface-soft)]"></div>
+          }
+        </div>
+        <div class="h-full animate-pulse rounded-[24px] bg-[var(--ncm-surface-soft)]"></div>
+        <div class="h-full animate-pulse rounded-[24px] bg-[var(--ncm-surface-soft)]"></div>
+      </div>
+    </section>
+  } @else if (inboxState() === 'error') {
+    <section
+      class="flex h-full items-center rounded-[28px] border border-[rgba(194,65,59,0.18)] bg-[linear-gradient(180deg,#ffffff_0%,#fff7f6_100%)] p-6 shadow-sm lg:p-7"
+    >
+      <div>
+        <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--ncm-danger)]">
+          Inbox unavailable
+        </p>
+        <h3 class="mt-3 text-2xl font-extrabold tracking-[-0.04em] text-[var(--ncm-text)]">
+          Conversations could not be loaded right now.
+        </h3>
+        <p class="mt-3 max-w-2xl text-sm leading-7 text-[var(--ncm-text-muted)]">
+          Retry the inbox, then clear unread and needs-attention threads first so member follow-up
+          stays fast and visible.
+        </p>
+        <button
+          type="button"
+          class="mt-5 inline-flex items-center justify-center rounded-2xl bg-[var(--ncm-primary)] px-4 py-3 text-sm font-semibold text-white shadow-[0_16px_28px_rgba(36,122,82,0.22)] transition duration-200 hover:-translate-y-0.5 hover:bg-[var(--ncm-primary-strong)] hover:shadow-[0_20px_34px_rgba(36,122,82,0.28)] active:translate-y-0"
+          (click)="setInboxState('default')"
+        >
+          Retry inbox
+        </button>
+      </div>
+    </section>
+  } @else {
+    <section class="grid h-full gap-4 xl:grid-cols-[300px_minmax(0,1fr)_300px]">
+      <aside
+        class="flex h-full min-h-0 flex-col rounded-[20px] border border-[color:var(--ncm-border)] bg-white p-3 shadow-sm"
+      >
+        <div class="space-y-3 border-b border-[color:var(--ncm-border)] pb-3">
+          <div class="flex items-center justify-between gap-3">
+            <div>
+              <h3 class="text-base font-extrabold tracking-[-0.03em] text-[var(--ncm-text)]">
+                Conversations
+              </h3>
+            </div>
+            <span
+              class="inline-flex items-center rounded-full bg-[var(--ncm-primary-soft)] px-2.5 py-1 text-[11px] font-semibold text-[var(--ncm-primary-strong)]"
+            >
+              {{ inboxSummary().unread }} unread
+            </span>
+          </div>
+
+          <label
+            class="group flex items-center gap-3 rounded-2xl border border-[color:var(--ncm-border)] bg-[var(--ncm-surface-soft)] px-3.5 py-3 shadow-sm transition duration-200 hover:shadow-md focus-within:border-[rgba(36,122,82,0.22)] focus-within:bg-white focus-within:shadow-[0_0_0_4px_rgba(36,122,82,0.08)]"
+          >
+            <span class="text-[var(--ncm-text-soft)] transition duration-200 group-focus-within:text-[var(--ncm-primary)]">
+              <ncm-icon name="search" [size]="18" />
+            </span>
+            <input
+              type="search"
+              class="w-full border-0 bg-transparent p-0 text-sm text-[var(--ncm-text)] outline-none placeholder:text-[var(--ncm-text-soft)]"
+              placeholder="Search by member..."
+              [value]="query()"
+              (input)="setQuery(($any($event.target).value ?? '').toString())"
+            />
+          </label>
+
+          <div class="flex flex-wrap gap-2.5">
+            @for (filter of filterOptions; track filter) {
+              <button
+                type="button"
+                class="inline-flex items-center rounded-full border px-3.5 py-2 text-sm font-medium transition duration-200 hover:-translate-y-0.5 hover:shadow-sm"
+                [ngClass]="{
+                  'border-[rgba(36,122,82,0.14)] bg-[var(--ncm-primary-soft)] text-[var(--ncm-primary-strong)]':
+                    selectedFilter() === filter,
+                  'border-[color:var(--ncm-border)] bg-white text-[var(--ncm-text-muted)] hover:bg-[var(--ncm-surface-soft)]':
+                    selectedFilter() !== filter
+                }"
+                (click)="setFilter(filter)"
+              >
+                {{ filter }}
+              </button>
+            }
+          </div>
+        </div>
+
+        @if (!hasAnyConversations()) {
+          <div class="mt-4 rounded-[20px] border border-[color:var(--ncm-border)] bg-[var(--ncm-surface-soft)] p-4">
+            <p class="text-sm font-semibold text-[var(--ncm-text)]">No conversations yet</p>
+            <p class="mt-2 text-sm leading-6 text-[var(--ncm-text-muted)]">
+              Member follow-up will appear here once coach or admin messaging starts.
+            </p>
+          </div>
+        } @else if (!filteredConversations().length) {
+          <div class="mt-4 rounded-[20px] border border-[color:var(--ncm-border)] bg-[var(--ncm-surface-soft)] p-4">
+            <p class="text-sm font-semibold text-[var(--ncm-text)]">No matching conversations</p>
+            <p class="mt-2 text-sm leading-6 text-[var(--ncm-text-muted)]">
+              Reset the search or switch back to `All` to restore the inbox view.
+            </p>
+          </div>
+        } @else {
+          <div class="mt-3 flex min-h-0 flex-1 flex-col">
+            <div class="flex items-center justify-between gap-3 px-1 pb-3">
+              <p class="text-[13px] font-semibold text-[var(--ncm-text)]">{{ queueLabel() }}</p>
+              <button
+                type="button"
+                class="inline-flex items-center rounded-full bg-[var(--ncm-surface-soft)] px-3 py-1 text-[11px] font-semibold text-[var(--ncm-text-muted)] transition duration-200 hover:bg-white"
+                (click)="resetFilters()"
+              >
+                Reset
+              </button>
+            </div>
+            <div class="min-h-0 flex-1 space-y-2 overflow-y-auto pr-1">
+            @for (conversation of filteredConversations(); track conversation.id) {
+              <button
+                type="button"
+                class="block w-full text-left"
+                (click)="selectConversation(conversation.id)"
+              >
+                <app-conversation-list-item
+                  [conversation]="conversation"
+                  [selected]="selectedConversation()?.id === conversation.id"
+                />
+              </button>
+            }
+            </div>
+          </div>
+        }
+      </aside>
+
+      <section
+        class="flex h-full min-h-0 flex-col rounded-[20px] border border-[color:var(--ncm-border)] bg-white shadow-sm"
+      >
+        @if (selectedConversation()) {
+          <div class="flex h-full min-h-0 flex-col">
+            <div class="sticky top-0 z-10 border-b border-[color:var(--ncm-border)] bg-white px-4 py-2.5 lg:px-5">
+              <div class="min-w-0">
+                <div class="flex flex-wrap items-center gap-3">
+                  <h3 class="truncate text-base font-extrabold tracking-[-0.03em] text-[var(--ncm-text)]">
+                    {{ selectedConversation()!.memberName }}
+                  </h3>
+                  <span
+                    class="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold"
+                    [ngClass]="statusClass(selectedConversation()!.status)"
+                  >
+                    {{ selectedConversation()!.status }}
+                  </span>
+                  @if (selectedConversation()!.unreadCount > 0) {
+                    <span
+                      class="inline-flex items-center rounded-full bg-[var(--ncm-primary-soft)] px-2.5 py-1 text-[11px] font-semibold text-[var(--ncm-primary-strong)]"
+                    >
+                      {{ selectedConversation()!.unreadCount }} unread
+                    </span>
+                  }
+                </div>
+              </div>
+            </div>
+
+            @if (selectedConversation()!.messages.length) {
+              <div class="min-h-0 flex-1 space-y-3 overflow-y-auto bg-[var(--ncm-surface-soft)] px-4 py-3 lg:px-5">
+                @for (message of selectedConversation()!.messages; track message.id) {
+                  <app-message-bubble [message]="message" />
+                }
+              </div>
+            } @else {
+              <div class="flex min-h-0 flex-1 items-center justify-center bg-[var(--ncm-surface-soft)] px-4 py-6">
+                <div class="max-w-md rounded-[20px] border border-[color:var(--ncm-border)] bg-white p-5 text-center shadow-sm">
+                  <p class="text-sm font-semibold text-[var(--ncm-text)]">No messages in this thread yet</p>
+                  <p class="mt-2 text-sm leading-6 text-[var(--ncm-text-muted)]">
+                    Start the follow-up from here and keep the member context visible on the right.
+                  </p>
+                </div>
+              </div>
+            }
+
+            <div class="sticky bottom-0 border-t border-[color:var(--ncm-border)] bg-white px-4 py-2.5 lg:px-5">
+              <div class="flex items-end gap-2.5">
+                <textarea
+                  rows="1"
+                  class="min-h-[44px] max-h-28 flex-1 resize-none rounded-[16px] border border-transparent bg-[var(--ncm-surface-soft)] px-4 py-3 text-sm leading-5 text-[var(--ncm-text)] outline-none transition duration-200 hover:border-[rgba(36,122,82,0.12)] focus:border-[rgba(36,122,82,0.16)] focus:bg-white focus:shadow-[0_0_0_3px_rgba(36,122,82,0.08)]"
+                  placeholder="Type a reply..."
+                  [value]="draftMessage()"
+                  (input)="updateDraft(($any($event.target).value ?? '').toString())"
+                ></textarea>
+                <button
+                  type="button"
+                  class="inline-flex h-[44px] items-center justify-center rounded-[16px] bg-[var(--ncm-primary)] px-4 text-sm font-semibold text-white shadow-[0_12px_20px_rgba(36,122,82,0.18)] transition duration-200 hover:bg-[var(--ncm-primary-strong)] active:translate-y-0"
+                  [class.opacity-50]="!draftMessage().trim()"
+                  [disabled]="!draftMessage().trim()"
+                  (click)="sendMessage()"
+                >
+                  Send
+                </button>
+              </div>
+            </div>
+          </div>
+        }
+      </section>
+
+      <aside class="space-y-4">
+        @if (selectedConversation()) {
+          <section
+            class="flex h-full min-h-0 flex-col rounded-[20px] border border-[color:var(--ncm-border)] bg-white p-3 shadow-sm"
+          >
+            <div class="border-b border-[color:var(--ncm-border)] pb-3">
+              <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--ncm-text-soft)]">
+                Context
+              </p>
+              <h4 class="mt-1 text-base font-extrabold tracking-[-0.03em] text-[var(--ncm-text)]">
+                {{ selectedConversation()!.memberName }}
+              </h4>
+              <p class="mt-1 text-[13px] text-[var(--ncm-text-muted)]">{{ selectedConversation()!.memberGoal }}</p>
+            </div>
+
+            <div class="mt-3 min-h-0 flex-1 space-y-3 overflow-y-auto pr-1">
+              <div class="rounded-[16px] bg-[var(--ncm-surface-soft)] px-3.5 py-3">
+                <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--ncm-text-soft)]">
+                  Status
+                </p>
+                <span
+                  class="mt-1 inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold"
+                  [ngClass]="statusClass(selectedConversation()!.status)"
+                >
+                  {{ selectedConversation()!.memberStatus }}
+                </span>
+              </div>
+
+              <div class="rounded-[16px] bg-[var(--ncm-surface-soft)] px-3.5 py-3">
+                <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--ncm-text-soft)]">
+                  Program
+                </p>
+                <p class="mt-1 text-sm font-semibold text-[var(--ncm-text)]">{{ selectedConversation()!.memberGoal }}</p>
+              </div>
+
+              <div class="rounded-[16px] bg-[var(--ncm-surface-soft)] px-3.5 py-3">
+                <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--ncm-text-soft)]">
+                  Last evaluation
+                </p>
+                <p class="mt-1 text-sm font-semibold text-[var(--ncm-text)]">{{ selectedConversation()!.lastEvaluationDate }}</p>
+              </div>
+
+              <div class="rounded-[16px] bg-[var(--ncm-surface-soft)] px-3.5 py-3">
+                <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--ncm-text-soft)]">
+                  Latest metrics
+                </p>
+                <p class="mt-1 text-sm font-semibold text-[var(--ncm-text)]">{{ selectedConversation()!.latestEvaluation }}</p>
+              </div>
+
+              <div class="rounded-[16px] bg-[var(--ncm-surface-soft)] px-3.5 py-3">
+                <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--ncm-text-soft)]">
+                  Insight
+                </p>
+                <p class="mt-1 text-[13px] leading-5 text-[var(--ncm-text-muted)]">{{ selectedConversation()!.quickInsight }}</p>
+              </div>
+            </div>
+
+            <div class="mt-3 grid gap-2.5 border-t border-[color:var(--ncm-border)] pt-3">
+              <button
+                type="button"
+                class="inline-flex w-full items-center justify-center rounded-2xl border border-[color:var(--ncm-border)] bg-white px-4 py-3 text-sm font-semibold text-[var(--ncm-text)] shadow-sm transition duration-200 hover:-translate-y-0.5 hover:bg-[var(--ncm-surface-soft)] hover:shadow-md active:translate-y-0"
+                (click)="openSelectedMember()"
+              >
+                View full profile
+              </button>
+              <button
+                type="button"
+                class="inline-flex w-full items-center justify-center rounded-2xl bg-[var(--ncm-primary)] px-5 py-3 text-sm font-semibold text-white shadow-[0_16px_28px_rgba(36,122,82,0.22)] transition duration-200 hover:-translate-y-0.5 hover:bg-[var(--ncm-primary-strong)] hover:shadow-[0_20px_34px_rgba(36,122,82,0.28)] active:translate-y-0"
+                (click)="openEvaluationForSelectedMember()"
+              >
+                + Add Evaluation
+              </button>
+            </div>
+          </section>
+        }
+      </aside>
+    </section>
+  }
+</div>
