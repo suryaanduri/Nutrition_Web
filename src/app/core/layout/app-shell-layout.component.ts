@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import { IconComponent } from '../../shared/ui/icon/icon.component';
 import { DashboardScreenComponent } from '../../features/dashboard/dashboard-screen.component';
+import { EvaluationsListScreenComponent } from '../../features/evaluations/evaluations-list-screen.component';
 import { MembersListScreenComponent } from '../../features/members/members-list-screen.component';
 import { MemberDetail } from '../../features/members/member-detail/member-detail';
 
@@ -27,6 +28,7 @@ interface NavItem {
     CommonModule,
     IconComponent,
     DashboardScreenComponent,
+    EvaluationsListScreenComponent,
     MembersListScreenComponent,
     MemberDetail
   ],
@@ -90,6 +92,7 @@ export class AppShellLayoutComponent {
   );
   protected readonly isDashboard = computed(() => this.activeNav() === 'dashboard');
   protected readonly isMembers = computed(() => this.activeNav() === 'members');
+  protected readonly isEvaluations = computed(() => this.activeNav() === 'evaluations');
   protected readonly isMemberDetail = computed(
     () => this.activeNav() === 'members' && this.selectedMemberId() !== null
   );

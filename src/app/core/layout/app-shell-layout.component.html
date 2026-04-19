@@ -254,6 +254,8 @@
           <app-dashboard-screen />
         } @else if (isMemberDetail()) {
           <app-member-detail />
+        } @else if (isEvaluations()) {
+          <app-evaluations-list-screen />
         } @else if (isMembers()) {
           <app-members-list-screen (memberSelected)="openMemberDetail($event)" />
         } @else {
