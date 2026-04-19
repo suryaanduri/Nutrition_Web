@@ -1,6 +1,4 @@
-export type EvaluationStatus = 'Pending review' | 'Completed' | 'Scheduled' | 'Overdue';
 export type EvaluationType = 'Baseline' | 'Progress' | 'Body composition' | 'Follow-up';
-export type PriorityTone = 'critical' | 'warning' | 'normal';
 export type EvaluationEditorMode = 'add' | 'edit';
 export type EvaluationEditorViewState = 'default' | 'loading' | 'error';
 
@@ -9,16 +7,12 @@ export interface EvaluationRecord {
   memberId: string;
   memberName: string;
   type: EvaluationType;
-  status: EvaluationStatus;
   coach: 'Ava Nelson' | 'Mila Carter' | 'Rita Jones';
   scheduledLabel: string;
   timeLabel: string;
   relativeLabel: string;
   summary: string;
-  nextAction: string;
-  flags: string[];
   daysFromToday: number;
-  priority: PriorityTone;
 }
 
 export interface EvaluationMemberContext {
@@ -71,96 +65,84 @@ export const EVALUATION_RECORDS: EvaluationRecord[] = [
     memberId: 'MBR-1042',
     memberName: 'Rhea Sharma',
     type: 'Progress',
-    status: 'Pending review',
     coach: 'Ava Nelson',
-    scheduledLabel: 'Today',
+    scheduledLabel: '19 Apr 2026',
     timeLabel: '10:30 AM',
     relativeLabel: 'Captured 38 min ago',
-    summary: 'Weight and body-fat moved in the right direction, but sleep and hydration dipped this week.',
-    nextAction: 'Review notes and confirm the next 7-day adjustment before noon.',
-    flags: ['Today', 'Needs coach review'],
-    daysFromToday: 0,
-    priority: 'critical'
+    summary: '68.2 kg · 31.0% body fat · visceral fat 8.3 · hydration focus noted.',
+    daysFromToday: 0
+  },
+  {
+    id: 'EVAL-2403',
+    memberId: 'MBR-1042',
+    memberName: 'Rhea Sharma',
+    type: 'Follow-up',
+    coach: 'Ava Nelson',
+    scheduledLabel: '10 Apr 2026',
+    timeLabel: '9:15 AM',
+    relativeLabel: 'Recorded 9 days ago',
+    summary: '68.4 kg · 31.2% body fat · visceral fat 8.4 · sleep consistency reviewed.',
+    daysFromToday: -9
   },
   {
     id: 'EVAL-2397',
     memberId: 'MBR-0612',
     memberName: 'Nadia Khan',
-    type: 'Follow-up',
-    status: 'Overdue',
+    type: 'Progress',
     coach: 'Mila Carter',
     scheduledLabel: '14 Apr 2026',
     timeLabel: '4:00 PM',
-    relativeLabel: 'Missed 2 days ago',
-    summary: 'Postpartum recomposition review was not completed and follow-up momentum is softening.',
-    nextAction: 'Reschedule immediately and notify the assigned coach before the evening block.',
-    flags: ['Overdue', 'Priority member'],
-    daysFromToday: -2,
-    priority: 'critical'
+    relativeLabel: 'Recorded 5 days ago',
+    summary: '72.6 kg · 34.7% body fat · visceral fat 9.3 · postpartum reset follow-up.',
+    daysFromToday: -5
   },
   {
     id: 'EVAL-2411',
     memberId: 'MBR-0987',
     memberName: 'Arjun Menon',
     type: 'Body composition',
-    status: 'Scheduled',
     coach: 'Ava Nelson',
-    scheduledLabel: 'Today',
+    scheduledLabel: '18 Apr 2026',
     timeLabel: '1:00 PM',
-    relativeLabel: 'Starts in 1h 20m',
-    summary: 'Metabolic reset checkpoint with composition scan and adherence review.',
-    nextAction: 'Prepare the comparison snapshot before the consultation starts.',
-    flags: ['Today'],
-    daysFromToday: 0,
-    priority: 'warning'
+    relativeLabel: 'Recorded yesterday',
+    summary: '82.1 kg · 24.8% body fat · visceral fat 8.2 · composition scan completed.',
+    daysFromToday: -1
   },
   {
     id: 'EVAL-2388',
-    memberId: 'MBR-0871',
-    memberName: 'Sana Qureshi',
+    memberId: 'MBR-0987',
+    memberName: 'Arjun Menon',
     type: 'Progress',
-    status: 'Completed',
-    coach: 'Rita Jones',
-    scheduledLabel: '15 Apr 2026',
+    coach: 'Ava Nelson',
+    scheduledLabel: '09 Apr 2026',
     timeLabel: '8:45 AM',
-    relativeLabel: 'Completed yesterday',
-    summary: 'Wedding cut plan remains on track with strong adherence and improved energy.',
-    nextAction: 'No escalation needed. Keep the current pace and schedule the next weekly review.',
-    flags: ['Stable'],
-    daysFromToday: -1,
-    priority: 'normal'
+    relativeLabel: 'Recorded 10 days ago',
+    summary: '82.1 kg · 24.8% body fat · visceral fat 8.2 · metabolic reset checkpoint.',
+    daysFromToday: -10
   },
   {
     id: 'EVAL-2379',
     memberId: 'MBR-0773',
     memberName: 'Kavya Iyer',
     type: 'Baseline',
-    status: 'Scheduled',
     coach: 'Rita Jones',
-    scheduledLabel: '18 Apr 2026',
+    scheduledLabel: '12 Apr 2026',
     timeLabel: '11:15 AM',
-    relativeLabel: 'Scheduled in 2 days',
-    summary: 'Initial strength-gain baseline assessment with body composition and goal capture.',
-    nextAction: 'Confirm intake readiness and make sure onboarding notes are complete.',
-    flags: ['New member'],
-    daysFromToday: 2,
-    priority: 'normal'
+    relativeLabel: 'Recorded 7 days ago',
+    summary: '53.2 kg · 19.6% body fat · visceral fat 6.1 · initial strength-gain baseline.',
+    daysFromToday: -7
   },
   {
     id: 'EVAL-2365',
-    memberId: 'MBR-0439',
-    memberName: 'Rahul Sethi',
+    memberId: 'MBR-0612',
+    memberName: 'Nadia Khan',
     type: 'Follow-up',
-    status: 'Pending review',
     coach: 'Mila Carter',
-    scheduledLabel: '13 Apr 2026',
+    scheduledLabel: '06 Apr 2026',
     timeLabel: '6:15 PM',
-    relativeLabel: 'Awaiting sign-off for 3 days',
-    summary: 'Prediabetes reversal follow-up was entered, but coach sign-off is still pending.',
-    nextAction: 'Close the review so medication-support notes can be finalized.',
-    flags: ['Pending sign-off'],
-    daysFromToday: -3,
-    priority: 'warning'
+    relativeLabel: 'Recorded 13 days ago',
+    summary: '73.1 kg · 35.1% body fat · visceral fat 9.5 · consistency check after travel.',
+    daysFromToday: -13
   }
 ];
 
@@ -334,11 +316,25 @@ const EDITOR_PRESETS: Record<string, EvaluationEditorPreset> = {
     bodyAgeYears: 34,
     history: HISTORY_BY_MEMBER['MBR-0612']
   },
+  'EVAL-2403': {
+    mode: 'edit',
+    evaluationId: 'EVAL-2403',
+    member: MEMBER_CONTEXTS['MBR-1042'],
+    recordedAtLabel: '10 Apr 2026',
+    weightKg: 68.4,
+    trunkSubcutaneousFatPercent: 16.3,
+    bodyFatPercent: 31.2,
+    visceralFat: 8.4,
+    skeletalMuscleKg: 26.7,
+    bmrKcal: 1386,
+    bodyAgeYears: 30,
+    history: HISTORY_BY_MEMBER['MBR-1042']
+  },
   'EVAL-2411': {
     mode: 'edit',
     evaluationId: 'EVAL-2411',
     member: MEMBER_CONTEXTS['MBR-0987'],
-    recordedAtLabel: '19 Apr 2026',
+    recordedAtLabel: '18 Apr 2026',
     weightKg: 82.1,
     trunkSubcutaneousFatPercent: 14.8,
     bodyFatPercent: 24.8,
@@ -347,6 +343,48 @@ const EDITOR_PRESETS: Record<string, EvaluationEditorPreset> = {
     bmrKcal: 1690,
     bodyAgeYears: 32,
     history: HISTORY_BY_MEMBER['MBR-0987']
+  },
+  'EVAL-2388': {
+    mode: 'edit',
+    evaluationId: 'EVAL-2388',
+    member: MEMBER_CONTEXTS['MBR-0987'],
+    recordedAtLabel: '09 Apr 2026',
+    weightKg: 82.1,
+    trunkSubcutaneousFatPercent: 15.0,
+    bodyFatPercent: 24.8,
+    visceralFat: 8.2,
+    skeletalMuscleKg: 33.4,
+    bmrKcal: 1684,
+    bodyAgeYears: 33,
+    history: HISTORY_BY_MEMBER['MBR-0987']
+  },
+  'EVAL-2379': {
+    mode: 'edit',
+    evaluationId: 'EVAL-2379',
+    member: MEMBER_CONTEXTS['MBR-0773'],
+    recordedAtLabel: '12 Apr 2026',
+    weightKg: 53.2,
+    trunkSubcutaneousFatPercent: 12.4,
+    bodyFatPercent: 19.6,
+    visceralFat: 6.1,
+    skeletalMuscleKg: 22.8,
+    bmrKcal: 1325,
+    bodyAgeYears: 24,
+    history: HISTORY_BY_MEMBER['MBR-0773']
+  },
+  'EVAL-2365': {
+    mode: 'edit',
+    evaluationId: 'EVAL-2365',
+    member: MEMBER_CONTEXTS['MBR-0612'],
+    recordedAtLabel: '06 Apr 2026',
+    weightKg: 73.1,
+    trunkSubcutaneousFatPercent: 18.8,
+    bodyFatPercent: 35.1,
+    visceralFat: 9.5,
+    skeletalMuscleKg: 23.7,
+    bmrKcal: 1352,
+    bodyAgeYears: 35,
+    history: HISTORY_BY_MEMBER['MBR-0612']
   }
 };
 
