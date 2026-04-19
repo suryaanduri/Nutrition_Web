@@ -31,13 +31,6 @@ interface ModerationPost {
   reviewReason: string;
 }
 
-interface QueueSummaryCard {
-  label: string;
-  value: string;
-  detail: string;
-  emphasized?: boolean;
-}
-
 interface FeedbackMessage {
   tone: FeedbackTone;
   message: string;
@@ -197,45 +190,19 @@ export class FeedModerationQueueScreenComponent {
       this.posts()[0]
   );
 
-  protected readonly summaryCards = computed<QueueSummaryCard[]>(() => {
-    const pending = this.posts().filter((post) => post.status === 'Pending').length;
-    const imageReviews = this.posts().filter(
-      (post) => post.status === 'Pending' && (post.contentType === 'Image' || post.contentType === 'Text + Image')
-    ).length;
-    const waitingLong = this.posts().filter(
-      (post) => post.status === 'Pending' && post.submittedMinutesAgo > 1440
-    ).length;
-    const memberSubmissions = this.posts().filter((post) =>
-      post.flags.includes('Member submission')
-    ).length;
-
-    return [
-      {
-        label: 'Pending posts',
-        value: `${pending}`,
-        detail: 'Posts awaiting moderation before they can appear in the member feed.',
-        emphasized: true
-      },
-      {
-        label: 'Image review',
-        value: `${imageReviews}`,
-        detail: 'Posts that need a quick visual check as part of approval.'
-      },
-      {
-        label: 'Waiting over 24h',
-        value: `${waitingLong}`,
-        detail: 'Older queue items that should be cleared to protect community responsiveness.'
-      },
-      {
-        label: 'Member-led stories',
-        value: `${memberSubmissions}`,
-        detail: 'Submissions with high engagement value once they pass review.'
-      }
-    ];
-  });
-
   protected readonly pendingCount = computed(
     () => this.posts().filter((post) => post.status === 'Pending').length
+  );
+  protected readonly imagePendingCount = computed(
+    () =>
+      this.posts().filter(
+        (post) =>
+          post.status === 'Pending' &&
+          (post.contentType === 'Image' || post.contentType === 'Text + Image')
+      ).length
+  );
+  protected readonly waitingLongCount = computed(
+    () => this.posts().filter((post) => post.status === 'Pending' && post.submittedMinutesAgo > 1440).length
   );
   protected readonly queueLabel = computed(
     () => `${this.filteredPosts().length} posts awaiting review`
@@ -321,7 +288,7 @@ export class FeedModerationQueueScreenComponent {
 
   protected priorityClass(priority: PriorityTone): string {
     if (priority === 'priority') {
-      return 'border-[rgba(183,121,31,0.18)] ring-1 ring-[rgba(183,121,31,0.08)] bg-[linear-gradient(180deg,#ffffff_0%,#fffbf4_100%)]';
+      return 'border-[rgba(183,121,31,0.16)] bg-[linear-gradient(180deg,#ffffff_0%,#fffbf6_100%)]';
     }
 
     return 'border-[color:var(--ncm-border)] hover:border-[rgba(36,122,82,0.18)]';
