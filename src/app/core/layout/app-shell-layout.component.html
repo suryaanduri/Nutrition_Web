@@ -10,13 +10,13 @@
 
   <div class="relative h-full">
     <aside
-      class="fixed inset-y-0 left-0 z-40 flex h-screen flex-col border-r border-[color:var(--ncm-border-strong)] bg-[var(--ncm-sidebar-bg)] px-3 py-4 transition-transform duration-300 ease-out lg:translate-x-0"
+      class="fixed inset-y-0 left-0 z-40 flex h-screen flex-col border-r border-[color:var(--ncm-border-strong)] bg-[var(--ncm-sidebar-bg)] px-3 py-3 transition-transform duration-300 ease-out lg:translate-x-0"
       [style.width.px]="isMobile() ? 288 : desktopSidebarWidth()"
       [ngClass]="{
         '-translate-x-full': !mobileNavOpen() && isMobile()
       }"
     >
-      <div class="flex items-center gap-3 rounded-[22px] border border-[color:var(--ncm-border)] bg-white px-3 py-3 shadow-sm">
+      <div class="flex items-center gap-3 rounded-[18px] border border-[color:var(--ncm-border)] bg-white px-3 py-2.5">
         <div
           class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[linear-gradient(180deg,#dce7ff_0%,#cbd8ff_100%)] text-sm font-bold text-[#4966d6]"
         >
@@ -39,20 +39,11 @@
         </button>
       </div>
 
-      <!-- <div class="mt-4 rounded-[20px] border border-[color:var(--ncm-border)] bg-white px-3 py-3 shadow-sm">
-        <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--ncm-text-soft)]">
-          Center
-        </p>
-        <p class="mt-1 truncate text-sm font-semibold text-[var(--ncm-text)]">
-          {{ workspaceName }}
-        </p>
-      </div> -->
-
-      <nav class="mt-5 flex-1 space-y-1.5" aria-label="Primary">
+      <nav class="mt-4 flex-1 space-y-1" aria-label="Primary">
         @for (item of navItems; track item.key) {
           <button
             type="button"
-            class="group flex w-full items-center gap-3 rounded-[18px] border px-3 py-3 text-left transition"
+            class="group flex w-full items-center gap-3 rounded-[16px] border px-3 py-2.5 text-left transition"
             [ngClass]="{
               'border-[rgba(73,102,214,0.18)] bg-[linear-gradient(180deg,#eef3ff_0%,#e8efff_100%)] text-[var(--ncm-text)] shadow-sm':
                 activeNav() === item.key,
@@ -63,7 +54,7 @@
             (click)="selectNavItem(item.key)"
           >
             <span
-              class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border bg-white"
+              class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border bg-white"
               [ngClass]="{
                 'border-[rgba(73,102,214,0.18)] text-[#4966d6]': activeNav() === item.key,
                 'border-[rgba(24,24,27,0.06)] text-[var(--ncm-text-soft)]': activeNav() !== item.key
@@ -90,7 +81,7 @@
         }
       </nav>
 
-      <div class="border-t border-[color:var(--ncm-border)] px-2 pt-4">
+      <div class="border-t border-[color:var(--ncm-border)] px-2 pt-3">
         <button
           type="button"
           class="flex w-full items-center justify-between rounded-[18px] px-2 py-2 text-left text-sm text-[var(--ncm-text-muted)] transition hover:bg-white"
@@ -102,7 +93,7 @@
     </aside>
 
     <div class="ml-0 flex h-screen min-h-0 flex-col overflow-hidden transition-[margin] duration-300 lg:ml-[288px]">
-      <header class="z-20 shrink-0 border-b border-[color:var(--ncm-border)] bg-white px-4 py-3 shadow-sm sm:px-6 lg:px-8">
+      <header class="z-20 shrink-0 border-b border-[color:var(--ncm-border)] bg-white px-4 py-2.5 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between gap-4">
           <div class="flex min-w-0 items-center gap-3">
             <button
@@ -126,7 +117,7 @@
 
           <div class="flex items-center gap-3">
             <div
-              class="hidden items-center gap-3 rounded-[18px] border border-[color:var(--ncm-border)] bg-[var(--ncm-surface-strong)] px-3 py-2 shadow-sm sm:inline-flex"
+              class="hidden items-center gap-3 rounded-[14px] border border-[color:var(--ncm-border)] bg-[var(--ncm-surface-strong)] px-3 py-2 sm:inline-flex"
             >
               <div
                 class="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--ncm-primary-soft)] text-sm font-bold text-[var(--ncm-primary-strong)]"
@@ -145,7 +136,7 @@
 
             <button
               type="button"
-              class="inline-flex items-center gap-2 rounded-[16px] border border-[rgba(206,114,96,0.24)] bg-[rgba(255,245,242,0.92)] px-3 py-2 text-sm font-semibold text-[#c55a48] transition hover:bg-[rgba(255,239,235,1)]"
+              class="inline-flex items-center gap-2 rounded-[12px] border border-[rgba(206,114,96,0.24)] bg-[rgba(255,245,242,0.92)] px-3 py-2 text-sm font-semibold text-[#c55a48] transition hover:bg-[rgba(255,239,235,1)]"
             >
               <ncm-icon name="logout" [size]="16" />
               <span class="hidden sm:inline">Logout</span>
