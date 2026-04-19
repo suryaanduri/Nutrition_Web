@@ -1,4 +1,4 @@
-<div class="min-h-0">
+<div class="flex h-full min-h-0 flex-col">
   @if (feedback()) {
     <div class="fixed right-4 top-24 z-30 sm:right-6 lg:right-8">
       <div
@@ -15,22 +15,22 @@
 
   @if (inboxState() === 'loading') {
     <section
-      class="rounded-[28px] border border-[color:var(--ncm-border)] bg-white p-4 shadow-sm lg:p-5"
+      class="flex h-full min-h-0 rounded-[24px] border border-[color:var(--ncm-border)] bg-white shadow-sm"
       aria-hidden="true"
     >
-      <div class="grid gap-3 xl:grid-cols-[236px_minmax(0,1fr)_224px]">
-        <div class="space-y-3">
+      <div class="grid min-h-0 flex-1 xl:grid-cols-[248px_minmax(0,1fr)_248px] xl:divide-x xl:divide-[color:var(--ncm-border)]">
+        <div class="space-y-3 p-4">
           @for (_ of skeletonRows; track $index) {
-            <div class="h-18 animate-pulse rounded-[18px] bg-[var(--ncm-surface-soft)]"></div>
+            <div class="h-18 animate-pulse rounded-[14px] bg-[var(--ncm-surface-soft)]"></div>
           }
         </div>
-        <div class="h-[34rem] animate-pulse rounded-[22px] bg-[var(--ncm-surface-soft)]"></div>
-        <div class="h-[34rem] animate-pulse rounded-[22px] bg-[var(--ncm-surface-soft)]"></div>
+        <div class="m-4 animate-pulse rounded-[16px] bg-[var(--ncm-surface-soft)]"></div>
+        <div class="m-4 animate-pulse rounded-[16px] bg-[var(--ncm-surface-soft)]"></div>
       </div>
     </section>
   } @else if (inboxState() === 'error') {
     <section
-      class="flex items-center rounded-[28px] border border-[rgba(194,65,59,0.18)] bg-[linear-gradient(180deg,#ffffff_0%,#fff7f6_100%)] p-6 shadow-sm lg:p-7"
+      class="flex h-full min-h-0 items-center rounded-[24px] border border-[rgba(194,65,59,0.18)] bg-[linear-gradient(180deg,#ffffff_0%,#fff7f6_100%)] p-6 shadow-sm lg:p-7"
     >
       <div>
         <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--ncm-danger)]">
@@ -53,11 +53,9 @@
       </div>
     </section>
   } @else {
-    <section class="grid h-[calc(100vh-10rem)] min-h-[560px] gap-3 xl:grid-cols-[236px_minmax(0,1fr)_224px]">
-      <aside
-        class="flex h-full min-h-0 flex-col rounded-[18px] border border-[rgba(24,24,27,0.06)] bg-[rgba(255,255,255,0.88)] p-3 shadow-sm"
-      >
-        <div class="space-y-2 border-b border-[color:var(--ncm-border)] pb-2.5">
+    <section class="flex min-h-0 flex-1 overflow-hidden rounded-[24px] border border-[color:var(--ncm-border)] bg-white shadow-sm">
+      <aside class="flex h-full min-h-0 w-[248px] shrink-0 flex-col border-r border-[color:var(--ncm-border)] bg-[rgba(255,255,255,0.94)]">
+        <div class="space-y-2 border-b border-[color:var(--ncm-border)] px-3 py-3">
           <div class="flex items-center justify-between gap-3">
             <div>
               <h3 class="text-[0.98rem] font-extrabold tracking-[-0.03em] text-[var(--ncm-text)]">
@@ -106,22 +104,22 @@
         </div>
 
         @if (!hasAnyConversations()) {
-          <div class="mt-4 rounded-[20px] border border-[color:var(--ncm-border)] bg-[var(--ncm-surface-soft)] p-4">
+          <div class="m-3 rounded-[16px] border border-[color:var(--ncm-border)] bg-[var(--ncm-surface-soft)] p-4">
             <p class="text-sm font-semibold text-[var(--ncm-text)]">No conversations yet</p>
             <p class="mt-2 text-sm leading-6 text-[var(--ncm-text-muted)]">
               Member follow-up will appear here once coach or admin messaging starts.
             </p>
           </div>
         } @else if (!filteredConversations().length) {
-          <div class="mt-4 rounded-[20px] border border-[color:var(--ncm-border)] bg-[var(--ncm-surface-soft)] p-4">
+          <div class="m-3 rounded-[16px] border border-[color:var(--ncm-border)] bg-[var(--ncm-surface-soft)] p-4">
             <p class="text-sm font-semibold text-[var(--ncm-text)]">No matching conversations</p>
             <p class="mt-2 text-sm leading-6 text-[var(--ncm-text-muted)]">
               Reset the search or switch back to `All` to restore the inbox view.
             </p>
           </div>
         } @else {
-          <div class="mt-2.5 flex min-h-0 flex-1 flex-col">
-            <div class="flex items-center justify-between gap-3 px-1 pb-2.5">
+          <div class="flex min-h-0 flex-1 flex-col">
+            <div class="flex items-center justify-between gap-3 px-3 py-2.5">
               <p class="text-[13px] font-semibold text-[var(--ncm-text)]">{{ queueLabel() }}</p>
               <button
                 type="button"
@@ -131,7 +129,7 @@
                 Reset
               </button>
             </div>
-            <div class="min-h-0 flex-1 space-y-1.5 overflow-y-auto pr-1">
+            <div class="min-h-0 flex-1 space-y-1.5 overflow-y-auto px-3 pb-3">
             @for (conversation of filteredConversations(); track conversation.id) {
               <button
                 type="button"
@@ -149,12 +147,10 @@
         }
       </aside>
 
-      <section
-        class="flex h-full min-h-0 flex-col rounded-[18px] border border-[color:var(--ncm-border)] bg-white shadow-sm"
-      >
+      <section class="flex min-h-0 flex-1 flex-col bg-[linear-gradient(180deg,#fcfdfd_0%,#f7f9fb_100%)]">
         @if (selectedConversation()) {
           <div class="flex min-h-0 flex-1 flex-col">
-            <div class="sticky top-0 z-10 border-b border-[color:var(--ncm-border)] bg-white px-4 py-1.5 lg:px-5">
+            <div class="sticky top-0 z-10 border-b border-[color:var(--ncm-border)] bg-white/96 px-4 py-2 lg:px-5 backdrop-blur supports-[backdrop-filter]:bg-white/92">
               <div class="min-w-0">
                 <div class="flex flex-wrap items-center gap-2">
                   <h3 class="truncate text-[0.98rem] font-extrabold tracking-[-0.03em] text-[var(--ncm-text)]">
@@ -178,7 +174,7 @@
             </div>
 
             @if (selectedConversation()!.messages.length) {
-              <div class="min-h-0 flex-1 overflow-y-auto bg-[linear-gradient(180deg,#fbfcfd_0%,#f7f9fb_100%)] px-3.5 py-2.5 lg:px-4.5">
+              <div class="min-h-0 flex-1 overflow-y-auto px-3.5 py-2.5 lg:px-5">
                 <div class="space-y-1.5">
                 @for (message of selectedConversation()!.messages; track message.id) {
                   <app-message-bubble [message]="message" />
@@ -186,8 +182,8 @@
                 </div>
               </div>
             } @else {
-              <div class="flex min-h-0 flex-1 items-center justify-center bg-[linear-gradient(180deg,#fbfcfd_0%,#f7f9fb_100%)] px-4 py-5">
-                <div class="max-w-md rounded-[18px] border border-[color:var(--ncm-border)] bg-white p-5 text-center shadow-sm">
+              <div class="flex min-h-0 flex-1 items-center justify-center px-4 py-5">
+                <div class="max-w-md rounded-[16px] border border-[color:var(--ncm-border)] bg-white p-5 text-center shadow-sm">
                   <p class="text-sm font-semibold text-[var(--ncm-text)]">No messages in this thread yet</p>
                   <p class="mt-2 text-sm leading-6 text-[var(--ncm-text-muted)]">
                     Start the follow-up from here and keep the member context visible on the right.
@@ -196,7 +192,7 @@
               </div>
             }
 
-            <div class="sticky bottom-0 border-t border-[color:var(--ncm-border)] bg-white/96 px-3.5 py-1.5 lg:px-4.5 backdrop-blur supports-[backdrop-filter]:bg-white/92">
+            <div class="sticky bottom-0 border-t border-[color:var(--ncm-border)] bg-white/96 px-3.5 py-2 lg:px-5 backdrop-blur supports-[backdrop-filter]:bg-white/92">
               <div class="flex items-end gap-2">
                 <textarea
                   rows="1"
@@ -220,12 +216,10 @@
         }
       </section>
 
-      <aside class="h-full min-h-0">
+      <aside class="flex h-full min-h-0 w-[248px] shrink-0 flex-col border-l border-[color:var(--ncm-border)] bg-[rgba(255,255,255,0.94)]">
         @if (selectedConversation()) {
-          <section
-            class="flex h-full min-h-0 flex-col rounded-[18px] border border-[rgba(24,24,27,0.06)] bg-[rgba(255,255,255,0.88)] p-3 shadow-sm"
-          >
-            <div class="border-b border-[color:var(--ncm-border)] pb-2">
+          <section class="flex h-full min-h-0 flex-col">
+            <div class="border-b border-[color:var(--ncm-border)] px-3 py-3">
               <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--ncm-text-soft)]">
                 Context
               </p>
@@ -235,8 +229,8 @@
               <p class="mt-0.5 text-[12px] text-[var(--ncm-text-muted)]">{{ selectedConversation()!.memberGoal }}</p>
             </div>
 
-            <div class="mt-2.5 min-h-0 flex-1 space-y-2 overflow-y-auto pr-1">
-              <div class="rounded-[15px] border border-[color:var(--ncm-border)] bg-[var(--ncm-surface-soft)] px-3 py-2.5">
+            <div class="min-h-0 flex-1 space-y-2 overflow-y-auto px-3 py-3">
+              <div class="rounded-[14px] border border-[rgba(24,24,27,0.06)] bg-[var(--ncm-surface-soft)] px-3 py-2.5">
                 <div class="flex items-center justify-between gap-3">
                   <div>
                     <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--ncm-text-soft)]">
@@ -258,7 +252,7 @@
                 </div>
               </div>
 
-              <div class="rounded-[15px] border border-[color:var(--ncm-border)] bg-[var(--ncm-surface-soft)] px-3 py-2.5">
+              <div class="rounded-[14px] border border-[rgba(24,24,27,0.06)] bg-[var(--ncm-surface-soft)] px-3 py-2.5">
                 <div>
                   <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--ncm-text-soft)]">
                     Program
@@ -280,7 +274,7 @@
               </div>
             </div>
 
-            <div class="mt-2.5 grid gap-2 border-t border-[color:var(--ncm-border)] pt-2.5">
+            <div class="grid gap-2 border-t border-[color:var(--ncm-border)] px-3 py-3">
               <button
                 type="button"
                 class="inline-flex w-full items-center justify-center rounded-[13px] border border-[color:var(--ncm-border)] bg-white px-4 py-2.5 text-sm font-semibold text-[var(--ncm-text)] transition duration-200 hover:bg-[var(--ncm-surface-soft)]"
