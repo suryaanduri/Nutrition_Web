@@ -256,7 +256,8 @@ export class EvaluationEditorScreenComponent {
   ): void {
     const target = this.signalFor(field);
     const current = this.parseNumber(target());
-    const next = Math.max(0, Number(((current ?? 0) + delta).toFixed(digits)));
+    const baseline = current ?? this.previousNumericValue(field) ?? 0;
+    const next = Math.max(0, Number((baseline + delta).toFixed(digits)));
     target.set(next.toFixed(digits));
   }
 
@@ -279,13 +280,22 @@ export class EvaluationEditorScreenComponent {
   }
 
   private hydrateFromPreset(preset: EvaluationEditorPreset): void {
-    this.weightKg.set(this.formatNullable(preset.weightKg));
-    this.visceralFat.set(this.formatNullable(preset.visceralFat));
-    this.trunkSubcutaneousFatPercent.set(this.formatNullable(preset.trunkSubcutaneousFatPercent));
-    this.bodyFatPercent.set(this.formatNullable(preset.bodyFatPercent));
-    this.bodyAgeYears.set(this.formatNullable(preset.bodyAgeYears, 0));
-    this.bmrKcal.set(this.formatNullable(preset.bmrKcal, 0));
-    this.skeletalMuscleKg.set(this.formatNullable(preset.skeletalMuscleKg));
+    this.weightKg.set(this.seedValue(preset.weightKg, this.previousNumericValue('weightKg')));
+    this.visceralFat.set(this.seedValue(preset.visceralFat, this.previousNumericValue('visceralFat')));
+    this.trunkSubcutaneousFatPercent.set(
+      this.seedValue(
+        preset.trunkSubcutaneousFatPercent,
+        this.previousNumericValue('trunkSubcutaneousFatPercent')
+      )
+    );
+    this.bodyFatPercent.set(
+      this.seedValue(preset.bodyFatPercent, this.previousNumericValue('bodyFatPercent'))
+    );
+    this.bodyAgeYears.set(this.seedValue(preset.bodyAgeYears, this.previousNumericValue('bodyAgeYears'), 0));
+    this.bmrKcal.set(this.seedValue(preset.bmrKcal, this.previousNumericValue('bmrKcal'), 0));
+    this.skeletalMuscleKg.set(
+      this.seedValue(preset.skeletalMuscleKg, this.previousNumericValue('skeletalMuscleKg'))
+    );
     this.savedPulse.set(false);
   }
 
@@ -320,6 +330,43 @@ export class EvaluationEditorScreenComponent {
   private parseNumber(value: string): number | null {
     const parsed = Number.parseFloat(value);
     return Number.isFinite(parsed) ? parsed : null;
+  }
+
+  private previousNumericValue(
+    field:
+      | 'weightKg'
+      | 'visceralFat'
+      | 'trunkSubcutaneousFatPercent'
+      | 'bodyFatPercent'
+      | 'bodyAgeYears'
+      | 'bmrKcal'
+      | 'skeletalMuscleKg'
+  ): number | null {
+    const previous = this.latestPrevious();
+    if (!previous) {
+      return null;
+    }
+
+    switch (field) {
+      case 'weightKg':
+        return this.parseMetricValue(previous.weight);
+      case 'visceralFat':
+        return this.parseMetricValue(previous.visceralFat);
+      case 'bodyFatPercent':
+        return this.parseMetricValue(previous.bodyFat);
+      default:
+        return null;
+    }
+  }
+
+  private parseMetricValue(metric: string): number | null {
+    const parsed = Number.parseFloat(metric);
+    return Number.isFinite(parsed) ? parsed : null;
+  }
+
+  private seedValue(value: number | null, fallback: number | null, digits = 1): string {
+    const resolved = value ?? fallback;
+    return resolved === null ? '' : this.formatNumber(resolved, digits);
   }
 
   private formatNullable(value: number | null, digits = 1): string {
