@@ -24,6 +24,9 @@ export interface EvaluationRecord {
 export interface EvaluationMemberContext {
   id: string;
   name: string;
+  age: number;
+  gender: string;
+  heightCm: number;
   goal: string;
   program: string;
   status: string;
@@ -51,15 +54,14 @@ export interface EvaluationEditorPreset {
   viewState?: EvaluationEditorViewState;
   evaluationId: string | null;
   member: EvaluationMemberContext;
-  evaluationDate: string;
-  heightCm: number;
+  recordedAtLabel: string;
   weightKg: number | null;
+  trunkSubcutaneousFatPercent: number | null;
   bodyFatPercent: number | null;
   visceralFat: number | null;
   skeletalMuscleKg: number | null;
   bmrKcal: number | null;
   bodyAgeYears: number | null;
-  notes: string;
   history: EvaluationHistoryEntry[];
 }
 
@@ -166,6 +168,9 @@ const MEMBER_CONTEXTS: Record<string, EvaluationMemberContext> = {
   'MBR-1042': {
     id: 'MBR-1042',
     name: 'Rhea Sharma',
+    age: 29,
+    gender: 'Female',
+    heightCm: 164,
     goal: 'PCOS-focused fat loss',
     program: 'PCOS Reset Intensive',
     status: 'Needs attention',
@@ -177,6 +182,9 @@ const MEMBER_CONTEXTS: Record<string, EvaluationMemberContext> = {
   'MBR-0612': {
     id: 'MBR-0612',
     name: 'Nadia Khan',
+    age: 33,
+    gender: 'Female',
+    heightCm: 160,
     goal: 'Postpartum recomposition',
     program: 'Restore & Reset',
     status: 'Needs attention',
@@ -188,6 +196,9 @@ const MEMBER_CONTEXTS: Record<string, EvaluationMemberContext> = {
   'MBR-0987': {
     id: 'MBR-0987',
     name: 'Arjun Menon',
+    age: 35,
+    gender: 'Male',
+    heightCm: 175,
     goal: 'Metabolic reset',
     program: 'Metabolic Recovery',
     status: 'Active',
@@ -199,6 +210,9 @@ const MEMBER_CONTEXTS: Record<string, EvaluationMemberContext> = {
   'MBR-0773': {
     id: 'MBR-0773',
     name: 'Kavya Iyer',
+    age: 26,
+    gender: 'Female',
+    heightCm: 167,
     goal: 'Strength gain',
     program: 'Strength Nutrition Start',
     status: 'New member',
@@ -296,71 +310,71 @@ const EDITOR_PRESETS: Record<string, EvaluationEditorPreset> = {
     mode: 'edit',
     evaluationId: 'EVAL-2408',
     member: MEMBER_CONTEXTS['MBR-1042'],
-    evaluationDate: '19 Apr 2026',
-    heightCm: 164,
+    recordedAtLabel: '19 Apr 2026',
     weightKg: 68.2,
+    trunkSubcutaneousFatPercent: 16.1,
     bodyFatPercent: 31.0,
     visceralFat: 8.3,
     skeletalMuscleKg: 26.9,
     bmrKcal: 1390,
     bodyAgeYears: 30,
-    notes: 'Hydration improved this week. Still need to stabilize sleep timing before the next review.',
     history: HISTORY_BY_MEMBER['MBR-1042']
   },
   'EVAL-2397': {
     mode: 'edit',
     evaluationId: 'EVAL-2397',
     member: MEMBER_CONTEXTS['MBR-0612'],
-    evaluationDate: '14 Apr 2026',
-    heightCm: 160,
+    recordedAtLabel: '14 Apr 2026',
     weightKg: 72.6,
+    trunkSubcutaneousFatPercent: 18.4,
     bodyFatPercent: 34.7,
     visceralFat: 9.3,
     skeletalMuscleKg: 24.1,
     bmrKcal: 1360,
     bodyAgeYears: 34,
-    notes: 'Missed follow-up should be rescheduled. Keep postpartum sleep support visible in next plan adjustment.',
     history: HISTORY_BY_MEMBER['MBR-0612']
   },
   'EVAL-2411': {
     mode: 'edit',
     evaluationId: 'EVAL-2411',
     member: MEMBER_CONTEXTS['MBR-0987'],
-    evaluationDate: '19 Apr 2026',
-    heightCm: 175,
+    recordedAtLabel: '19 Apr 2026',
     weightKg: 82.1,
+    trunkSubcutaneousFatPercent: 14.8,
     bodyFatPercent: 24.8,
     visceralFat: 8.2,
     skeletalMuscleKg: 33.6,
     bmrKcal: 1690,
     bodyAgeYears: 32,
-    notes: 'Use this composition checkpoint to verify whether energy recovery is tracking with the plan.',
     history: HISTORY_BY_MEMBER['MBR-0987']
   }
 };
 
-const FALLBACK_ADD_PRESET: EvaluationEditorPreset = {
-  mode: 'add',
-  evaluationId: null,
-  member: MEMBER_CONTEXTS['MBR-0773'],
-  evaluationDate: '19 Apr 2026',
-  heightCm: 167,
-  weightKg: null,
-  bodyFatPercent: null,
-  visceralFat: null,
-  skeletalMuscleKg: null,
-  bmrKcal: null,
-  bodyAgeYears: null,
-  notes: '',
-  history: HISTORY_BY_MEMBER['MBR-0773']
-};
+function createAddPreset(memberId?: string | null): EvaluationEditorPreset {
+  const member = MEMBER_CONTEXTS[memberId ?? 'MBR-0773'] ?? MEMBER_CONTEXTS['MBR-0773'];
+  return {
+    mode: 'add',
+    evaluationId: null,
+    member,
+    recordedAtLabel: formatSystemDate(),
+    weightKg: null,
+    trunkSubcutaneousFatPercent: null,
+    bodyFatPercent: null,
+    visceralFat: null,
+    skeletalMuscleKg: null,
+    bmrKcal: null,
+    bodyAgeYears: null,
+    history: HISTORY_BY_MEMBER[member.id] ?? []
+  };
+}
 
 export function getEvaluationEditorPreset(
   mode: EvaluationEditorMode,
-  recordId?: string | null
+  recordId?: string | null,
+  memberId?: string | null
 ): EvaluationEditorPreset {
   if (mode === 'add') {
-    return FALLBACK_ADD_PRESET;
+    return createAddPreset(memberId);
   }
 
   if (recordId && EDITOR_PRESETS[recordId]) {
@@ -368,4 +382,12 @@ export function getEvaluationEditorPreset(
   }
 
   return EDITOR_PRESETS['EVAL-2408'];
+}
+
+function formatSystemDate(date = new Date()): string {
+  return new Intl.DateTimeFormat('en-IN', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric'
+  }).format(date);
 }

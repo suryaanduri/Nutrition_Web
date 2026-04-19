@@ -93,6 +93,7 @@ export class AppShellLayoutComponent {
   protected readonly selectedMemberId = signal<string | null>(null);
   protected readonly evaluationEditorMode = signal<'add' | 'edit' | null>(null);
   protected readonly selectedEvaluationId = signal<string | null>(null);
+  protected readonly selectedEvaluationMemberId = signal<string | null>(null);
 
   protected readonly currentNav = computed(
     () => this.navItems.find((item) => item.key === this.activeNav()) ?? this.navItems[0]
@@ -132,7 +133,11 @@ export class AppShellLayoutComponent {
     this.isWorkspaceScreen() ? 'workspace' : 'overview'
   );
   protected readonly currentEvaluationPreset = computed(() =>
-    getEvaluationEditorPreset(this.evaluationEditorMode() ?? 'add', this.selectedEvaluationId())
+    getEvaluationEditorPreset(
+      this.evaluationEditorMode() ?? 'add',
+      this.selectedEvaluationId(),
+      this.selectedEvaluationMemberId() ?? this.selectedMemberId()
+    )
   );
   protected readonly desktopSidebarWidth = computed(() => (this.sidebarCollapsed() ? 96 : 288));
 
@@ -174,6 +179,7 @@ export class AppShellLayoutComponent {
     this.activeNav.set('evaluations');
     this.evaluationEditorMode.set('add');
     this.selectedEvaluationId.set(null);
+    this.selectedEvaluationMemberId.set(this.selectedMemberId());
     if (this.isMobile()) {
       this.mobileNavOpen.set(false);
     }
@@ -183,6 +189,7 @@ export class AppShellLayoutComponent {
     this.activeNav.set('evaluations');
     this.evaluationEditorMode.set('edit');
     this.selectedEvaluationId.set(recordId);
+    this.selectedEvaluationMemberId.set(null);
     if (this.isMobile()) {
       this.mobileNavOpen.set(false);
     }
@@ -191,6 +198,7 @@ export class AppShellLayoutComponent {
   protected closeEvaluationEditor(): void {
     this.evaluationEditorMode.set(null);
     this.selectedEvaluationId.set(null);
+    this.selectedEvaluationMemberId.set(null);
   }
 
   protected toggleSidebar(): void {

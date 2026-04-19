@@ -16,25 +16,31 @@ import {
 } from './evaluations.data';
 
 interface EvaluationEditorPayload {
-  evaluationDate: string;
-  heightCm: number | null;
   weightKg: number | null;
-  bmi: number | null;
-  bodyFatPercent: number | null;
   visceralFat: number | null;
-  skeletalMuscleKg: number | null;
-  bmrKcal: number | null;
+  trunkSubcutaneousFatPercent: number | null;
+  bodyFatPercent: number | null;
   bodyAgeYears: number | null;
-  notes: string;
+  bmi: number | null;
+  bmrKcal: number | null;
+  skeletalMuscleKg: number | null;
 }
 
-interface MetricCard {
-  key: 'height' | 'weight' | 'bodyFat' | 'visceralFat' | 'skeletalMuscle' | 'bmr' | 'bodyAge';
+interface MeasurementField {
+  key:
+    | 'weight'
+    | 'visceralFat'
+    | 'trunkSubcutaneousFat'
+    | 'bodyFat'
+    | 'bodyAge'
+    | 'bmr'
+    | 'skeletalMuscle';
   label: string;
   unit: string;
-  hint: string;
   previous: string;
   value: string;
+  step: number;
+  digits: number;
   required?: boolean;
   prominent?: boolean;
 }
@@ -56,30 +62,28 @@ export class EvaluationEditorScreenComponent {
   protected readonly viewState = signal<EvaluationEditorViewState>('default');
   protected readonly savedPulse = signal(false);
 
-  protected readonly evaluationDate = signal('');
-  protected readonly heightCm = signal('');
   protected readonly weightKg = signal('');
-  protected readonly bodyFatPercent = signal('');
   protected readonly visceralFat = signal('');
-  protected readonly skeletalMuscleKg = signal('');
-  protected readonly bmrKcal = signal('');
+  protected readonly trunkSubcutaneousFatPercent = signal('');
+  protected readonly bodyFatPercent = signal('');
   protected readonly bodyAgeYears = signal('');
-  protected readonly notes = signal('');
+  protected readonly bmrKcal = signal('');
+  protected readonly skeletalMuscleKg = signal('');
 
   private savePulseTimer?: ReturnType<typeof setTimeout>;
 
   protected readonly isEditMode = computed(() => this.preset().mode === 'edit');
-  protected readonly pageEyebrow = computed(() =>
-    this.isEditMode() ? 'Edit evaluation' : 'Add evaluation'
-  );
   protected readonly pageTitle = computed(() =>
-    this.isEditMode() ? 'Update evaluation details' : 'Capture a new evaluation'
+    this.isEditMode() ? 'Edit Evaluation' : 'New Evaluation'
   );
-  protected readonly modeChip = computed(() => (this.isEditMode() ? 'Edit mode' : 'Add mode'));
+  protected readonly actionLabel = computed(() =>
+    this.isEditMode() ? 'Save Changes' : 'Save Evaluation'
+  );
+  protected readonly modeChip = computed(() => (this.isEditMode() ? 'Edit mode' : 'New entry'));
   protected readonly bmiValue = computed(() => {
-    const height = this.parseNumber(this.heightCm());
+    const height = this.preset().member.heightCm;
     const weight = this.parseNumber(this.weightKg());
-    if (height === null || weight === null || height <= 0) {
+    if (weight === null || height <= 0) {
       return null;
     }
 
@@ -89,89 +93,101 @@ export class EvaluationEditorScreenComponent {
   protected readonly isDirty = computed(() => {
     const preset = this.preset();
     return (
-      this.evaluationDate() !== preset.evaluationDate ||
-      this.heightCm() !== this.formatNumber(preset.heightCm, 0) ||
       this.weightKg() !== this.formatNullable(preset.weightKg) ||
-      this.bodyFatPercent() !== this.formatNullable(preset.bodyFatPercent) ||
       this.visceralFat() !== this.formatNullable(preset.visceralFat) ||
-      this.skeletalMuscleKg() !== this.formatNullable(preset.skeletalMuscleKg) ||
-      this.bmrKcal() !== this.formatNullable(preset.bmrKcal, 0) ||
+      this.trunkSubcutaneousFatPercent() !== this.formatNullable(preset.trunkSubcutaneousFatPercent) ||
+      this.bodyFatPercent() !== this.formatNullable(preset.bodyFatPercent) ||
       this.bodyAgeYears() !== this.formatNullable(preset.bodyAgeYears, 0) ||
-      this.notes() !== preset.notes
+      this.bmrKcal() !== this.formatNullable(preset.bmrKcal, 0) ||
+      this.skeletalMuscleKg() !== this.formatNullable(preset.skeletalMuscleKg)
     );
   });
   protected readonly canSave = computed(() => {
     return (
-      this.evaluationDate().trim().length > 0 &&
-      this.parseNumber(this.heightCm()) !== null &&
       this.parseNumber(this.weightKg()) !== null &&
-      this.parseNumber(this.bodyFatPercent()) !== null
+      this.parseNumber(this.bodyFatPercent()) !== null &&
+      this.parseNumber(this.visceralFat()) !== null &&
+      this.parseNumber(this.trunkSubcutaneousFatPercent()) !== null &&
+      this.parseNumber(this.bodyAgeYears()) !== null &&
+      this.parseNumber(this.bmrKcal()) !== null &&
+      this.parseNumber(this.skeletalMuscleKg()) !== null
     );
   });
-  protected readonly previousEvaluation = computed(() => this.preset().history[0] ?? null);
-  protected readonly recentHistory = computed(() => this.preset().history.slice(0, 3));
-  protected readonly metricCards = computed<MetricCard[]>(() => {
-    const previous = this.previousEvaluation();
+  protected readonly recentHistory = computed(() => this.preset().history.slice(0, 2));
+  protected readonly latestPrevious = computed(() => this.preset().history[0] ?? null);
+  protected readonly measurementFields = computed<MeasurementField[]>(() => {
+    const previous = this.latestPrevious();
     return [
-      {
-        key: 'height',
-        label: 'Height',
-        unit: 'cm',
-        hint: 'Used for BMI calculation',
-        previous: previous ? `Last BMI context: ${previous.bmi}` : 'No prior reference',
-        value: this.heightCm(),
-        required: true
-      },
       {
         key: 'weight',
         label: 'Weight',
         unit: 'kg',
-        hint: 'Core consultation metric',
-        previous: previous?.weight ? `Last: ${previous.weight}` : 'No prior reference',
+        previous: previous?.weight ? `Last: ${previous.weight}` : 'No prior entry',
         value: this.weightKg(),
+        step: 0.1,
+        digits: 1,
         required: true,
         prominent: true
+      },
+      {
+        key: 'visceralFat',
+        label: 'Visceral Fat %',
+        unit: '%',
+        previous: previous?.visceralFat ? `Last: ${previous.visceralFat}` : 'No prior entry',
+        value: this.visceralFat(),
+        step: 0.1,
+        digits: 1,
+        required: true
+      },
+      {
+        key: 'trunkSubcutaneousFat',
+        label: 'Trunk Subcutaneous Fat',
+        unit: '%',
+        previous: 'Enrollment scan reference',
+        value: this.trunkSubcutaneousFatPercent(),
+        step: 0.1,
+        digits: 1,
+        required: true
       },
       {
         key: 'bodyFat',
         label: 'Body Fat',
         unit: '%',
-        hint: 'Manual entry',
-        previous: previous?.bodyFat ? `Last: ${previous.bodyFat}` : 'No prior reference',
+        previous: previous?.bodyFat ? `Last: ${previous.bodyFat}` : 'No prior entry',
         value: this.bodyFatPercent(),
+        step: 0.1,
+        digits: 1,
         required: true
-      },
-      {
-        key: 'visceralFat',
-        label: 'Visceral Fat',
-        unit: 'score',
-        hint: 'Manual entry',
-        previous: previous?.visceralFat ? `Last: ${previous.visceralFat}` : 'No prior reference',
-        value: this.visceralFat()
-      },
-      {
-        key: 'skeletalMuscle',
-        label: 'Skeletal Muscle',
-        unit: 'kg',
-        hint: 'Manual entry',
-        previous: previous ? 'Compare with latest scan' : 'No prior reference',
-        value: this.skeletalMuscleKg()
-      },
-      {
-        key: 'bmr',
-        label: 'BMR',
-        unit: 'kcal',
-        hint: 'Manual entry',
-        previous: previous ? 'Use device readout if available' : 'Optional on first capture',
-        value: this.bmrKcal()
       },
       {
         key: 'bodyAge',
         label: 'Body Age',
         unit: 'yrs',
-        hint: 'Manual entry',
-        previous: previous ? 'Capture only if available' : 'Optional on first capture',
-        value: this.bodyAgeYears()
+        previous: 'Use device readout',
+        value: this.bodyAgeYears(),
+        step: 1,
+        digits: 0,
+        required: true
+      },
+      {
+        key: 'bmr',
+        label: 'BMR',
+        unit: 'kcal',
+        previous: 'Use device readout',
+        value: this.bmrKcal(),
+        step: 10,
+        digits: 0,
+        required: true
+      },
+      {
+        key: 'skeletalMuscle',
+        label: 'Skeletal Muscle',
+        unit: 'kg',
+        previous: 'Compare to last scan',
+        value: this.skeletalMuscleKg(),
+        step: 0.1,
+        digits: 1,
+        required: true
       }
     ];
   });
@@ -186,22 +202,15 @@ export class EvaluationEditorScreenComponent {
 
   protected updateField(
     field:
-      | 'evaluationDate'
-      | 'heightCm'
       | 'weightKg'
-      | 'bodyFatPercent'
       | 'visceralFat'
-      | 'skeletalMuscleKg'
-      | 'bmrKcal'
+      | 'trunkSubcutaneousFatPercent'
+      | 'bodyFatPercent'
       | 'bodyAgeYears'
-      | 'notes',
+      | 'bmrKcal'
+      | 'skeletalMuscleKg',
     rawValue: string
   ): void {
-    if (field === 'evaluationDate' || field === 'notes') {
-      this.signalFor(field).set(rawValue);
-      return;
-    }
-
     this.signalFor(field).set(rawValue.replace(/[^0-9.\-]/g, ''));
   }
 
@@ -211,16 +220,14 @@ export class EvaluationEditorScreenComponent {
     }
 
     const payload: EvaluationEditorPayload = {
-      evaluationDate: this.evaluationDate().trim(),
-      heightCm: this.parseNumber(this.heightCm()),
       weightKg: this.parseNumber(this.weightKg()),
-      bmi: this.bmiValue(),
-      bodyFatPercent: this.parseNumber(this.bodyFatPercent()),
       visceralFat: this.parseNumber(this.visceralFat()),
-      skeletalMuscleKg: this.parseNumber(this.skeletalMuscleKg()),
-      bmrKcal: this.parseNumber(this.bmrKcal()),
+      trunkSubcutaneousFatPercent: this.parseNumber(this.trunkSubcutaneousFatPercent()),
+      bodyFatPercent: this.parseNumber(this.bodyFatPercent()),
       bodyAgeYears: this.parseNumber(this.bodyAgeYears()),
-      notes: this.notes().trim()
+      bmi: this.bmiValue(),
+      bmrKcal: this.parseNumber(this.bmrKcal()),
+      skeletalMuscleKg: this.parseNumber(this.skeletalMuscleKg())
     };
 
     this.saved.emit(payload);
@@ -233,6 +240,24 @@ export class EvaluationEditorScreenComponent {
 
   protected resetForm(): void {
     this.hydrateFromPreset(this.preset());
+  }
+
+  protected adjustField(
+    field:
+      | 'weightKg'
+      | 'visceralFat'
+      | 'trunkSubcutaneousFatPercent'
+      | 'bodyFatPercent'
+      | 'bodyAgeYears'
+      | 'bmrKcal'
+      | 'skeletalMuscleKg',
+    delta: number,
+    digits: number
+  ): void {
+    const target = this.signalFor(field);
+    const current = this.parseNumber(target());
+    const next = Math.max(0, Number(((current ?? 0) + delta).toFixed(digits)));
+    target.set(next.toFixed(digits));
   }
 
   protected cancel(): void {
@@ -254,49 +279,41 @@ export class EvaluationEditorScreenComponent {
   }
 
   private hydrateFromPreset(preset: EvaluationEditorPreset): void {
-    this.evaluationDate.set(preset.evaluationDate);
-    this.heightCm.set(this.formatNumber(preset.heightCm, 0));
     this.weightKg.set(this.formatNullable(preset.weightKg));
-    this.bodyFatPercent.set(this.formatNullable(preset.bodyFatPercent));
     this.visceralFat.set(this.formatNullable(preset.visceralFat));
-    this.skeletalMuscleKg.set(this.formatNullable(preset.skeletalMuscleKg));
-    this.bmrKcal.set(this.formatNullable(preset.bmrKcal, 0));
+    this.trunkSubcutaneousFatPercent.set(this.formatNullable(preset.trunkSubcutaneousFatPercent));
+    this.bodyFatPercent.set(this.formatNullable(preset.bodyFatPercent));
     this.bodyAgeYears.set(this.formatNullable(preset.bodyAgeYears, 0));
-    this.notes.set(preset.notes);
+    this.bmrKcal.set(this.formatNullable(preset.bmrKcal, 0));
+    this.skeletalMuscleKg.set(this.formatNullable(preset.skeletalMuscleKg));
     this.savedPulse.set(false);
   }
 
   private signalFor(
     field:
-      | 'evaluationDate'
-      | 'heightCm'
       | 'weightKg'
-      | 'bodyFatPercent'
       | 'visceralFat'
-      | 'skeletalMuscleKg'
-      | 'bmrKcal'
+      | 'trunkSubcutaneousFatPercent'
+      | 'bodyFatPercent'
       | 'bodyAgeYears'
-      | 'notes'
+      | 'bmrKcal'
+      | 'skeletalMuscleKg'
   ) {
     switch (field) {
-      case 'evaluationDate':
-        return this.evaluationDate;
-      case 'heightCm':
-        return this.heightCm;
       case 'weightKg':
         return this.weightKg;
-      case 'bodyFatPercent':
-        return this.bodyFatPercent;
       case 'visceralFat':
         return this.visceralFat;
-      case 'skeletalMuscleKg':
-        return this.skeletalMuscleKg;
-      case 'bmrKcal':
-        return this.bmrKcal;
+      case 'trunkSubcutaneousFatPercent':
+        return this.trunkSubcutaneousFatPercent;
+      case 'bodyFatPercent':
+        return this.bodyFatPercent;
       case 'bodyAgeYears':
         return this.bodyAgeYears;
-      case 'notes':
-        return this.notes;
+      case 'bmrKcal':
+        return this.bmrKcal;
+      case 'skeletalMuscleKg':
+        return this.skeletalMuscleKg;
     }
   }
 
