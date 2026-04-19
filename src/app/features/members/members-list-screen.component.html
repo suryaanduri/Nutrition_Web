@@ -1,4 +1,4 @@
-<div class="flex h-full min-h-0 flex-col">
+<div class="flex min-h-full flex-col">
   <section class="px-1 py-2">
     <div class="rounded-[22px] border border-[color:var(--ncm-border)] bg-white px-4 py-4 shadow-sm">
       <div class="flex flex-wrap items-center justify-between gap-4 border-b border-[color:rgba(24,24,27,0.08)] pb-3">
@@ -94,7 +94,7 @@
     </div>
   </section>
 
-  <section class="mt-2 flex min-h-0 flex-1 flex-col">
+  <section class="mt-2 flex flex-col">
     <div class="flex items-center justify-between gap-3 px-1 pb-2">
       <p class="text-sm font-semibold text-[var(--ncm-text)]">{{ memberCountLabel() }}</p>
       <span
@@ -104,7 +104,7 @@
       </span>
     </div>
 
-    <div class="min-h-0 flex-1 space-y-1.5 overflow-y-auto pr-1">
+    <div class="space-y-1.5 pr-1">
       @for (member of filteredMembers(); track member.id) {
         <article
           class="group cursor-pointer rounded-[16px] border bg-white px-4 py-3 transition duration-200 hover:border-[rgba(36,122,82,0.2)] hover:bg-[rgba(255,255,255,0.98)]"

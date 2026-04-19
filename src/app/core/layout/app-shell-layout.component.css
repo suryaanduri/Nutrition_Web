@@ -1,12 +1,12 @@
 :host {
   display: block;
+  height: 100vh;
 }
 
 aside {
   max-height: 100vh;
 }
 
-main,
 aside,
 header {
   will-change: transform;
