@@ -6,19 +6,19 @@
   }"
 >
   <article
-    class="max-w-[78%] rounded-[16px] border px-3 py-2 shadow-sm"
+    class="max-w-[76%] rounded-[14px] border px-3 py-2 shadow-sm"
     [ngClass]="{
       'border-[color:var(--ncm-border)] bg-white': message().sender === 'member',
-      'border-[rgba(36,122,82,0.16)] bg-[linear-gradient(180deg,#ffffff_0%,#f4fbf7_100%)]': message().sender === 'coach'
+      'border-[rgba(36,122,82,0.14)] bg-[linear-gradient(180deg,#ffffff_0%,#f5faf7_100%)]': message().sender === 'coach'
     }"
   >
-    <div class="flex items-center gap-1.5">
-      <p class="text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--ncm-text-soft)]">
+    <div class="flex flex-wrap items-center gap-1.5">
+      <p class="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--ncm-text-soft)]">
         {{ message().senderLabel }}
       </p>
       <span class="text-[10px] text-[var(--ncm-text-soft)]">{{ message().time }}</span>
     </div>
-    <p class="mt-1 whitespace-pre-line text-[13px] leading-5 text-[var(--ncm-text-muted)]">
+    <p class="mt-1 whitespace-pre-line text-[13px] leading-[1.55] text-[var(--ncm-text-muted)]">
       {{ message().body }}
     </p>
   </article>

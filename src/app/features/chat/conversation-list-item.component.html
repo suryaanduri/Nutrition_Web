@@ -1,9 +1,9 @@
 <article
-  class="group rounded-[18px] border bg-white px-3.5 py-3 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:shadow-md"
+  class="group rounded-[16px] border bg-white px-3 py-2.5 shadow-sm transition duration-200 hover:border-[rgba(36,122,82,0.18)] hover:bg-[rgba(255,255,255,0.98)]"
   [ngClass]="{
-    'border-[rgba(36,122,82,0.18)] ring-1 ring-[rgba(36,122,82,0.08)] bg-[linear-gradient(180deg,#ffffff_0%,#f4fbf7_100%)]':
+    'border-[rgba(36,122,82,0.18)] bg-[linear-gradient(180deg,#ffffff_0%,#f6fbf8_100%)]':
       selected(),
-    'border-[rgba(183,121,31,0.18)] ring-1 ring-[rgba(183,121,31,0.08)] bg-[linear-gradient(180deg,#ffffff_0%,#fffbf4_100%)]':
+    'border-[rgba(183,121,31,0.16)] bg-[linear-gradient(180deg,#ffffff_0%,#fffbf6_100%)]':
       !selected() && conversation().status === 'Needs attention',
     'border-[color:var(--ncm-border)] hover:border-[rgba(36,122,82,0.18)]':
       !selected() && conversation().status !== 'Needs attention'
@@ -11,7 +11,7 @@
 >
   <div class="flex items-start gap-3">
     <div
-      class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--ncm-primary-soft)] text-sm font-bold text-[var(--ncm-primary-strong)]"
+      class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--ncm-primary-soft)] text-[13px] font-bold text-[var(--ncm-primary-strong)]"
     >
       {{ conversation().memberName.charAt(0) }}
     </div>
@@ -24,18 +24,18 @@
               {{ conversation().memberName }}
             </h4>
             <span
-              class="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold"
+              class="inline-flex items-center rounded-full px-2 py-0.5 text-[9px] font-semibold"
               [ngClass]="statusClass(conversation().status)"
             >
               {{ conversation().status }}
             </span>
           </div>
-          <p class="mt-1 truncate text-xs text-[var(--ncm-text-soft)]">
+          <p class="mt-0.5 truncate text-[11px] text-[var(--ncm-text-soft)]">
             {{ conversation().memberGoal }}
           </p>
         </div>
 
-        <div class="flex flex-col items-end gap-1">
+        <div class="flex flex-col items-end gap-0.5">
           <span class="text-[10px] font-semibold text-[var(--ncm-text-soft)]">
             {{ conversation().timestamp }}
           </span>
@@ -50,7 +50,7 @@
       </div>
 
       <p
-        class="mt-2 line-clamp-1 text-[13px] leading-5"
+        class="mt-1.5 line-clamp-1 text-[12px] leading-5"
         [ngClass]="{
           'font-medium text-[var(--ncm-text)]': conversation().unreadCount > 0,
           'text-[var(--ncm-text-muted)]': conversation().unreadCount === 0
