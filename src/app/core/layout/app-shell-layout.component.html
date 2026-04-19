@@ -194,7 +194,7 @@
           @if (isDashboard()) {
             <app-dashboard-screen />
           } @else if (isMemberDetail()) {
-            <app-member-detail (addEvaluation)="openAddEvaluation()" />
+            <app-member-detail (back)="closeMemberDetail()" (addEvaluation)="openAddEvaluation()" />
           } @else if (isEvaluationEditor()) {
             <app-evaluation-editor-screen
               [preset]="currentEvaluationPreset()"

@@ -40,6 +40,7 @@ interface TrendPoint {
 })
 export class MemberDetail {
   readonly addEvaluation = output<void>();
+  readonly back = output<void>();
 
   readonly selectedRange = signal<RangeKey>('30D');
   readonly rangeOptions: RangeKey[] = ['7D', '30D', '90D'];
@@ -204,6 +205,10 @@ export class MemberDetail {
 
   openAddEvaluation(): void {
     this.addEvaluation.emit();
+  }
+
+  goBack(): void {
+    this.back.emit();
   }
 
   badgeClass(type: TrendType): string {
