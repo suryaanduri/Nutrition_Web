@@ -8,7 +8,9 @@ import {
 } from '@angular/core';
 import { IconComponent } from '../../shared/ui/icon/icon.component';
 import { DashboardScreenComponent } from '../../features/dashboard/dashboard-screen.component';
+import { EvaluationEditorScreenComponent } from '../../features/evaluations/evaluation-editor-screen.component';
 import { EvaluationsListScreenComponent } from '../../features/evaluations/evaluations-list-screen.component';
+import { getEvaluationEditorPreset } from '../../features/evaluations/evaluations.data';
 import { MembersListScreenComponent } from '../../features/members/members-list-screen.component';
 import { MemberDetail } from '../../features/members/member-detail/member-detail';
 
@@ -28,6 +30,7 @@ interface NavItem {
     CommonModule,
     IconComponent,
     DashboardScreenComponent,
+    EvaluationEditorScreenComponent,
     EvaluationsListScreenComponent,
     MembersListScreenComponent,
     MemberDetail
@@ -77,24 +80,40 @@ export class AppShellLayoutComponent {
   protected readonly mobileNavOpen = signal(false);
   protected readonly isMobile = signal(false);
   protected readonly selectedMemberId = signal<string | null>(null);
+  protected readonly evaluationEditorMode = signal<'add' | 'edit' | null>(null);
+  protected readonly selectedEvaluationId = signal<string | null>(null);
 
   protected readonly currentNav = computed(
     () => this.navItems.find((item) => item.key === this.activeNav()) ?? this.navItems[0]
   );
 
   protected readonly pageTitle = computed(() =>
-    this.isMemberDetail() ? 'Member Detail' : this.currentNav().label
+    this.isMemberDetail()
+      ? 'Member Detail'
+      : this.isEvaluationEditor()
+        ? this.evaluationEditorMode() === 'edit'
+          ? 'Edit Evaluation'
+          : 'Add Evaluation'
+        : this.currentNav().label
   );
   protected readonly pageDescription = computed(() =>
     this.isMemberDetail()
       ? 'Progress, evaluations, adherence, and next best actions for this member'
+      : this.isEvaluationEditor()
+        ? 'Fast evaluation entry with member context, derived BMI, and compact history reference'
       : this.currentNav().description
   );
   protected readonly isDashboard = computed(() => this.activeNav() === 'dashboard');
   protected readonly isMembers = computed(() => this.activeNav() === 'members');
   protected readonly isEvaluations = computed(() => this.activeNav() === 'evaluations');
+  protected readonly isEvaluationEditor = computed(
+    () => this.activeNav() === 'evaluations' && this.evaluationEditorMode() !== null
+  );
   protected readonly isMemberDetail = computed(
     () => this.activeNav() === 'members' && this.selectedMemberId() !== null
+  );
+  protected readonly currentEvaluationPreset = computed(() =>
+    getEvaluationEditorPreset(this.evaluationEditorMode() ?? 'add', this.selectedEvaluationId())
   );
   protected readonly desktopSidebarWidth = computed(() => (this.sidebarCollapsed() ? 96 : 288));
 
@@ -112,6 +131,9 @@ export class AppShellLayoutComponent {
     if (key !== 'members') {
       this.selectedMemberId.set(null);
     }
+    if (key !== 'evaluations') {
+      this.closeEvaluationEditor();
+    }
     if (this.isMobile()) {
       this.mobileNavOpen.set(false);
     }
@@ -127,6 +149,29 @@ export class AppShellLayoutComponent {
 
   protected closeMemberDetail(): void {
     this.selectedMemberId.set(null);
+  }
+
+  protected openAddEvaluation(): void {
+    this.activeNav.set('evaluations');
+    this.evaluationEditorMode.set('add');
+    this.selectedEvaluationId.set(null);
+    if (this.isMobile()) {
+      this.mobileNavOpen.set(false);
+    }
+  }
+
+  protected openEditEvaluation(recordId: string): void {
+    this.activeNav.set('evaluations');
+    this.evaluationEditorMode.set('edit');
+    this.selectedEvaluationId.set(recordId);
+    if (this.isMobile()) {
+      this.mobileNavOpen.set(false);
+    }
+  }
+
+  protected closeEvaluationEditor(): void {
+    this.evaluationEditorMode.set(null);
+    this.selectedEvaluationId.set(null);
   }
 
   protected toggleSidebar(): void {

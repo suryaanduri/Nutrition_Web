@@ -19,22 +19,8 @@
       <div class="flex flex-wrap items-center gap-3">
         <button
           type="button"
-          class="inline-flex items-center justify-center rounded-2xl border border-[color:var(--ncm-border)] bg-white px-4 py-3 text-sm font-semibold text-[var(--ncm-text)] shadow-sm transition duration-200 hover:-translate-y-0.5 hover:bg-[var(--ncm-surface-soft)] hover:shadow-md active:translate-y-0"
-          (click)="setScreenState('loading')"
-        >
-          Preview loading
-        </button>
-        <button
-          type="button"
-          class="inline-flex items-center justify-center rounded-2xl border border-[color:var(--ncm-border)] bg-white px-4 py-3 text-sm font-semibold text-[var(--ncm-text)] shadow-sm transition duration-200 hover:-translate-y-0.5 hover:bg-[var(--ncm-surface-soft)] hover:shadow-md active:translate-y-0"
-          (click)="setScreenState('error')"
-        >
-          Preview error
-        </button>
-        <button
-          type="button"
           class="inline-flex items-center justify-center rounded-2xl bg-[var(--ncm-primary)] px-5 py-3.5 text-sm font-semibold text-white shadow-[0_16px_28px_rgba(36,122,82,0.22)] transition duration-200 hover:-translate-y-0.5 hover:bg-[var(--ncm-primary-strong)] hover:shadow-[0_20px_34px_rgba(36,122,82,0.28)] active:translate-y-0"
-          (click)="setScreenState('default')"
+          (click)="requestAddEvaluation()"
         >
           + Add Evaluation
         </button>
@@ -408,7 +394,7 @@
                     <button
                       type="button"
                       class="inline-flex h-10 items-center justify-center rounded-2xl bg-[var(--ncm-primary)] px-4 text-sm font-semibold text-white shadow-[0_14px_24px_rgba(36,122,82,0.18)] transition duration-200 hover:-translate-y-0.5 hover:bg-[var(--ncm-primary-strong)] active:translate-y-0"
-                      (click)="selectEvaluation(record.id); $event.stopPropagation()"
+                      (click)="requestEditEvaluation(record.id); $event.stopPropagation()"
                     >
                       Review
                     </button>
@@ -513,6 +499,7 @@
         <button
           type="button"
           class="mt-5 inline-flex w-full items-center justify-center rounded-2xl bg-[var(--ncm-primary)] px-4 py-3 text-sm font-semibold text-white shadow-[0_16px_28px_rgba(36,122,82,0.22)] transition duration-200 hover:-translate-y-0.5 hover:bg-[var(--ncm-primary-strong)] hover:shadow-[0_20px_34px_rgba(36,122,82,0.28)] active:translate-y-0"
+          (click)="requestEditEvaluation(selectedRecord().id)"
         >
           Review selected evaluation
         </button>

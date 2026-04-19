@@ -254,8 +254,16 @@
           <app-dashboard-screen />
         } @else if (isMemberDetail()) {
           <app-member-detail />
+        } @else if (isEvaluationEditor()) {
+          <app-evaluation-editor-screen
+            [preset]="currentEvaluationPreset()"
+            (cancelled)="closeEvaluationEditor()"
+          />
         } @else if (isEvaluations()) {
-          <app-evaluations-list-screen />
+          <app-evaluations-list-screen
+            (addEvaluation)="openAddEvaluation()"
+            (editEvaluation)="openEditEvaluation($event)"
+          />
         } @else if (isMembers()) {
           <app-members-list-screen (memberSelected)="openMemberDetail($event)" />
         } @else {

@@ -1,37 +1,20 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, output, signal } from '@angular/core';
 import { IconComponent } from '../../shared/ui/icon/icon.component';
+import {
+  EVALUATION_RECORDS,
+  EvaluationRecord,
+  EvaluationStatus,
+  EvaluationType,
+  PriorityTone
+} from './evaluations.data';
 
-type EvaluationStatus = 'Pending review' | 'Completed' | 'Scheduled' | 'Overdue';
-type EvaluationType =
-  | 'Baseline'
-  | 'Progress'
-  | 'Body composition'
-  | 'Follow-up';
 type DateFilter = 'All dates' | 'Today' | '7 days' | '30 days' | 'Upcoming';
 type StatusFilter = 'All status' | EvaluationStatus;
 type CoachFilter = 'All coaches' | 'Ava Nelson' | 'Mila Carter' | 'Rita Jones';
 type TypeFilter = 'All types' | EvaluationType;
 type SortFilter = 'Recent' | 'Priority' | 'Member name';
 type ScreenState = 'default' | 'loading' | 'error';
-type PriorityTone = 'critical' | 'warning' | 'normal';
-
-interface EvaluationRecord {
-  id: string;
-  memberId: string;
-  memberName: string;
-  type: EvaluationType;
-  status: EvaluationStatus;
-  coach: Exclude<CoachFilter, 'All coaches'>;
-  scheduledLabel: string;
-  timeLabel: string;
-  relativeLabel: string;
-  summary: string;
-  nextAction: string;
-  flags: string[];
-  daysFromToday: number;
-  priority: PriorityTone;
-}
 
 interface SupportSignal {
   label: string;
@@ -48,6 +31,9 @@ interface SupportSignal {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EvaluationsListScreenComponent {
+  readonly addEvaluation = output<void>();
+  readonly editEvaluation = output<string>();
+
   protected readonly statusOptions: StatusFilter[] = [
     'All status',
     'Pending review',
@@ -71,104 +57,7 @@ export class EvaluationsListScreenComponent {
   protected readonly dateOptions: DateFilter[] = ['All dates', 'Today', '7 days', '30 days', 'Upcoming'];
   protected readonly sortOptions: SortFilter[] = ['Recent', 'Priority', 'Member name'];
 
-  protected readonly records = signal<EvaluationRecord[]>([
-    {
-      id: 'EVAL-2408',
-      memberId: 'MBR-1042',
-      memberName: 'Rhea Sharma',
-      type: 'Progress',
-      status: 'Pending review',
-      coach: 'Ava Nelson',
-      scheduledLabel: 'Today',
-      timeLabel: '10:30 AM',
-      relativeLabel: 'Captured 38 min ago',
-      summary: 'Weight and body-fat moved in the right direction, but sleep and hydration dipped this week.',
-      nextAction: 'Review notes and confirm the next 7-day adjustment before noon.',
-      flags: ['Today', 'Needs coach review'],
-      daysFromToday: 0,
-      priority: 'critical'
-    },
-    {
-      id: 'EVAL-2397',
-      memberId: 'MBR-0612',
-      memberName: 'Nadia Khan',
-      type: 'Follow-up',
-      status: 'Overdue',
-      coach: 'Mila Carter',
-      scheduledLabel: '14 Apr 2026',
-      timeLabel: '4:00 PM',
-      relativeLabel: 'Missed 2 days ago',
-      summary: 'Postpartum recomposition review was not completed and follow-up momentum is softening.',
-      nextAction: 'Reschedule immediately and notify the assigned coach before the evening block.',
-      flags: ['Overdue', 'Priority member'],
-      daysFromToday: -2,
-      priority: 'critical'
-    },
-    {
-      id: 'EVAL-2411',
-      memberId: 'MBR-0987',
-      memberName: 'Arjun Menon',
-      type: 'Body composition',
-      status: 'Scheduled',
-      coach: 'Ava Nelson',
-      scheduledLabel: 'Today',
-      timeLabel: '1:00 PM',
-      relativeLabel: 'Starts in 1h 20m',
-      summary: 'Metabolic reset checkpoint with composition scan and adherence review.',
-      nextAction: 'Prepare the comparison snapshot before the consultation starts.',
-      flags: ['Today'],
-      daysFromToday: 0,
-      priority: 'warning'
-    },
-    {
-      id: 'EVAL-2388',
-      memberId: 'MBR-0871',
-      memberName: 'Sana Qureshi',
-      type: 'Progress',
-      status: 'Completed',
-      coach: 'Rita Jones',
-      scheduledLabel: '15 Apr 2026',
-      timeLabel: '8:45 AM',
-      relativeLabel: 'Completed yesterday',
-      summary: 'Wedding cut plan remains on track with strong adherence and improved energy.',
-      nextAction: 'No escalation needed. Keep the current pace and schedule the next weekly review.',
-      flags: ['Stable'],
-      daysFromToday: -1,
-      priority: 'normal'
-    },
-    {
-      id: 'EVAL-2379',
-      memberId: 'MBR-0773',
-      memberName: 'Kavya Iyer',
-      type: 'Baseline',
-      status: 'Scheduled',
-      coach: 'Rita Jones',
-      scheduledLabel: '18 Apr 2026',
-      timeLabel: '11:15 AM',
-      relativeLabel: 'Scheduled in 2 days',
-      summary: 'Initial strength-gain baseline assessment with body composition and goal capture.',
-      nextAction: 'Confirm intake readiness and make sure onboarding notes are complete.',
-      flags: ['New member'],
-      daysFromToday: 2,
-      priority: 'normal'
-    },
-    {
-      id: 'EVAL-2365',
-      memberId: 'MBR-0439',
-      memberName: 'Rahul Sethi',
-      type: 'Follow-up',
-      status: 'Pending review',
-      coach: 'Mila Carter',
-      scheduledLabel: '13 Apr 2026',
-      timeLabel: '6:15 PM',
-      relativeLabel: 'Awaiting sign-off for 3 days',
-      summary: 'Prediabetes reversal follow-up was entered, but coach sign-off is still pending.',
-      nextAction: 'Close the review so medication-support notes can be finalized.',
-      flags: ['Pending sign-off'],
-      daysFromToday: -3,
-      priority: 'warning'
-    }
-  ]);
+  protected readonly records = signal<EvaluationRecord[]>(EVALUATION_RECORDS);
 
   protected readonly query = signal('');
   protected readonly selectedStatus = signal<StatusFilter>('All status');
@@ -306,6 +195,14 @@ export class EvaluationsListScreenComponent {
 
   protected setScreenState(state: ScreenState): void {
     this.screenState.set(state);
+  }
+
+  protected requestAddEvaluation(): void {
+    this.addEvaluation.emit();
+  }
+
+  protected requestEditEvaluation(recordId: string): void {
+    this.editEvaluation.emit(recordId);
   }
 
   protected statusClass(status: EvaluationStatus): string {
