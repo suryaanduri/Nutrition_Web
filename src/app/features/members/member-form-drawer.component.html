@@ -1,0 +1,238 @@
+@if (open()) {
+  <div
+    class="fixed inset-0 z-40 bg-[rgba(15,23,42,0.18)] backdrop-blur-[1px]"
+    (click)="closeDrawer()"
+  ></div>
+
+  <aside
+    class="fixed inset-y-0 right-0 z-50 flex w-full max-w-[540px] flex-col border-l border-[color:var(--ncm-border)] bg-white shadow-[0_24px_48px_rgba(15,23,42,0.12)]"
+  >
+    <div class="sticky top-0 z-10 border-b border-[color:var(--ncm-border)] bg-white px-5 py-4">
+      <div class="flex items-start justify-between gap-4">
+        <div class="min-w-0">
+          <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--ncm-text-soft)]">
+            {{ title() }}
+          </p>
+          <h3 class="mt-1.5 text-[1.35rem] font-extrabold tracking-[-0.04em] text-[var(--ncm-text)]">
+            {{ mode() === 'edit' ? 'Member profile update' : 'Quick onboarding' }}
+          </h3>
+          <p class="mt-1 text-sm text-[var(--ncm-text-soft)]">
+            {{ subtitle() }}
+          </p>
+
+          @if (mode() === 'edit' && initialValue()) {
+            <div class="mt-2 flex flex-wrap items-center gap-2 text-[11px] font-medium text-[var(--ncm-text-soft)]">
+              @if (initialValue()!.id) {
+                <span class="inline-flex items-center rounded-full bg-[var(--ncm-surface-soft)] px-2.5 py-1">
+                  {{ initialValue()!.id }}
+                </span>
+              }
+              @if (initialValue()!.joinedOn) {
+                <span>{{ initialValue()!.joinedOn }}</span>
+              }
+            </div>
+          }
+        </div>
+
+        <button
+          type="button"
+          class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[14px] border border-[color:var(--ncm-border)] bg-white text-[var(--ncm-text)] transition duration-200 hover:bg-[var(--ncm-surface-soft)]"
+          [attr.aria-label]="mode() === 'edit' ? 'Close edit member drawer' : 'Close add member drawer'"
+          (click)="closeDrawer()"
+        >
+          <span class="rotate-45">
+            <ncm-icon name="chevron-left" [size]="18" />
+          </span>
+        </button>
+      </div>
+    </div>
+
+    <form class="flex min-h-0 flex-1 flex-col" [formGroup]="memberForm" (ngSubmit)="submit()">
+      <div class="min-h-0 flex-1 overflow-y-auto px-5 py-4">
+        <div class="grid gap-4">
+          <label class="block">
+            <span class="mb-1.5 block text-sm font-semibold text-[var(--ncm-text)]">Full Name</span>
+            <input
+              type="text"
+              formControlName="fullName"
+              class="w-full rounded-[14px] border bg-white px-3 py-3 text-sm text-[var(--ncm-text)] outline-none transition placeholder:text-[var(--ncm-text-soft)]"
+              [ngClass]="{
+                'border-[rgba(194,65,59,0.28)] bg-[rgba(255,247,246,0.8)]': fieldHasError('fullName'),
+                'border-[color:var(--ncm-border)]': !fieldHasError('fullName')
+              }"
+              placeholder="Enter member full name"
+            />
+            @if (fieldHasError('fullName')) {
+              <span class="mt-1.5 block text-xs font-medium text-[var(--ncm-danger)]">
+                Full name is required.
+              </span>
+            }
+          </label>
+
+          <div class="grid gap-4 sm:grid-cols-2">
+            <label class="block">
+              <span class="mb-1.5 block text-sm font-semibold text-[var(--ncm-text)]">DOB</span>
+              <input
+                type="date"
+                formControlName="dob"
+                class="w-full rounded-[14px] border bg-white px-3 py-3 text-sm text-[var(--ncm-text)] outline-none transition"
+                [ngClass]="{
+                  'border-[rgba(194,65,59,0.28)] bg-[rgba(255,247,246,0.8)]': fieldHasError('dob'),
+                  'border-[color:var(--ncm-border)]': !fieldHasError('dob')
+                }"
+              />
+              @if (fieldHasError('dob')) {
+                <span class="mt-1.5 block text-xs font-medium text-[var(--ncm-danger)]">
+                  DOB is required.
+                </span>
+              }
+            </label>
+
+            <label class="block">
+              <span class="mb-1.5 block text-sm font-semibold text-[var(--ncm-text)]">Gender</span>
+              <select
+                formControlName="gender"
+                class="w-full rounded-[14px] border bg-white px-3 py-3 text-sm text-[var(--ncm-text)] outline-none transition"
+                [ngClass]="{
+                  'border-[rgba(194,65,59,0.28)] bg-[rgba(255,247,246,0.8)]': fieldHasError('gender'),
+                  'border-[color:var(--ncm-border)]': !fieldHasError('gender')
+                }"
+              >
+                <option value="">Select gender</option>
+                @for (gender of genderOptions; track gender) {
+                  <option [value]="gender">{{ gender }}</option>
+                }
+              </select>
+              @if (fieldHasError('gender')) {
+                <span class="mt-1.5 block text-xs font-medium text-[var(--ncm-danger)]">
+                  Gender is required.
+                </span>
+              }
+            </label>
+          </div>
+
+          <div class="grid gap-4 sm:grid-cols-2">
+            <label class="block">
+              <span class="mb-1.5 block text-sm font-semibold text-[var(--ncm-text)]">Height</span>
+              <input
+                type="number"
+                formControlName="height"
+                class="w-full rounded-[14px] border bg-white px-3 py-3 text-sm text-[var(--ncm-text)] outline-none transition placeholder:text-[var(--ncm-text-soft)]"
+                [ngClass]="{
+                  'border-[rgba(194,65,59,0.28)] bg-[rgba(255,247,246,0.8)]': fieldHasError('height'),
+                  'border-[color:var(--ncm-border)]': !fieldHasError('height')
+                }"
+                placeholder="Height in cm"
+              />
+              @if (fieldHasError('height')) {
+                <span class="mt-1.5 block text-xs font-medium text-[var(--ncm-danger)]">
+                  Height is required.
+                </span>
+              }
+            </label>
+
+            <label class="block">
+              <span class="mb-1.5 block text-sm font-semibold text-[var(--ncm-text)]">Goal</span>
+              <select
+                formControlName="goal"
+                class="w-full rounded-[14px] border bg-white px-3 py-3 text-sm text-[var(--ncm-text)] outline-none transition"
+                [ngClass]="{
+                  'border-[rgba(194,65,59,0.28)] bg-[rgba(255,247,246,0.8)]': fieldHasError('goal'),
+                  'border-[color:var(--ncm-border)]': !fieldHasError('goal')
+                }"
+              >
+                <option value="">Select goal</option>
+                @for (goal of goalOptions; track goal) {
+                  <option [value]="goal">{{ goal }}</option>
+                }
+              </select>
+              @if (fieldHasError('goal')) {
+                <span class="mt-1.5 block text-xs font-medium text-[var(--ncm-danger)]">
+                  Goal is required.
+                </span>
+              }
+            </label>
+          </div>
+
+          <label class="block">
+            <span class="mb-1.5 block text-sm font-semibold text-[var(--ncm-text)]">Email</span>
+            <input
+              type="email"
+              formControlName="email"
+              class="w-full rounded-[14px] border bg-white px-3 py-3 text-sm text-[var(--ncm-text)] outline-none transition placeholder:text-[var(--ncm-text-soft)]"
+              [ngClass]="{
+                'border-[rgba(194,65,59,0.28)] bg-[rgba(255,247,246,0.8)]': fieldHasError('email'),
+                'border-[color:var(--ncm-border)]': !fieldHasError('email')
+              }"
+              placeholder="member@example.com"
+            />
+            @if (fieldHasError('email')) {
+              <span class="mt-1.5 block text-xs font-medium text-[var(--ncm-danger)]">
+                Enter a valid email address.
+              </span>
+            }
+          </label>
+
+          <label class="block">
+            <span class="mb-1.5 block text-sm font-semibold text-[var(--ncm-text)]">Phone Number</span>
+            <input
+              type="tel"
+              formControlName="phone"
+              class="w-full rounded-[14px] border bg-white px-3 py-3 text-sm text-[var(--ncm-text)] outline-none transition placeholder:text-[var(--ncm-text-soft)]"
+              [ngClass]="{
+                'border-[rgba(194,65,59,0.28)] bg-[rgba(255,247,246,0.8)]': fieldHasError('phone'),
+                'border-[color:var(--ncm-border)]': !fieldHasError('phone')
+              }"
+              placeholder="+91 98765 43210"
+            />
+            @if (fieldHasError('phone')) {
+              <span class="mt-1.5 block text-xs font-medium text-[var(--ncm-danger)]">
+                Enter a valid phone number.
+              </span>
+            }
+          </label>
+
+          <label class="block">
+            <span class="mb-1.5 block text-sm font-semibold text-[var(--ncm-text)]">Coach Select</span>
+            <select
+              formControlName="coach"
+              class="w-full rounded-[14px] border bg-white px-3 py-3 text-sm text-[var(--ncm-text)] outline-none transition"
+              [ngClass]="{
+                'border-[rgba(194,65,59,0.28)] bg-[rgba(255,247,246,0.8)]': fieldHasError('coach'),
+                'border-[color:var(--ncm-border)]': !fieldHasError('coach')
+              }"
+            >
+              <option value="">Select coach</option>
+              @for (coach of coachOptions; track coach) {
+                <option [value]="coach">{{ coach }}</option>
+              }
+            </select>
+            @if (fieldHasError('coach')) {
+              <span class="mt-1.5 block text-xs font-medium text-[var(--ncm-danger)]">
+                Coach selection is required.
+              </span>
+            }
+          </label>
+        </div>
+      </div>
+
+      <div class="sticky bottom-0 z-10 border-t border-[color:var(--ncm-border)] bg-white px-5 py-4">
+        <div class="flex items-center justify-end gap-2.5">
+          <button
+            type="button"
+            class="inline-flex items-center justify-center rounded-[14px] border border-[color:var(--ncm-border)] bg-white px-4 py-2.5 text-sm font-semibold text-[var(--ncm-text)] transition duration-200 hover:bg-[var(--ncm-surface-soft)]"
+            (click)="closeDrawer()"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            class="inline-flex items-center justify-center rounded-[14px] bg-[var(--ncm-primary)] px-4 py-2.5 text-sm font-semibold text-white transition duration-200 hover:bg-[var(--ncm-primary-strong)]"
+          >
+            {{ submitLabel() }}
+          </button>
+        </div>
+      </div>
+    </form>
+  </aside>
+}

@@ -1,4 +1,12 @@
-<div class="flex min-h-full flex-col">
+<div class="relative flex min-h-full flex-col">
+  @if (saveFeedback()) {
+    <div class="fixed right-4 top-24 z-30 sm:right-6 lg:right-8">
+      <div class="rounded-2xl border border-emerald-100 bg-white px-4 py-3 text-sm font-semibold text-emerald-700 shadow-[0_18px_34px_rgba(15,23,42,0.08)]">
+        {{ saveFeedback() }}
+      </div>
+    </div>
+  }
+
   <section class="px-1 py-2">
     <div class="rounded-[22px] border border-[color:var(--ncm-border)] bg-white px-4 py-4 shadow-sm">
       <div class="flex flex-wrap items-center justify-between gap-4 border-b border-[color:rgba(24,24,27,0.08)] pb-3">
@@ -14,6 +22,7 @@
         <button
           type="button"
           class="inline-flex items-center justify-center rounded-[14px] bg-[var(--ncm-primary)] px-4 py-2 text-sm font-semibold text-white transition duration-200 hover:bg-[var(--ncm-primary-strong)]"
+          (click)="openAddMemberDrawer()"
         >
           + Add Member
         </button>
@@ -235,6 +244,13 @@
                 </button>
                 <button
                   type="button"
+                  class="inline-flex h-8 items-center justify-center rounded-[12px] border border-[color:var(--ncm-border)] bg-white px-3 text-xs font-semibold text-[var(--ncm-text)] transition duration-200 hover:border-[rgba(36,122,82,0.18)] hover:text-[var(--ncm-primary)]"
+                  (click)="$event.stopPropagation(); openEditMemberDrawer(member.id)"
+                >
+                  Edit
+                </button>
+                <button
+                  type="button"
                   class="inline-flex h-8 w-8 items-center justify-center rounded-[12px] border border-[color:var(--ncm-border)] bg-white text-[var(--ncm-text)] transition duration-200 hover:border-[rgba(36,122,82,0.18)] hover:bg-[var(--ncm-surface-soft)]"
                   aria-label="View member"
                   (click)="$event.stopPropagation(); openMember(member.id)"
@@ -250,4 +266,12 @@
       }
     </div>
   </section>
+
+  <app-member-form-drawer
+    [open]="drawerOpen()"
+    [mode]="drawerMode()"
+    [initialValue]="drawerInitialValue()"
+    (cancelled)="closeMemberDrawer()"
+    (saved)="saveMember($event)"
+  />
 </div>

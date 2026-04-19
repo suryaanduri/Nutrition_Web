@@ -1,6 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, output, signal } from '@angular/core';
 import { IconComponent } from '../../../shared/ui/icon/icon.component';
+import {
+  GenderOption,
+  MemberFormDrawerComponent,
+  MemberFormValue
+} from '../member-form-drawer.component';
 
 type RangeKey = '7D' | '30D' | '90D';
 type TrendType = 'up' | 'down' | 'neutral';
@@ -33,7 +38,7 @@ interface TrendPoint {
 @Component({
   selector: 'app-member-detail',
   standalone: true,
-  imports: [CommonModule, IconComponent],
+  imports: [CommonModule, IconComponent, MemberFormDrawerComponent],
   templateUrl: './member-detail.html',
   styleUrl: './member-detail.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -44,19 +49,24 @@ export class MemberDetail {
 
   readonly selectedRange = signal<RangeKey>('30D');
   readonly rangeOptions: RangeKey[] = ['7D', '30D', '90D'];
+  readonly editDrawerOpen = signal(false);
 
-  readonly member = {
+  readonly member = signal({
+    id: 'MBR-1042',
     name: 'Rhea Sharma',
+    email: 'rhea.sharma@nourish.app',
     phone: '+91 98765 10245',
+    dob: '1996-05-14',
+    height: '164',
     age: 29,
-    gender: 'Female',
+    gender: 'Female' as GenderOption,
     goal: 'PCOS-focused fat loss',
     coach: 'Ava Nelson',
     status: 'Needs attention',
     tags: ['Needs attention', 'Missed follow-up'],
     program: 'PCOS Reset Intensive',
     joinedOn: 'Joined 12 Jan 2026'
-  };
+  });
 
   readonly history = signal<EvaluationHistoryItem[]>([
     {
@@ -146,6 +156,18 @@ export class MemberDetail {
 
   readonly latestEvaluation = computed(() => this.history()[0]);
   readonly previousEvaluation = computed(() => this.history()[1] ?? null);
+  readonly memberDrawerValue = computed<MemberFormValue>(() => ({
+    id: this.member().id,
+    joinedOn: this.member().joinedOn,
+    fullName: this.member().name,
+    dob: this.member().dob,
+    height: this.member().height,
+    email: this.member().email,
+    phone: this.member().phone,
+    gender: this.member().gender,
+    goal: this.goalOptionFromGoal(this.member().program),
+    coach: this.member().coach
+  }));
 
   readonly metricCards = computed<MetricCard[]>(() => {
     const latest = this.latestEvaluation();
@@ -207,6 +229,31 @@ export class MemberDetail {
     this.addEvaluation.emit();
   }
 
+  openEditMember(): void {
+    this.editDrawerOpen.set(true);
+  }
+
+  closeEditMember(): void {
+    this.editDrawerOpen.set(false);
+  }
+
+  saveMember(payload: MemberFormValue): void {
+    this.member.update((member) => ({
+      ...member,
+      name: payload.fullName,
+      email: payload.email,
+      phone: payload.phone,
+      dob: payload.dob,
+      height: payload.height,
+      age: this.ageFromDob(payload.dob),
+      gender: payload.gender,
+      goal: this.goalLabel(payload.goal),
+      coach: payload.coach,
+      program: this.programLabel(payload.goal)
+    }));
+    this.closeEditMember();
+  }
+
   goBack(): void {
     this.back.emit();
   }
@@ -247,6 +294,56 @@ export class MemberDetail {
 
   private valueFromMetric(metric: string): number {
     return Number.parseFloat(metric);
+  }
+
+  private ageFromDob(dob: string): number {
+    const birthDate = new Date(dob);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      age -= 1;
+    }
+    return age;
+  }
+
+  private goalOptionFromGoal(program: string): MemberFormValue['goal'] {
+    if (program.includes('PCOS')) {
+      return 'PCOS';
+    }
+    if (program.includes('Weight Gain')) {
+      return 'Weight Gain';
+    }
+    if (program.includes('Metabolic')) {
+      return 'Metabolic Reset';
+    }
+    return 'Weight Loss';
+  }
+
+  private programLabel(goal: MemberFormValue['goal']): string {
+    if (goal === 'PCOS') {
+      return 'PCOS Reset Intensive';
+    }
+    if (goal === 'Weight Gain') {
+      return 'Weight Gain Intensive';
+    }
+    if (goal === 'Metabolic Reset') {
+      return 'Metabolic Reset Intensive';
+    }
+    return 'Weight Loss Intensive';
+  }
+
+  private goalLabel(goal: MemberFormValue['goal']): string {
+    if (goal === 'PCOS') {
+      return 'PCOS-focused fat loss';
+    }
+    if (goal === 'Weight Gain') {
+      return 'Strength and recovery gain';
+    }
+    if (goal === 'Metabolic Reset') {
+      return 'Metabolic reset and insulin stability';
+    }
+    return 'Sustainable fat loss';
   }
 
   private buildPath(values: number[]): string {

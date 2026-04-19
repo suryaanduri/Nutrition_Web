@@ -16,6 +16,7 @@ type IconName =
   | 'trend'
   | 'calendar'
   | 'target'
+  | 'close'
   | 'logout';
 
 @Component({
@@ -179,6 +180,10 @@ const ICONS: Record<
       { d: 'M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z' },
       { d: 'M12 12h.01', width: 3 }
     ]
+  },
+  close: {
+    viewBox: '0 0 24 24',
+    paths: [{ d: 'm7 7 10 10' }, { d: 'm17 7-10 10' }]
   },
   logout: {
     viewBox: '0 0 24 24',
