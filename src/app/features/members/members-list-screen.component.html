@@ -1,167 +1,130 @@
-<div class="space-y-6 lg:space-y-7">
+<div class="flex h-[calc(100vh-10rem)] min-h-[700px] flex-col">
   <section
-    class="rounded-[32px] border border-[color:var(--ncm-border)] bg-white p-6 shadow-sm transition duration-200 hover:shadow-md lg:p-7"
+    class="sticky top-0 z-10 rounded-[24px] border border-[color:var(--ncm-border)] bg-white/95 px-4 py-3 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-white/88 sm:px-5"
   >
-    <div class="flex flex-col gap-5 xl:flex-row xl:items-end xl:justify-between">
-      <div>
-        <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--ncm-text-soft)]">
-          Member operations
-        </p>
-        <h3 class="mt-2 text-[2rem] font-extrabold tracking-[-0.05em] text-[var(--ncm-text)]">
-          Members
-        </h3>
-        <p class="mt-2 text-sm leading-7 text-[var(--ncm-text-muted)]">
-          Track and manage all member activity with instant search, clear status signals, and
-          one-click follow-up actions.
-        </p>
-      </div>
+    <div class="flex items-center justify-between gap-4">
+      <h3 class="truncate text-[1.45rem] font-extrabold tracking-[-0.04em] text-[var(--ncm-text)]">
+        Members
+      </h3>
 
       <button
         type="button"
-        class="inline-flex items-center justify-center rounded-2xl bg-[var(--ncm-primary)] px-5 py-3.5 text-sm font-semibold text-white shadow-[0_16px_28px_rgba(36,122,82,0.22)] transition duration-200 hover:-translate-y-0.5 hover:bg-[var(--ncm-primary-strong)] hover:shadow-[0_20px_34px_rgba(36,122,82,0.28)] active:translate-y-0"
+        class="inline-flex items-center justify-center rounded-2xl bg-[var(--ncm-primary)] px-4 py-2.5 text-sm font-semibold text-white shadow-[0_14px_24px_rgba(36,122,82,0.22)] transition duration-200 hover:-translate-y-0.5 hover:bg-[var(--ncm-primary-strong)] hover:shadow-[0_18px_30px_rgba(36,122,82,0.26)] active:translate-y-0"
       >
         + Add Member
       </button>
     </div>
+  </section>
 
-    <div class="mt-6 space-y-4">
-      <label
-        class="group flex items-center gap-3 rounded-2xl border border-[color:var(--ncm-border)] bg-[var(--ncm-surface-soft)] px-4 py-4 shadow-sm transition duration-200 hover:shadow-md focus-within:border-[rgba(36,122,82,0.22)] focus-within:bg-white focus-within:shadow-[0_0_0_4px_rgba(36,122,82,0.08)]"
-      >
-        <span class="text-[var(--ncm-text-soft)] transition duration-200 group-focus-within:text-[var(--ncm-primary)]">
-          <ncm-icon name="search" [size]="18" />
-        </span>
-        <input
-          type="search"
-          class="w-full border-0 bg-transparent p-0 text-sm text-[var(--ncm-text)] outline-none placeholder:text-[var(--ncm-text-soft)]"
-          placeholder="Search by name, phone, or goal..."
-          [value]="query()"
-          (input)="setQuery(($any($event.target).value ?? '').toString())"
-        />
-        <span
-          class="hidden rounded-full border border-[color:var(--ncm-border)] bg-white px-2.5 py-1 text-[11px] font-semibold text-[var(--ncm-text-soft)] sm:inline-flex"
+  <section
+    class="sticky top-[4.8rem] z-10 mt-3 rounded-[22px] border border-[color:var(--ncm-border)] bg-white/95 px-3 py-3 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-white/88 sm:px-4"
+  >
+    <div class="overflow-x-auto">
+      <div class="flex min-w-max items-center gap-2.5">
+        <label
+          class="group flex min-w-[250px] items-center gap-3 rounded-2xl border border-[color:var(--ncm-border)] bg-[var(--ncm-surface-soft)] px-3.5 py-3 shadow-sm transition duration-200 hover:shadow-md focus-within:border-[rgba(36,122,82,0.22)] focus-within:bg-white focus-within:shadow-[0_0_0_4px_rgba(36,122,82,0.08)]"
         >
-          /
-        </span>
-      </label>
+          <span class="text-[var(--ncm-text-soft)] transition duration-200 group-focus-within:text-[var(--ncm-primary)]">
+            <ncm-icon name="search" [size]="18" />
+          </span>
+          <input
+            type="search"
+            class="w-full border-0 bg-transparent p-0 text-sm text-[var(--ncm-text)] outline-none placeholder:text-[var(--ncm-text-soft)]"
+            placeholder="Search by name, phone, or goal..."
+            [value]="query()"
+            (input)="setQuery(($any($event.target).value ?? '').toString())"
+          />
+        </label>
 
-      <div class="flex flex-col gap-3 xl:gap-4">
-        <div class="flex flex-col gap-2 xl:flex-row xl:items-center xl:justify-between">
-          <div class="flex flex-col gap-2">
-            <p class="text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--ncm-text-soft)]">
-              Status
-            </p>
-            <div class="flex flex-wrap gap-2.5">
-              @for (status of statusOptions; track status) {
-                <button
-                  type="button"
-                  class="inline-flex items-center rounded-full border px-3.5 py-2 text-sm font-medium transition duration-200 hover:-translate-y-0.5 hover:shadow-sm"
-                  [ngClass]="{
-                    'border-[rgba(36,122,82,0.14)] bg-[var(--ncm-primary-soft)] text-[var(--ncm-primary-strong)]':
-                      selectedStatus() === status,
-                    'border-[color:var(--ncm-border)] bg-white text-[var(--ncm-text-muted)] hover:bg-[var(--ncm-surface-soft)]':
-                      selectedStatus() !== status
-                  }"
-                  (click)="setStatus(status)"
-                >
-                  {{ status }}
-                </button>
-              }
-            </div>
-          </div>
+        @for (status of statusOptions; track status) {
+          <button
+            type="button"
+            class="inline-flex shrink-0 items-center rounded-full border px-3.5 py-2 text-sm font-medium transition duration-200 hover:-translate-y-0.5 hover:shadow-sm"
+            [ngClass]="{
+              'border-[rgba(36,122,82,0.14)] bg-[var(--ncm-primary-soft)] text-[var(--ncm-primary-strong)]':
+                selectedStatus() === status,
+              'border-[color:var(--ncm-border)] bg-white text-[var(--ncm-text-muted)] hover:bg-[var(--ncm-surface-soft)]':
+                selectedStatus() !== status
+            }"
+            (click)="setStatus(status)"
+          >
+            {{ status }}
+          </button>
+        }
 
-          <div class="flex flex-col gap-2">
-            <p class="text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--ncm-text-soft)]">
-              Sort
-            </p>
-            <div class="flex flex-wrap gap-2.5">
-              @for (sort of sortOptions; track sort) {
-                <button
-                  type="button"
-                  class="inline-flex items-center rounded-full border px-3.5 py-2 text-sm font-medium transition duration-200 hover:-translate-y-0.5 hover:shadow-sm"
-                  [ngClass]="{
-                    'border-[rgba(36,122,82,0.14)] bg-[var(--ncm-primary-soft)] text-[var(--ncm-primary-strong)]':
-                      selectedSort() === sort,
-                    'border-[color:var(--ncm-border)] bg-white text-[var(--ncm-text-muted)] hover:bg-[var(--ncm-surface-soft)]':
-                      selectedSort() !== sort
-                  }"
-                  (click)="setSort(sort)"
-                >
-                  {{ sort }}
-                </button>
-              }
-            </div>
-          </div>
-        </div>
+        @for (goal of goalOptions; track goal) {
+          <button
+            type="button"
+            class="inline-flex shrink-0 items-center rounded-full border px-3.5 py-2 text-sm font-medium transition duration-200 hover:-translate-y-0.5 hover:shadow-sm"
+            [ngClass]="{
+              'border-[rgba(36,122,82,0.14)] bg-[var(--ncm-primary-soft)] text-[var(--ncm-primary-strong)]':
+                selectedGoal() === goal,
+              'border-[color:var(--ncm-border)] bg-white text-[var(--ncm-text-muted)] hover:bg-[var(--ncm-surface-soft)]':
+                selectedGoal() !== goal
+            }"
+            (click)="setGoal(goal)"
+          >
+            {{ goal }}
+          </button>
+        }
 
-        <div class="flex flex-col gap-2 xl:flex-row xl:items-center xl:justify-between">
-          <div class="flex flex-col gap-2">
-            <p class="text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--ncm-text-soft)]">
-              Goal
-            </p>
-            <div class="flex flex-wrap gap-2.5">
-              @for (goal of goalOptions; track goal) {
-                <button
-                  type="button"
-                  class="inline-flex items-center rounded-full border px-3.5 py-2 text-sm font-medium transition duration-200 hover:-translate-y-0.5 hover:shadow-sm"
-                  [ngClass]="{
-                    'border-[rgba(36,122,82,0.14)] bg-[var(--ncm-primary-soft)] text-[var(--ncm-primary-strong)]':
-                      selectedGoal() === goal,
-                    'border-[color:var(--ncm-border)] bg-white text-[var(--ncm-text-muted)] hover:bg-[var(--ncm-surface-soft)]':
-                      selectedGoal() !== goal
-                  }"
-                  (click)="setGoal(goal)"
-                >
-                  {{ goal }}
-                </button>
-              }
-            </div>
-          </div>
+        @for (visit of visitOptions; track visit) {
+          <button
+            type="button"
+            class="inline-flex shrink-0 items-center rounded-full border px-3.5 py-2 text-sm font-medium transition duration-200 hover:-translate-y-0.5 hover:shadow-sm"
+            [ngClass]="{
+              'border-[rgba(36,122,82,0.14)] bg-[var(--ncm-primary-soft)] text-[var(--ncm-primary-strong)]':
+                selectedVisit() === visit,
+              'border-[color:var(--ncm-border)] bg-white text-[var(--ncm-text-muted)] hover:bg-[var(--ncm-surface-soft)]':
+                selectedVisit() !== visit
+            }"
+            (click)="setVisit(visit)"
+          >
+            {{ visit }}
+          </button>
+        }
 
-          <div class="flex flex-col gap-2">
-            <p class="text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--ncm-text-soft)]">
-              Last visit
-            </p>
-            <div class="flex flex-wrap gap-2.5">
-              @for (visit of visitOptions; track visit) {
-                <button
-                  type="button"
-                  class="inline-flex items-center rounded-full border px-3.5 py-2 text-sm font-medium transition duration-200 hover:-translate-y-0.5 hover:shadow-sm"
-                  [ngClass]="{
-                    'border-[rgba(36,122,82,0.14)] bg-[var(--ncm-primary-soft)] text-[var(--ncm-primary-strong)]':
-                      selectedVisit() === visit,
-                    'border-[color:var(--ncm-border)] bg-white text-[var(--ncm-text-muted)] hover:bg-[var(--ncm-surface-soft)]':
-                      selectedVisit() !== visit
-                  }"
-                  (click)="setVisit(visit)"
-                >
-                  {{ visit }}
-                </button>
-              }
-            </div>
-          </div>
-        </div>
+        @for (sort of sortOptions; track sort) {
+          <button
+            type="button"
+            class="inline-flex shrink-0 items-center rounded-full border px-3.5 py-2 text-sm font-medium transition duration-200 hover:-translate-y-0.5 hover:shadow-sm"
+            [ngClass]="{
+              'border-[rgba(36,122,82,0.14)] bg-[var(--ncm-primary-soft)] text-[var(--ncm-primary-strong)]':
+                selectedSort() === sort,
+              'border-[color:var(--ncm-border)] bg-white text-[var(--ncm-text-muted)] hover:bg-[var(--ncm-surface-soft)]':
+                selectedSort() !== sort
+            }"
+            (click)="setSort(sort)"
+          >
+            {{ sort }}
+          </button>
+        }
+
+        <button
+          type="button"
+          class="inline-flex shrink-0 items-center rounded-full bg-[var(--ncm-surface-soft)] px-3 py-2 text-sm font-semibold text-[var(--ncm-text-muted)] transition duration-200 hover:bg-white"
+          (click)="resetFilters()"
+        >
+          Reset
+        </button>
       </div>
     </div>
   </section>
 
-  <section class="space-y-4">
-    <div class="flex items-center justify-between gap-3 px-1">
-      <div>
-        <p class="text-sm font-semibold text-[var(--ncm-text)]">{{ memberCountLabel() }}</p>
-        <p class="text-sm text-[var(--ncm-text-muted)]">Fast scan view for daily coach workflows</p>
-      </div>
+  <section class="mt-3 flex min-h-0 flex-1 flex-col">
+    <div class="flex items-center justify-between gap-3 px-1 pb-3">
+      <p class="text-sm font-semibold text-[var(--ncm-text)]">{{ memberCountLabel() }}</p>
       <span
-        class="inline-flex items-center rounded-full bg-[var(--ncm-surface-soft)] px-3 py-1.5 text-xs font-semibold text-[var(--ncm-text-muted)]"
+        class="inline-flex items-center rounded-full bg-[var(--ncm-surface-soft)] px-3 py-1 text-[11px] font-semibold text-[var(--ncm-text-muted)]"
       >
         Live list
       </span>
     </div>
 
-    <div class="space-y-3">
+    <div class="min-h-0 flex-1 space-y-2.5 overflow-y-auto pr-1">
       @for (member of filteredMembers(); track member.id) {
         <article
-          class="group cursor-pointer rounded-2xl border bg-white p-5 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:shadow-md"
+          class="group cursor-pointer rounded-[20px] border bg-white px-4 py-4 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:shadow-md"
           [ngClass]="{
             'border-[rgba(194,65,59,0.22)] ring-1 ring-[rgba(194,65,59,0.08)] bg-[linear-gradient(180deg,#ffffff_0%,#fff8f7_100%)]':
               member.status === 'Needs attention',
@@ -172,17 +135,17 @@
           role="button"
           (click)="openMember(member.id)"
         >
-          <div class="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
+          <div class="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
             <div class="flex min-w-0 items-start gap-4">
               <div
-                class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[var(--ncm-primary-soft)] text-sm font-bold text-[var(--ncm-primary-strong)]"
+                class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[var(--ncm-primary-soft)] text-sm font-bold text-[var(--ncm-primary-strong)]"
               >
                 {{ member.name.charAt(0) }}
               </div>
 
               <div class="min-w-0">
                 <div class="flex flex-wrap items-center gap-2">
-                  <h4 class="truncate text-lg font-bold tracking-[-0.03em] text-[var(--ncm-text)]">
+                  <h4 class="truncate text-base font-bold tracking-[-0.03em] text-[var(--ncm-text)]">
                     {{ member.name }}
                   </h4>
                   <span class="text-sm text-[var(--ncm-text-soft)]">{{ member.phone }}</span>
@@ -191,7 +154,7 @@
                   {{ member.goal }} · {{ member.tagLine }}
                 </p>
 
-                <div class="mt-3 flex flex-wrap gap-1.5">
+                <div class="mt-2.5 flex flex-wrap gap-1.5">
                   @for (flag of member.flags; track flag) {
                     <span
                       class="inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold"
@@ -214,8 +177,8 @@
               </div>
             </div>
 
-            <div class="flex flex-1 flex-col gap-3 xl:min-w-[440px] xl:max-w-[560px]">
-              <div class="flex flex-wrap items-center gap-x-6 gap-y-2">
+            <div class="flex flex-1 flex-col gap-2.5 xl:min-w-[420px] xl:max-w-[560px]">
+              <div class="flex flex-wrap items-center gap-x-5 gap-y-2">
                 <div class="flex items-center gap-2">
                   <span class="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--ncm-text-soft)]">
                     Last weight
@@ -263,21 +226,21 @@
                 >
                   <button
                     type="button"
-                    class="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-[color:var(--ncm-border)] bg-white text-[var(--ncm-text-muted)] shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-[rgba(36,122,82,0.18)] hover:text-[var(--ncm-primary)] hover:shadow-sm active:translate-y-0"
+                    class="inline-flex h-9 w-9 items-center justify-center rounded-2xl border border-[color:var(--ncm-border)] bg-white text-[var(--ncm-text-muted)] shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-[rgba(36,122,82,0.18)] hover:text-[var(--ncm-primary)] hover:shadow-sm active:translate-y-0"
                     aria-label="Call member"
                   >
                     <ncm-icon name="phone" [size]="16" />
                   </button>
                   <button
                     type="button"
-                    class="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-[color:var(--ncm-border)] bg-white text-[var(--ncm-text-muted)] shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-[rgba(36,122,82,0.18)] hover:text-[var(--ncm-primary)] hover:shadow-sm active:translate-y-0"
+                    class="inline-flex h-9 w-9 items-center justify-center rounded-2xl border border-[color:var(--ncm-border)] bg-white text-[var(--ncm-text-muted)] shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-[rgba(36,122,82,0.18)] hover:text-[var(--ncm-primary)] hover:shadow-sm active:translate-y-0"
                     aria-label="Message member"
                   >
                     <ncm-icon name="chat" [size]="16" />
                   </button>
                   <button
                     type="button"
-                    class="inline-flex h-10 items-center justify-center rounded-2xl border border-[color:var(--ncm-border)] bg-white px-3 text-xs font-semibold text-[var(--ncm-text-muted)] shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-[rgba(36,122,82,0.18)] hover:text-[var(--ncm-primary)] hover:shadow-sm active:translate-y-0"
+                    class="inline-flex h-9 items-center justify-center rounded-2xl border border-[color:var(--ncm-border)] bg-white px-3 text-xs font-semibold text-[var(--ncm-text-muted)] shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-[rgba(36,122,82,0.18)] hover:text-[var(--ncm-primary)] hover:shadow-sm active:translate-y-0"
                   >
                     <ncm-icon name="evaluations" [size]="15" />
                     <span class="ml-1.5">Evaluate</span>
@@ -289,7 +252,7 @@
             <div class="flex items-center justify-between gap-3 xl:justify-end">
               <div class="flex flex-col items-start gap-2 xl:items-end">
                 <span
-                  class="inline-flex items-center rounded-full px-3 py-1.5 text-xs font-semibold"
+                  class="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold"
                   [ngClass]="{
                     'bg-[rgba(25,135,84,0.12)] text-[var(--ncm-success)]': member.status === 'Active',
                     'bg-[rgba(183,121,31,0.14)] text-[var(--ncm-warning)]':
@@ -304,7 +267,7 @@
 
               <button
                 type="button"
-                class="inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-[color:var(--ncm-border)] bg-white text-[var(--ncm-text)] shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-[rgba(36,122,82,0.18)] hover:bg-[var(--ncm-surface-soft)] hover:shadow-md active:translate-y-0"
+                class="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-[color:var(--ncm-border)] bg-white text-[var(--ncm-text)] shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-[rgba(36,122,82,0.18)] hover:bg-[var(--ncm-surface-soft)] hover:shadow-md active:translate-y-0"
                 aria-label="View member"
                 (click)="$event.stopPropagation(); openMember(member.id)"
               >

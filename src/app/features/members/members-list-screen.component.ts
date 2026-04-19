@@ -205,6 +205,14 @@ export class MembersListScreenComponent {
     this.selectedSort.set(value);
   }
 
+  protected resetFilters(): void {
+    this.query.set('');
+    this.selectedStatus.set('All status');
+    this.selectedGoal.set('All goals');
+    this.selectedVisit.set('Any time');
+    this.selectedSort.set('Recent');
+  }
+
   protected openMember(memberId: string): void {
     this.memberSelected.emit(memberId);
   }
