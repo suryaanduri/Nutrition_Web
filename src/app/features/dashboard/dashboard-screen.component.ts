@@ -2,19 +2,22 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { IconComponent } from '../../shared/ui/icon/icon.component';
 
-interface KpiCard {
+interface SummaryCard {
   label: string;
   value: string;
-  delta: string;
-  context: string;
+  change: string;
+  hint: string;
   trend: 'up' | 'down' | 'steady';
   icon: 'members' | 'evaluations' | 'approvals' | 'chat';
 }
 
-interface QuickAction {
+interface PriorityAction {
   title: string;
-  description: string;
-  tone: 'primary' | 'neutral' | 'soft';
+  detail: string;
+  meta: string;
+  cta: string;
+  tone: 'danger' | 'warning' | 'success' | 'neutral';
+  icon: 'members' | 'evaluations' | 'approvals' | 'chat';
 }
 
 interface MemberRow {
@@ -33,11 +36,17 @@ interface EvaluationRow {
   status: 'Confirmed' | 'Pending review' | 'Rescheduled';
 }
 
-interface FeedActivity {
+interface ActivityItem {
   title: string;
   detail: string;
   time: string;
-  icon: 'spark' | 'calendar' | 'trend' | 'approvals';
+  icon: 'approvals' | 'trend' | 'calendar' | 'chat';
+}
+
+interface QuickAction {
+  label: string;
+  icon: 'members' | 'evaluations' | 'chat' | 'approvals';
+  tone: 'primary' | 'neutral';
 }
 
 @Component({
@@ -49,57 +58,73 @@ interface FeedActivity {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DashboardScreenComponent {
-  protected readonly kpis: KpiCard[] = [
+  protected readonly summaryCards: SummaryCard[] = [
     {
       label: 'Active members',
       value: '1,284',
-      delta: '+8.2%',
-      context: '71 new members joined in the last 30 days',
+      change: '+71',
+      hint: 'vs last 30 days',
       trend: 'up',
       icon: 'members'
     },
     {
-      label: 'Evaluations due',
+      label: 'Recent evaluations',
       value: '46',
-      delta: '12 today',
-      context: 'Highest load is in metabolic reset and thyroid care',
+      change: '12 today',
+      hint: 'records captured today',
       trend: 'steady',
       icon: 'evaluations'
     },
     {
-      label: 'Pending approvals',
-      value: '08',
-      delta: '3 urgent',
-      context: 'Two stories and one carousel are blocking tonight’s queue',
+      label: 'Pending feed approvals',
+      value: '5',
+      change: '1 aging',
+      hint: 'member posts waiting review',
       trend: 'steady',
       icon: 'approvals'
     },
     {
       label: 'Unread priority chats',
       value: '14',
-      delta: '-18%',
-      context: 'Response time improved after triaging plateau escalations',
+      change: '-18%',
+      hint: 'response time improving',
       trend: 'down',
       icon: 'chat'
     }
   ];
 
-  protected readonly quickActions: QuickAction[] = [
+  protected readonly priorityActions: PriorityAction[] = [
     {
-      title: 'Add member',
-      description: 'Create a new profile and assign the right care pathway',
-      tone: 'primary'
+      title: 'Members need follow-up',
+      detail: '5 members are below adherence threshold and should be reviewed before the evening wave.',
+      meta: 'Members queue',
+      cta: 'Open members',
+      tone: 'danger',
+      icon: 'members'
     },
     {
-      title: 'Schedule evaluation',
-      description: 'Book a follow-up, baseline assessment, or goal review',
-      tone: 'neutral'
+      title: 'Feed queue waiting',
+      detail: '5 pending member posts include 3 with images. One post has been waiting more than 24 hours.',
+      meta: 'Moderation queue',
+      cta: 'Review feed',
+      tone: 'warning',
+      icon: 'approvals'
     },
     {
-      title: 'Review approvals',
-      description: 'Clear content approvals before the evening posting window',
-      tone: 'soft'
+      title: 'Priority chats unread',
+      detail: 'Unread coaching conversations are clustered around plateau and adherence concerns.',
+      meta: 'Chat workspace',
+      cta: 'Open chat',
+      tone: 'success',
+      icon: 'chat'
     }
+  ];
+
+  protected readonly quickActions: QuickAction[] = [
+    { label: 'Add member', icon: 'members', tone: 'primary' },
+    { label: 'Add evaluation', icon: 'evaluations', tone: 'neutral' },
+    { label: 'Open chat', icon: 'chat', tone: 'neutral' },
+    { label: 'Review feed', icon: 'approvals', tone: 'neutral' }
   ];
 
   protected readonly recentMembers: MemberRow[] = [
@@ -164,30 +189,30 @@ export class DashboardScreenComponent {
     }
   ];
 
-  protected readonly feed: FeedActivity[] = [
+  protected readonly activity: ActivityItem[] = [
     {
       title: 'Transformation story submitted for approval',
-      detail: 'Ava tagged the post for “Women’s fat loss” and scheduled it for 6:30 PM.',
+      detail: 'Member feed post is ready for moderation review.',
       time: '9 min ago',
       icon: 'approvals'
     },
     {
-      title: 'High-risk member flagged by adherence engine',
-      detail: 'Rhea Sharma missed protein targets for 5 consecutive days.',
+      title: 'High-risk member flagged',
+      detail: 'Protein targets were missed for 5 consecutive days.',
       time: '24 min ago',
       icon: 'trend'
     },
     {
-      title: 'Coach block opened for follow-up calls',
-      detail: 'A 90-minute window is now free after one evaluation reschedule.',
+      title: 'Coach follow-up window opened',
+      detail: 'One reschedule created a 90-minute buffer this afternoon.',
       time: '51 min ago',
       icon: 'calendar'
     },
     {
-      title: 'Community challenge crossed 80% participation',
-      detail: 'The hydration sprint is driving unusually strong check-in completion.',
-      time: '1h ago',
-      icon: 'spark'
+      title: 'Priority chat received',
+      detail: 'Member requested help tightening dinner structure this week.',
+      time: '1 h ago',
+      icon: 'chat'
     }
   ];
 }

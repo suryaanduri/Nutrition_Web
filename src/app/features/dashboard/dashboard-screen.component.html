@@ -1,188 +1,54 @@
-<div class="space-y-6 lg:space-y-7">
-  <section
-    class="overflow-hidden rounded-[34px] border border-[color:var(--ncm-border)] bg-white shadow-[var(--ncm-shadow-card)]"
-  >
-    <div class="grid gap-6 px-6 py-6 lg:grid-cols-[minmax(0,1.45fr)_400px] lg:px-8 lg:py-8">
+<div class="space-y-4 lg:space-y-5">
+  <section class="rounded-[20px] border border-[color:var(--ncm-border)] bg-white px-4 py-3.5 shadow-sm">
+    <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--ncm-text-soft)]">
+      Dashboard
+    </p>
+    <div class="mt-2 flex flex-col gap-2.5 lg:flex-row lg:items-end lg:justify-between">
       <div>
-        <div
-          class="inline-flex items-center gap-2 rounded-full border border-[color:var(--ncm-border)] bg-[var(--ncm-surface-soft)] px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.22em] text-[var(--ncm-primary-strong)]"
-        >
-          <span class="h-2 w-2 rounded-full bg-[var(--ncm-primary)]"></span>
-          Live overview
-        </div>
-        <h3 class="mt-4 max-w-3xl text-3xl font-extrabold tracking-[-0.05em] text-[var(--ncm-text)] sm:text-[2.4rem]">
-          High-signal clarity for the entire coaching floor.
+        <h3 class="text-[1.45rem] font-extrabold tracking-[-0.04em] text-[var(--ncm-text)]">
+          Center operations at a glance
         </h3>
-        <p class="mt-3 max-w-2xl text-sm leading-7 text-[var(--ncm-text-muted)]">
-          Today’s dashboard is designed for fast decision-making: who needs intervention, what
-          must be reviewed, and where your team can move next without context switching.
+        <p class="mt-0.5 text-[13px] text-[var(--ncm-text-soft)]">
+          What needs attention now, and where the team should move next.
         </p>
-
-        <div class="mt-7 grid gap-4 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]">
-          <article
-            class="rounded-2xl border border-[rgba(36,122,82,0.16)] bg-[linear-gradient(180deg,#ffffff_0%,#f4fbf7_100%)] p-6 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:shadow-md"
-          >
-            <div class="flex items-start justify-between gap-4">
-              <div>
-                <p class="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--ncm-text-soft)]">
-                  Center health
-                </p>
-                <p class="mt-3 text-[2.65rem] font-extrabold tracking-[-0.06em] text-[var(--ncm-text)]">
-                  87%
-                </p>
-                <p class="mt-2 text-sm font-medium text-[var(--ncm-text-muted)]">Plan adherence</p>
-              </div>
-              <div
-                class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[var(--ncm-primary-soft)] text-[var(--ncm-primary)]"
-              >
-                <ncm-icon name="trend" [size]="20" />
-              </div>
-            </div>
-
-            <div class="mt-5 flex items-center gap-3">
-              <span
-                class="inline-flex items-center rounded-full bg-[rgba(25,135,84,0.1)] px-2.5 py-1 text-xs font-semibold text-[var(--ncm-success)]"
-              >
-                +6 points from last week
-              </span>
-              <span class="text-sm text-[var(--ncm-text-soft)]">Top improvement across all centers</span>
-            </div>
-
-            <div class="mt-5 h-2.5 rounded-full bg-[var(--ncm-surface-soft)]">
-              <div
-                class="h-2.5 w-[87%] rounded-full bg-[linear-gradient(90deg,#2b8a5c_0%,#73bc93_100%)]"
-              ></div>
-            </div>
-          </article>
-
-          <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
-            <article
-              class="rounded-2xl border border-[color:var(--ncm-border)] bg-white p-5 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:shadow-md"
-            >
-              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--ncm-text-soft)]">
-                Coach capacity
-              </p>
-              <div class="mt-3 flex items-end justify-between gap-3">
-                <p class="text-3xl font-extrabold tracking-[-0.05em] text-[var(--ncm-text)]">3</p>
-                <span
-                  class="inline-flex items-center rounded-full bg-[var(--ncm-surface-soft)] px-2.5 py-1 text-xs font-semibold text-[var(--ncm-text-muted)]"
-                >
-                  Next 1:30 PM
-                </span>
-              </div>
-              <p class="mt-3 text-sm leading-6 text-[var(--ncm-text-muted)]">
-                Open coach slots before the evening consultation wave.
-              </p>
-            </article>
-
-            <article
-              class="rounded-2xl border border-[color:var(--ncm-border)] bg-white p-5 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:shadow-md"
-            >
-              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--ncm-text-soft)]">
-                Feed quality
-              </p>
-              <div class="mt-3 flex items-end justify-between gap-3">
-                <p class="text-3xl font-extrabold tracking-[-0.05em] text-[var(--ncm-text)]">94%</p>
-                <span
-                  class="inline-flex items-center rounded-full bg-[rgba(194,65,59,0.1)] px-2.5 py-1 text-xs font-semibold text-[var(--ncm-danger)]"
-                >
-                  2 at risk
-                </span>
-              </div>
-              <p class="mt-3 text-sm leading-6 text-[var(--ncm-text-muted)]">
-                Approval SLA remains strong, but tonight’s queue needs review.
-              </p>
-            </article>
-          </div>
-        </div>
       </div>
 
-      <aside
-        class="rounded-[30px] border border-[rgba(20,35,28,0.08)] bg-[linear-gradient(180deg,#1c3127_0%,#14231c_100%)] p-6 text-white shadow-[0_24px_44px_rgba(20,35,28,0.24)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_28px_52px_rgba(20,35,28,0.28)]"
-      >
-        <div class="flex items-center justify-between gap-3">
-          <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-white/55">
-          Daily focus
-          </p>
-          <span
-            class="inline-flex items-center rounded-full bg-[rgba(255,255,255,0.08)] px-3 py-1 text-xs font-semibold text-white/78"
+      <div class="flex flex-wrap gap-2">
+        @for (action of quickActions; track action.label) {
+          <button
+            type="button"
+            class="inline-flex items-center gap-2 rounded-[12px] border px-3 py-2 text-[13px] font-semibold transition duration-200"
+            [ngClass]="{
+              'border-[rgba(36,122,82,0.18)] bg-[var(--ncm-primary)] text-white hover:bg-[var(--ncm-primary-strong)]':
+                action.tone === 'primary',
+              'border-[color:var(--ncm-border)] bg-[var(--ncm-surface-soft)] text-[var(--ncm-text)] hover:bg-white':
+                action.tone === 'neutral'
+            }"
           >
-            Mission control
-          </span>
-        </div>
-        <h4 class="mt-4 text-[2rem] font-extrabold tracking-[-0.05em] text-white">
-          Intervene before the evening wave
-        </h4>
-        <p class="mt-3 text-sm leading-7 text-white/72">
-          5 members, 3 approvals, and 2 delayed evaluations can be resolved inside the next 90
-          minutes with the highest impact on retention.
-        </p>
-
-        <div class="mt-6 grid gap-3">
-          <div
-            class="rounded-2xl border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.06)] p-4 transition duration-200 hover:bg-[rgba(255,255,255,0.08)]"
-          >
-            <div class="flex items-start justify-between gap-3">
-              <div>
-                <p class="text-sm font-semibold text-white">Priority queue</p>
-                <p class="mt-1 text-sm text-white/65">17 items need direct coach attention</p>
-              </div>
-              <span
-                class="inline-flex items-center rounded-full bg-[rgba(255,255,255,0.12)] px-2.5 py-1 text-xs font-semibold text-white"
-              >
-                17
-              </span>
-            </div>
-          </div>
-          <div
-            class="rounded-2xl border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.06)] p-4 transition duration-200 hover:bg-[rgba(255,255,255,0.08)]"
-          >
-            <p class="text-sm font-semibold text-white">Next best action</p>
-            <p class="mt-1 text-sm text-white/65">Approve the Ramadan meal guide before 4:00 PM</p>
-          </div>
-          <div
-            class="rounded-2xl border border-[rgba(67,160,110,0.34)] bg-[rgba(67,160,110,0.12)] p-4"
-          >
-            <p class="text-xs font-semibold uppercase tracking-[0.16em] text-[#b6e3c7]">
-              Recommended sequence
-            </p>
-            <p class="mt-2 text-sm leading-6 text-white/78">
-              Review high-risk members, clear approvals, then reopen coach blocks for rescheduled evaluations.
-            </p>
-          </div>
-        </div>
-
-        <button
-          type="button"
-          class="mt-7 inline-flex w-full items-center justify-center rounded-2xl bg-white px-4 py-3.5 text-sm font-semibold text-[var(--ncm-primary-strong)] shadow-[0_18px_32px_rgba(255,255,255,0.12)] transition duration-200 hover:-translate-y-0.5 hover:bg-[var(--ncm-primary-soft)] hover:shadow-[0_20px_36px_rgba(255,255,255,0.16)] active:translate-y-0"
-        >
-          Open command queue
-        </button>
-      </aside>
+            <ncm-icon [name]="action.icon" [size]="16" />
+            <span>{{ action.label }}</span>
+          </button>
+        }
+      </div>
     </div>
   </section>
 
-  <section class="grid gap-4 md:grid-cols-2 2xl:grid-cols-4">
-    @for (card of kpis; track card.label; let index = $index) {
-      <article
-        class="group rounded-2xl border bg-white p-6 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:shadow-md"
-        [ngClass]="{
-          'border-[rgba(36,122,82,0.16)] ring-1 ring-[rgba(36,122,82,0.08)]': index === 0,
-          'border-[color:var(--ncm-border)]': index !== 0
-        }"
-      >
-        <div class="flex items-start justify-between gap-4">
+  <section class="grid gap-3 md:grid-cols-2 2xl:grid-cols-4">
+    @for (card of summaryCards; track card.label) {
+      <article class="rounded-[16px] border border-[color:var(--ncm-border)] bg-white px-4 py-3.5 shadow-sm">
+        <div class="flex items-start justify-between gap-3">
           <div
-            class="flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--ncm-primary-soft)] text-[var(--ncm-primary)]"
+            class="flex h-9 w-9 items-center justify-center rounded-[12px] bg-[var(--ncm-primary-soft)] text-[var(--ncm-primary)]"
           >
-            <ncm-icon [name]="card.icon" [size]="18" />
+            <ncm-icon [name]="card.icon" [size]="16" />
           </div>
+
           <span
-            class="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold"
+            class="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold"
             [ngClass]="{
               'bg-[rgba(25,135,84,0.1)] text-[var(--ncm-success)]': card.trend === 'up',
               'bg-[rgba(194,65,59,0.1)] text-[var(--ncm-danger)]': card.trend === 'down',
-              'bg-[var(--ncm-bg-muted)] text-[var(--ncm-text-muted)]': card.trend === 'steady'
+              'bg-[var(--ncm-surface-soft)] text-[var(--ncm-text-muted)]': card.trend === 'steady'
             }"
           >
             @if (card.trend === 'up') {
@@ -190,340 +56,216 @@
             } @else if (card.trend === 'down') {
               <span>↓</span>
             }
-            {{ card.delta }}
+            {{ card.change }}
           </span>
         </div>
 
-        <p class="mt-5 text-xs font-semibold uppercase tracking-[0.16em] text-[var(--ncm-text-soft)]">
+        <p class="mt-2.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--ncm-text-soft)]">
           {{ card.label }}
         </p>
-        <p class="mt-3 text-3xl font-extrabold tracking-[-0.05em] text-[var(--ncm-text)]">
+        <p class="mt-1 text-[1.82rem] font-extrabold tracking-[-0.05em] text-[var(--ncm-text)]">
           {{ card.value }}
         </p>
-        <p class="mt-3 text-sm leading-6 text-[var(--ncm-text-muted)]">{{ card.context }}</p>
+        <p class="mt-1 text-[13px] text-[var(--ncm-text-muted)]">{{ card.hint }}</p>
       </article>
     }
   </section>
 
-  <section class="grid gap-5 xl:grid-cols-[minmax(0,1.12fr)_380px]">
-    <div class="space-y-4">
-      <section
-        class="rounded-2xl border border-[color:var(--ncm-border)] bg-white p-6 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:shadow-md"
-      >
-        <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-          <div>
-            <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--ncm-text-soft)]">
-              Quick actions
-            </p>
-            <h4 class="mt-2 text-xl font-extrabold text-[var(--ncm-text)]">
-              Keep the workflow moving
-            </h4>
-          </div>
-          <button
-            type="button"
-            class="inline-flex items-center justify-center rounded-[20px] border border-[color:var(--ncm-border)] bg-[var(--ncm-surface-soft)] px-4 py-2.5 text-sm font-semibold text-[var(--ncm-text)] transition duration-200 hover:-translate-y-0.5 hover:border-[color:var(--ncm-border-strong)] hover:bg-white hover:shadow-sm active:translate-y-0"
-          >
-            Customize shortcuts
-          </button>
+  <section class="grid gap-4 xl:grid-cols-[minmax(0,1.18fr)_340px]">
+    <section class="rounded-[20px] border border-[color:var(--ncm-border)] bg-white px-4 py-4 shadow-sm">
+      <div class="flex items-center justify-between gap-3">
+        <div>
+          <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--ncm-text-soft)]">
+            Priority actions
+          </p>
+          <h4 class="mt-1.5 text-[1.1rem] font-extrabold text-[var(--ncm-text)]">
+            What needs attention now
+          </h4>
         </div>
+        <span class="inline-flex items-center rounded-full bg-[var(--ncm-surface-soft)] px-3 py-1 text-[11px] font-semibold text-[var(--ncm-text-muted)]">
+          {{ priorityActions.length }} active
+        </span>
+      </div>
 
-        <div class="mt-5 grid gap-3 md:grid-cols-3">
-          @for (action of quickActions; track action.title) {
-            <button
-              type="button"
-              class="rounded-[24px] border p-5 text-left transition duration-200 hover:-translate-y-0.5 hover:shadow-md"
-              [ngClass]="{
-                'border-[rgba(36,122,82,0.18)] bg-[var(--ncm-primary-soft)] shadow-[0_12px_24px_rgba(36,122,82,0.08)]':
-                  action.tone === 'primary',
-                'border-[color:var(--ncm-border)] bg-[var(--ncm-surface-soft)] hover:bg-white':
-                  action.tone === 'neutral',
-                'border-[color:var(--ncm-border)] bg-white hover:border-[rgba(36,122,82,0.14)]':
-                  action.tone === 'soft'
-              }"
-            >
-              <div class="flex items-center justify-between gap-3">
-                <p class="text-sm font-semibold text-[var(--ncm-text)]">{{ action.title }}</p>
-                <span
-                  class="inline-flex h-9 w-9 items-center justify-center rounded-2xl bg-white text-[var(--ncm-primary)]"
-                >
-                  <ncm-icon name="spark" [size]="16" />
-                </span>
+      <div class="mt-3.5 grid gap-2">
+        @for (item of priorityActions; track item.title) {
+          <article
+            class="rounded-[15px] border px-3.5 py-3 transition duration-200 hover:bg-[rgba(255,255,255,0.98)]"
+            [ngClass]="{
+              'border-[rgba(194,65,59,0.18)] bg-[linear-gradient(180deg,#ffffff_0%,#fff9f8_100%)]': item.tone === 'danger',
+              'border-[rgba(183,121,31,0.16)] bg-[linear-gradient(180deg,#ffffff_0%,#fffbf6_100%)]': item.tone === 'warning',
+              'border-[rgba(36,122,82,0.16)] bg-[linear-gradient(180deg,#ffffff_0%,#f6fbf8_100%)]': item.tone === 'success',
+              'border-[color:var(--ncm-border)] bg-white': item.tone === 'neutral'
+            }"
+          >
+            <div class="grid gap-2.5 lg:grid-cols-[auto_minmax(0,1fr)_auto] lg:items-start">
+              <div
+                class="flex h-9 w-9 items-center justify-center rounded-[12px] bg-white text-[var(--ncm-primary)]"
+              >
+                <ncm-icon [name]="item.icon" [size]="16" />
               </div>
-              <p class="mt-3 text-sm leading-6 text-[var(--ncm-text-muted)]">
-                {{ action.description }}
-              </p>
-            </button>
-          }
-        </div>
-      </section>
 
-      <section
-        class="rounded-2xl border border-[color:var(--ncm-border)] bg-white p-6 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:shadow-md"
-      >
-        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--ncm-text-soft)]">
-              Recent members
-            </p>
-            <h4 class="mt-2 text-xl font-extrabold text-[var(--ncm-text)]">Check-ins needing context</h4>
-          </div>
-          <button
-            type="button"
-            class="inline-flex items-center justify-center rounded-[20px] border border-[color:var(--ncm-border)] bg-[var(--ncm-surface-soft)] px-4 py-2.5 text-sm font-semibold text-[var(--ncm-text)] transition duration-200 hover:-translate-y-0.5 hover:bg-white hover:shadow-sm active:translate-y-0"
-          >
-            View all members
-          </button>
-        </div>
-
-        <div class="mt-5 overflow-hidden rounded-[26px] border border-[color:var(--ncm-border)]">
-          <div class="hidden grid-cols-[1.3fr_1fr_1fr_1fr_0.8fr] bg-[var(--ncm-surface-soft)] px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--ncm-text-soft)] lg:grid">
-            <span>Member</span>
-            <span>Program</span>
-            <span>Coach</span>
-            <span>Last check-in</span>
-            <span>Status</span>
-          </div>
-
-          <div class="divide-y divide-[color:var(--ncm-border)] bg-white">
-            @for (member of recentMembers; track member.name) {
-              <article class="grid gap-3 px-5 py-4 transition duration-200 hover:bg-[var(--ncm-surface-soft)] lg:grid-cols-[1.3fr_1fr_1fr_1fr_0.8fr] lg:items-center">
-                <div class="flex items-center gap-3">
-                  <div
-                    class="flex h-11 w-11 items-center justify-center rounded-2xl bg-[var(--ncm-primary-soft)] text-sm font-bold text-[var(--ncm-primary-strong)]"
-                  >
-                    {{ member.name.charAt(0) }}
-                  </div>
-                  <div>
-                    <p class="text-sm font-semibold text-[var(--ncm-text)]">{{ member.name }}</p>
-                    <p class="text-xs text-[var(--ncm-text-soft)]">Member profile updated today</p>
-                  </div>
+              <div class="min-w-0">
+                <div class="flex flex-wrap items-center gap-2">
+                  <p class="text-[13px] font-semibold text-[var(--ncm-text)]">{{ item.title }}</p>
+                  <span class="inline-flex items-center rounded-full bg-white px-2 py-0.5 text-[10px] font-semibold text-[var(--ncm-text-muted)]">
+                    {{ item.meta }}
+                  </span>
                 </div>
-                <p class="text-sm text-[var(--ncm-text-muted)]">{{ member.program }}</p>
-                <p class="text-sm text-[var(--ncm-text-muted)]">{{ member.coach }}</p>
-                <p class="text-sm text-[var(--ncm-text-muted)]">{{ member.lastCheckIn }}</p>
-                <span
-                  class="inline-flex w-fit items-center rounded-full px-2.5 py-1 text-xs font-semibold"
-                  [ngClass]="{
-                    'bg-[rgba(25,135,84,0.1)] text-[var(--ncm-success)]': member.risk === 'On track',
-                    'bg-[rgba(183,121,31,0.12)] text-[var(--ncm-warning)]':
-                      member.risk === 'Needs review',
-                    'bg-[rgba(194,65,59,0.1)] text-[var(--ncm-danger)]': member.risk === 'Priority'
-                  }"
-                >
-                  {{ member.risk }}
-                </span>
-              </article>
-            }
-          </div>
-        </div>
-      </section>
-
-      <section
-        class="rounded-2xl border border-[color:var(--ncm-border)] bg-white p-6 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:shadow-md"
-      >
-        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--ncm-text-soft)]">
-              Recent evaluations
-            </p>
-            <h4 class="mt-2 text-xl font-extrabold text-[var(--ncm-text)]">Today’s coaching cadence</h4>
-          </div>
-          <button
-            type="button"
-            class="inline-flex items-center justify-center rounded-[20px] border border-[color:var(--ncm-border)] bg-[var(--ncm-surface-soft)] px-4 py-2.5 text-sm font-semibold text-[var(--ncm-text)] transition duration-200 hover:-translate-y-0.5 hover:bg-white hover:shadow-sm active:translate-y-0"
-          >
-            Open calendar
-          </button>
-        </div>
-
-        <div class="mt-5 grid gap-3">
-          @for (evaluation of evaluations; track evaluation.member + evaluation.time) {
-            <article
-              class="grid gap-4 rounded-[24px] border border-[color:var(--ncm-border)] bg-[var(--ncm-surface-soft)] p-4 transition duration-200 hover:-translate-y-0.5 hover:shadow-sm lg:grid-cols-[1.2fr_1fr_0.8fr_1fr_auto] lg:items-center"
-            >
-              <div>
-                <p class="text-sm font-semibold text-[var(--ncm-text)]">{{ evaluation.member }}</p>
-                <p class="mt-1 text-sm text-[var(--ncm-text-muted)]">{{ evaluation.type }}</p>
+                <p class="mt-0.5 text-[13px] leading-5 text-[var(--ncm-text-muted)]">{{ item.detail }}</p>
               </div>
-              <p class="text-sm text-[var(--ncm-text-muted)]">{{ evaluation.coach }}</p>
-              <p class="text-sm font-semibold text-[var(--ncm-text)]">{{ evaluation.time }}</p>
-              <p class="text-sm text-[var(--ncm-text-soft)]">Room 2 / Virtual blend</p>
+
+              <button
+                type="button"
+                class="inline-flex items-center justify-center self-center rounded-[12px] border border-[color:var(--ncm-border)] bg-white px-3 py-2 text-[13px] font-semibold text-[var(--ncm-text)] transition duration-200 hover:bg-[var(--ncm-surface-soft)]"
+              >
+                {{ item.cta }}
+              </button>
+            </div>
+          </article>
+        }
+      </div>
+    </section>
+
+    <aside class="rounded-[20px] border border-[color:var(--ncm-border)] bg-[rgba(255,255,255,0.92)] px-4 py-4 shadow-sm">
+      <div class="flex items-center justify-between gap-3">
+        <div>
+          <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--ncm-text-soft)]">
+            Live activity
+          </p>
+          <h4 class="mt-1.5 text-[1.05rem] font-extrabold text-[var(--ncm-text)]">
+            Latest signals
+          </h4>
+        </div>
+        <span class="inline-flex items-center rounded-full bg-[var(--ncm-primary-soft)] px-2.5 py-1 text-[11px] font-semibold text-[var(--ncm-primary-strong)]">
+          Live
+        </span>
+      </div>
+
+      <div class="mt-3.5 space-y-2">
+        @for (item of activity; track item.title) {
+          <article class="rounded-[13px] border border-[rgba(24,24,27,0.06)] bg-[rgba(248,249,248,0.8)] px-3 py-2.5">
+            <div class="flex items-start gap-2.5">
+              <div
+                class="flex h-8 w-8 shrink-0 items-center justify-center rounded-[10px] bg-white text-[var(--ncm-primary)]"
+              >
+                <ncm-icon [name]="item.icon" [size]="15" />
+              </div>
+              <div class="min-w-0">
+                <div class="flex items-start justify-between gap-3">
+                  <p class="text-[13px] font-semibold text-[var(--ncm-text)]">{{ item.title }}</p>
+                  <span class="shrink-0 text-[11px] text-[var(--ncm-text-soft)]">{{ item.time }}</span>
+                </div>
+                <p class="mt-0.5 text-[12px] leading-5 text-[var(--ncm-text-muted)]">{{ item.detail }}</p>
+              </div>
+            </div>
+          </article>
+        }
+      </div>
+    </aside>
+  </section>
+
+  <section class="grid gap-4 xl:grid-cols-[minmax(0,1.12fr)_minmax(0,1fr)]">
+    <section class="rounded-[20px] border border-[color:var(--ncm-border)] bg-white px-4 py-4 shadow-sm">
+      <div class="flex items-center justify-between gap-3">
+        <div>
+          <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--ncm-text-soft)]">
+            Members
+          </p>
+          <h4 class="mt-1.5 text-[1.05rem] font-extrabold text-[var(--ncm-text)]">
+            Check-ins needing context
+          </h4>
+        </div>
+        <button
+          type="button"
+          class="inline-flex items-center justify-center rounded-[12px] border border-[color:var(--ncm-border)] bg-[var(--ncm-surface-soft)] px-3 py-2 text-sm font-semibold text-[var(--ncm-text)] transition duration-200 hover:bg-white"
+        >
+          View all
+        </button>
+      </div>
+
+      <div class="mt-4 overflow-hidden rounded-[16px] border border-[color:var(--ncm-border)]">
+        <div class="hidden grid-cols-[1.2fr_1fr_1fr_1fr_auto] bg-[var(--ncm-surface-soft)] px-4 py-2.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--ncm-text-soft)] lg:grid">
+          <span>Member</span>
+          <span>Program</span>
+          <span>Coach</span>
+          <span>Last check-in</span>
+          <span>Status</span>
+        </div>
+
+        <div class="divide-y divide-[color:var(--ncm-border)] bg-white">
+          @for (member of recentMembers; track member.name) {
+            <article class="grid gap-3 px-4 py-3 transition duration-200 hover:bg-[var(--ncm-surface-soft)] lg:grid-cols-[1.2fr_1fr_1fr_1fr_auto] lg:items-center">
+              <div class="flex items-center gap-3">
+                <div
+                  class="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--ncm-primary-soft)] text-sm font-bold text-[var(--ncm-primary-strong)]"
+                >
+                  {{ member.name.charAt(0) }}
+                </div>
+                <div class="min-w-0">
+                  <p class="truncate text-[13px] font-semibold text-[var(--ncm-text)]">{{ member.name }}</p>
+                  <p class="truncate text-[12px] text-[var(--ncm-text-soft)]">Member profile active</p>
+                </div>
+              </div>
+              <p class="text-[13px] text-[var(--ncm-text-muted)]">{{ member.program }}</p>
+              <p class="text-[13px] text-[var(--ncm-text-muted)]">{{ member.coach }}</p>
+              <p class="text-[13px] text-[var(--ncm-text-muted)]">{{ member.lastCheckIn }}</p>
               <span
-                class="inline-flex w-fit items-center rounded-full px-2.5 py-1 text-xs font-semibold"
+                class="inline-flex w-fit items-center rounded-full px-2 py-0.5 text-[10px] font-semibold"
                 [ngClass]="{
-                  'bg-[rgba(25,135,84,0.1)] text-[var(--ncm-success)]':
-                    evaluation.status === 'Confirmed',
-                  'bg-[rgba(183,121,31,0.12)] text-[var(--ncm-warning)]':
-                    evaluation.status === 'Pending review',
-                  'bg-[var(--ncm-bg-muted)] text-[var(--ncm-text-muted)]':
-                    evaluation.status === 'Rescheduled'
+                  'bg-[rgba(25,135,84,0.1)] text-[var(--ncm-success)]': member.risk === 'On track',
+                  'bg-[rgba(183,121,31,0.12)] text-[var(--ncm-warning)]': member.risk === 'Needs review',
+                  'bg-[rgba(194,65,59,0.1)] text-[var(--ncm-danger)]': member.risk === 'Priority'
                 }"
               >
-                {{ evaluation.status }}
+                {{ member.risk }}
               </span>
             </article>
           }
         </div>
-      </section>
-    </div>
+      </div>
+    </section>
 
-    <aside class="space-y-4">
-      <section
-        class="rounded-2xl border border-[color:var(--ncm-border)] bg-white p-6 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:shadow-md"
-      >
-        <div class="flex items-center justify-between gap-3">
-          <div>
-            <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--ncm-text-soft)]">
-              Activity feed
-            </p>
-            <h4 class="mt-2 text-xl font-extrabold text-[var(--ncm-text)]">Live signals</h4>
-          </div>
-          <span
-            class="inline-flex items-center rounded-full bg-[var(--ncm-primary-soft)] px-3 py-1 text-xs font-semibold text-[var(--ncm-primary-strong)]"
-          >
-            Preview
-          </span>
+    <section class="rounded-[20px] border border-[color:var(--ncm-border)] bg-white px-4 py-4 shadow-sm">
+      <div class="flex items-center justify-between gap-3">
+        <div>
+          <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--ncm-text-soft)]">
+            Evaluations
+          </p>
+          <h4 class="mt-1.5 text-[1.05rem] font-extrabold text-[var(--ncm-text)]">
+            Recent evaluation flow
+          </h4>
         </div>
-
-        <div class="mt-5 space-y-3">
-          @for (item of feed; track item.title) {
-            <article
-              class="rounded-[24px] border border-[color:var(--ncm-border)] bg-[var(--ncm-surface-soft)] p-4 transition duration-200 hover:-translate-y-0.5 hover:shadow-sm"
-            >
-              <div class="flex items-start gap-3">
-                <div
-                  class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[var(--ncm-primary-soft)] text-[var(--ncm-primary)]"
-                >
-                  <ncm-icon [name]="item.icon" [size]="17" />
-                </div>
-                <div class="min-w-0">
-                  <div class="flex items-start justify-between gap-3">
-                    <p class="text-sm font-semibold text-[var(--ncm-text)]">{{ item.title }}</p>
-                    <span class="shrink-0 text-xs font-medium text-[var(--ncm-text-soft)]">
-                      {{ item.time }}
-                    </span>
-                  </div>
-                  <p class="mt-2 text-sm leading-6 text-[var(--ncm-text-muted)]">{{ item.detail }}</p>
-                </div>
-              </div>
-            </article>
-          }
-        </div>
-      </section>
-
-      <section
-        class="rounded-2xl border border-[rgba(36,122,82,0.14)] bg-white p-6 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:shadow-md"
-      >
-        <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--ncm-text-soft)]">
-          Team pulse
-        </p>
-        <h4 class="mt-2 text-xl font-extrabold text-[var(--ncm-text)]">Ava’s team is ahead of SLA</h4>
-        <p class="mt-3 text-sm leading-6 text-[var(--ncm-text-muted)]">
-          Median response time is down to 6 minutes, and evaluations are currently 92% on time.
-        </p>
-
-        <div class="mt-5 space-y-4">
-          <div>
-            <div class="mb-2 flex items-center justify-between text-sm">
-              <span class="font-medium text-[var(--ncm-text)]">Check-in completion</span>
-              <span class="text-[var(--ncm-text-muted)]">86%</span>
-            </div>
-            <div class="h-2.5 rounded-full bg-white">
-              <div class="h-2.5 w-[86%] rounded-full bg-[linear-gradient(90deg,#2b8a5c_0%,#67b388_100%)]"></div>
-            </div>
-          </div>
-
-          <div>
-            <div class="mb-2 flex items-center justify-between text-sm">
-              <span class="font-medium text-[var(--ncm-text)]">Evaluation throughput</span>
-              <span class="text-[var(--ncm-text-muted)]">92%</span>
-            </div>
-            <div class="h-2.5 rounded-full bg-white">
-              <div class="h-2.5 w-[92%] rounded-full bg-[linear-gradient(90deg,#1e6d48_0%,#4fa576_100%)]"></div>
-            </div>
-          </div>
-
-          <div>
-            <div class="mb-2 flex items-center justify-between text-sm">
-              <span class="font-medium text-[var(--ncm-text)]">Content approval SLA</span>
-              <span class="text-[var(--ncm-text-muted)]">94%</span>
-            </div>
-            <div class="h-2.5 rounded-full bg-white">
-              <div class="h-2.5 w-[94%] rounded-full bg-[linear-gradient(90deg,#226f49_0%,#72ba90_100%)]"></div>
-            </div>
-          </div>
-        </div>
-      </section>
-    </aside>
-  </section>
-
-  <section
-    class="rounded-2xl border border-[color:var(--ncm-border)] bg-white p-6 shadow-sm transition duration-200 hover:shadow-md"
-  >
-    <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-      <div>
-        <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--ncm-text-soft)]">
-          Operational insight
-        </p>
-        <h4 class="mt-2 text-xl font-extrabold text-[var(--ncm-text)]">
-          What deserves attention next
-        </h4>
-        <p class="mt-2 max-w-2xl text-sm leading-7 text-[var(--ncm-text-muted)]">
-          The command center is strongest when it not only reports status, but also suggests where
-          the team should move next.
-        </p>
+        <button
+          type="button"
+          class="inline-flex items-center justify-center rounded-[12px] border border-[color:var(--ncm-border)] bg-[var(--ncm-surface-soft)] px-3 py-2 text-sm font-semibold text-[var(--ncm-text)] transition duration-200 hover:bg-white"
+        >
+          Open evaluations
+        </button>
       </div>
 
-      <button
-        type="button"
-        class="inline-flex items-center justify-center rounded-[20px] border border-[color:var(--ncm-border)] bg-[var(--ncm-surface-soft)] px-4 py-2.5 text-sm font-semibold text-[var(--ncm-text)] transition duration-200 hover:-translate-y-0.5 hover:bg-white hover:shadow-sm active:translate-y-0"
-      >
-        Generate action summary
-      </button>
-    </div>
-
-    <div class="mt-6 grid gap-4 lg:grid-cols-3">
-      <article
-        class="rounded-2xl border border-[color:var(--ncm-border)] bg-[var(--ncm-surface-soft)] p-5 transition duration-200 hover:-translate-y-0.5 hover:shadow-sm"
-      >
-        <p class="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--ncm-text-soft)]">
-          Risk cluster
-        </p>
-        <p class="mt-3 text-lg font-bold tracking-[-0.03em] text-[var(--ncm-text)]">
-          5 members are trending below adherence threshold
-        </p>
-        <p class="mt-2 text-sm leading-6 text-[var(--ncm-text-muted)]">
-          Most are concentrated in PCOS Reset and Metabolic Recovery, where meal logging fell first.
-        </p>
-      </article>
-
-      <article
-        class="rounded-2xl border border-[color:var(--ncm-border)] bg-[var(--ncm-surface-soft)] p-5 transition duration-200 hover:-translate-y-0.5 hover:shadow-sm"
-      >
-        <p class="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--ncm-text-soft)]">
-          Scheduling pressure
-        </p>
-        <p class="mt-3 text-lg font-bold tracking-[-0.03em] text-[var(--ncm-text)]">
-          Afternoon block is the bottleneck for evaluations
-        </p>
-        <p class="mt-2 text-sm leading-6 text-[var(--ncm-text-muted)]">
-          One rescheduled evaluation opened a small buffer. Use it before the 4 PM peak starts.
-        </p>
-      </article>
-
-      <article
-        class="rounded-2xl border border-[rgba(36,122,82,0.16)] bg-[linear-gradient(180deg,#ffffff_0%,#f4fbf7_100%)] p-5 transition duration-200 hover:-translate-y-0.5 hover:shadow-sm"
-      >
-        <p class="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--ncm-text-soft)]">
-          Growth lever
-        </p>
-        <p class="mt-3 text-lg font-bold tracking-[-0.03em] text-[var(--ncm-text)]">
-          Member stories are the highest-leverage approval queue today
-        </p>
-        <p class="mt-2 text-sm leading-6 text-[var(--ncm-text-muted)]">
-          Clearing transformation content improves both retention confidence and inbound trust.
-        </p>
-      </article>
-    </div>
+      <div class="mt-4 space-y-2">
+        @for (evaluation of evaluations; track evaluation.member + evaluation.time) {
+          <article class="grid gap-2 rounded-[14px] border border-[color:var(--ncm-border)] bg-[var(--ncm-surface-soft)] px-4 py-3 transition duration-200 hover:bg-white lg:grid-cols-[1.15fr_1fr_0.8fr_auto] lg:items-center">
+            <div class="min-w-0">
+              <p class="truncate text-[13px] font-semibold text-[var(--ncm-text)]">{{ evaluation.member }}</p>
+              <p class="truncate text-[13px] text-[var(--ncm-text-muted)]">{{ evaluation.type }}</p>
+            </div>
+            <p class="text-[13px] text-[var(--ncm-text-muted)]">{{ evaluation.coach }}</p>
+            <p class="text-[13px] font-semibold text-[var(--ncm-text)]">{{ evaluation.time }}</p>
+            <span
+              class="inline-flex w-fit items-center rounded-full px-2 py-0.5 text-[10px] font-semibold"
+              [ngClass]="{
+                'bg-[rgba(25,135,84,0.1)] text-[var(--ncm-success)]': evaluation.status === 'Confirmed',
+                'bg-[rgba(183,121,31,0.12)] text-[var(--ncm-warning)]': evaluation.status === 'Pending review',
+                'bg-[var(--ncm-bg-muted)] text-[var(--ncm-text-muted)]': evaluation.status === 'Rescheduled'
+              }"
+            >
+              {{ evaluation.status }}
+            </span>
+          </article>
+        }
+      </div>
+    </section>
   </section>
 </div>
