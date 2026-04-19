@@ -1,68 +1,84 @@
-<div class="space-y-6 lg:space-y-7">
-  @if (showSaveToast()) {
-    <div class="fixed right-4 top-24 z-30 sm:right-6 lg:right-8">
-      <div
-        class="rounded-2xl border border-emerald-100 bg-white px-4 py-3 text-sm font-semibold text-emerald-700 shadow-[0_18px_34px_rgba(16,185,129,0.16)]"
-      >
-        {{ saveToastMessage() }}
-      </div>
-    </div>
-  }
+<div class="space-y-5">
+  <section class="rounded-[24px] border border-[color:var(--ncm-border)] bg-white px-5 py-5 shadow-sm">
+    <div class="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
+      <div class="flex min-w-0 items-start gap-4">
+        <div
+          class="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-[linear-gradient(180deg,#e8f5ee_0%,#d5eadc_100%)] text-lg font-bold text-[var(--ncm-primary-strong)]"
+        >
+          {{ member.name.charAt(0) }}
+        </div>
 
-  @if (isEvaluationWorkspaceOpen()) {
-    <app-member-evaluation-workspace
-      [member]="{ name: member.name, goal: member.goal, status: member.status }"
-      [snapshot]="evaluationSnapshot()"
-      (saved)="handleEvaluationSaved($event)"
-      (cancelled)="closeEvaluationWorkspace()"
-    />
-  } @else {
-  <section
-    class="sticky top-4 z-10 rounded-[28px] border border-[color:var(--ncm-border)] bg-white/95 px-4 py-4 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-white/88 sm:px-5 lg:px-6"
-  >
-    <div class="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
-      <div class="min-w-0">
-        <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--ncm-text-soft)]">
-          Members / {{ member.program }}
-        </p>
-        <div class="mt-3 flex flex-wrap items-center gap-3">
-          <span
-            class="inline-flex items-center rounded-full bg-[var(--ncm-primary-soft)] px-3 py-1 text-xs font-semibold text-[var(--ncm-primary-strong)]"
-          >
-            {{ member.goal }}
-          </span>
-          <span
-            class="inline-flex items-center rounded-full bg-[rgba(183,121,31,0.12)] px-3 py-1 text-xs font-semibold text-[var(--ncm-warning)]"
-          >
-            {{ member.status }}
-          </span>
-          <span
-            class="inline-flex items-center rounded-full bg-[var(--ncm-surface-soft)] px-3 py-1 text-xs font-semibold text-[var(--ncm-text-muted)]"
-          >
-            Live member workspace
-          </span>
+        <div class="min-w-0">
+          <div class="flex flex-wrap items-center gap-3">
+            <h2 class="truncate text-[1.7rem] font-extrabold tracking-[-0.05em] text-[var(--ncm-text)]">
+              {{ member.name }}
+            </h2>
+            <span class="text-sm text-[var(--ncm-text-soft)]">{{ member.joinedOn }}</span>
+          </div>
+
+          <div class="mt-2 flex flex-wrap items-center gap-2">
+            <span
+              class="inline-flex items-center rounded-full bg-[var(--ncm-primary-soft)] px-3 py-1 text-xs font-semibold text-[var(--ncm-primary-strong)]"
+            >
+              {{ member.program }}
+            </span>
+            <span
+              class="inline-flex items-center rounded-full bg-[rgba(183,121,31,0.12)] px-3 py-1 text-xs font-semibold text-[var(--ncm-warning)]"
+            >
+              {{ member.status }}
+            </span>
+          </div>
+
+          <div class="mt-4 grid gap-x-5 gap-y-3 sm:grid-cols-2 xl:grid-cols-4">
+            <div>
+              <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--ncm-text-soft)]">
+                Goal
+              </p>
+              <p class="mt-1 text-sm font-semibold text-[var(--ncm-text)]">{{ member.goal }}</p>
+            </div>
+            <div>
+              <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--ncm-text-soft)]">
+                Contact
+              </p>
+              <p class="mt-1 text-sm font-semibold text-[var(--ncm-text)]">{{ member.phone }}</p>
+            </div>
+            <div>
+              <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--ncm-text-soft)]">
+                Assigned Coach
+              </p>
+              <p class="mt-1 text-sm font-semibold text-[var(--ncm-text)]">{{ member.coach }}</p>
+            </div>
+            <div>
+              <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--ncm-text-soft)]">
+                Age / Gender
+              </p>
+              <p class="mt-1 text-sm font-semibold text-[var(--ncm-text)]">
+                {{ member.age }} · {{ member.gender }}
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="flex flex-wrap items-center gap-3">
+      <div class="flex flex-wrap items-center gap-2">
         <button
           type="button"
-          class="inline-flex items-center justify-center rounded-2xl border border-[color:var(--ncm-border)] bg-white px-4 py-3 text-sm font-semibold text-[var(--ncm-text)] shadow-sm transition duration-200 hover:-translate-y-0.5 hover:bg-[var(--ncm-surface-soft)] hover:shadow-md active:translate-y-0"
+          class="inline-flex items-center justify-center rounded-[14px] border border-[color:var(--ncm-border)] bg-white px-4 py-2.5 text-sm font-semibold text-[var(--ncm-text)] transition duration-200 hover:bg-[var(--ncm-surface-soft)]"
         >
           <ncm-icon name="chat" [size]="16" />
           <span class="ml-2">Message</span>
         </button>
         <button
           type="button"
-          class="inline-flex items-center justify-center rounded-2xl border border-[color:var(--ncm-border)] bg-white px-4 py-3 text-sm font-semibold text-[var(--ncm-text)] shadow-sm transition duration-200 hover:-translate-y-0.5 hover:bg-[var(--ncm-surface-soft)] hover:shadow-md active:translate-y-0"
+          class="inline-flex items-center justify-center rounded-[14px] border border-[color:var(--ncm-border)] bg-white px-4 py-2.5 text-sm font-semibold text-[var(--ncm-text)] transition duration-200 hover:bg-[var(--ncm-surface-soft)]"
         >
           <ncm-icon name="phone" [size]="16" />
           <span class="ml-2">Call</span>
         </button>
         <button
           type="button"
-          class="inline-flex items-center justify-center rounded-2xl bg-[var(--ncm-primary)] px-5 py-3 text-sm font-semibold text-white shadow-[0_16px_28px_rgba(36,122,82,0.22)] transition duration-200 hover:-translate-y-0.5 hover:bg-[var(--ncm-primary-strong)] hover:shadow-[0_20px_34px_rgba(36,122,82,0.28)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[rgba(36,122,82,0.14)] active:translate-y-0"
-          (click)="openEvaluationWorkspace()"
+          class="inline-flex items-center justify-center rounded-[14px] bg-[var(--ncm-primary)] px-4 py-2.5 text-sm font-semibold text-white transition duration-200 hover:bg-[var(--ncm-primary-strong)]"
+          (click)="openAddEvaluation()"
         >
           + Add Evaluation
         </button>
@@ -70,495 +86,207 @@
     </div>
   </section>
 
-  <div class="grid gap-6 xl:grid-cols-[minmax(0,1fr)_360px] xl:items-start">
-    <div class="space-y-6">
-      <section
-        class="rounded-[32px] border border-[color:var(--ncm-border)] bg-white p-6 shadow-sm transition duration-200 hover:shadow-md lg:p-7"
-      >
-        <div class="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
-          <div class="flex min-w-0 items-start gap-5">
-            <div
-              class="flex h-18 w-18 shrink-0 items-center justify-center rounded-full bg-[linear-gradient(180deg,#e8f5ee_0%,#d5eadc_100%)] text-2xl font-bold text-[var(--ncm-primary-strong)] shadow-sm"
-            >
-              {{ member.name.charAt(0) }}
-            </div>
+  <section class="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+    @for (card of metricCards(); track card.label) {
+      <article class="rounded-[20px] border border-[color:var(--ncm-border)] bg-white px-4 py-4 shadow-sm">
+        <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--ncm-text-soft)]">
+          {{ card.label }}
+        </p>
+        <p class="mt-2 text-[1.85rem] font-extrabold tracking-[-0.05em] text-[var(--ncm-text)]">
+          {{ card.value }}
+        </p>
+        <span
+          class="mt-3 inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-semibold"
+          [ngClass]="badgeClass(card.trendType)"
+        >
+          {{ card.trend }}
+        </span>
+      </article>
+    }
+  </section>
 
-            <div class="min-w-0">
-              <div class="flex flex-wrap items-center gap-3">
-                <h2 class="truncate text-[2rem] font-extrabold tracking-[-0.05em] text-[var(--ncm-text)]">
-                  {{ member.name }}
-                </h2>
-                <span class="text-sm text-[var(--ncm-text-soft)]">{{ member.joinedOn }}</span>
-              </div>
+  <section class="rounded-[24px] border border-[color:var(--ncm-border)] bg-white px-5 py-5 shadow-sm">
+    <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+      <div>
+        <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--ncm-text-soft)]">
+          Progress visuals
+        </p>
+        <h3 class="mt-2 text-xl font-extrabold text-[var(--ncm-text)]">Weight and body fat trend</h3>
+      </div>
 
-              <p class="mt-2 text-base text-[var(--ncm-text-muted)]">
-                {{ member.summary }}
-              </p>
-
-              <div
-                class="mt-4 inline-flex max-w-full items-center gap-2 rounded-2xl border border-[rgba(183,121,31,0.16)] bg-[rgba(255,247,237,0.9)] px-3 py-2 text-sm text-[var(--ncm-warning)]"
-              >
-                <span class="h-2.5 w-2.5 rounded-full bg-[var(--ncm-warning)]"></span>
-                Follow-up momentum softened after a strong first month. Today is the right intervention point.
-              </div>
-
-              <div class="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-                <div>
-                  <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--ncm-text-soft)]">
-                    Contact
-                  </p>
-                  <p class="mt-1 text-sm font-semibold text-[var(--ncm-text)]">{{ member.phone }}</p>
-                </div>
-                <div>
-                  <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--ncm-text-soft)]">
-                    Age / Gender
-                  </p>
-                  <p class="mt-1 text-sm font-semibold text-[var(--ncm-text)]">
-                    {{ member.age }} · {{ member.gender }}
-                  </p>
-                </div>
-                <div>
-                  <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--ncm-text-soft)]">
-                    Assigned coach
-                  </p>
-                  <p class="mt-1 text-sm font-semibold text-[var(--ncm-text)]">{{ member.coach }}</p>
-                </div>
-                <div>
-                  <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--ncm-text-soft)]">
-                    Primary goal
-                  </p>
-                  <p class="mt-1 text-sm font-semibold text-[var(--ncm-text)]">{{ member.goal }}</p>
-                </div>
-                <div>
-                  <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--ncm-text-soft)]">
-                    Membership status
-                  </p>
-                  <span
-                    class="mt-1 inline-flex items-center rounded-full bg-[rgba(183,121,31,0.12)] px-3 py-1 text-xs font-semibold text-[var(--ncm-warning)]"
-                  >
-                    {{ member.status }}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="flex flex-wrap gap-2.5 lg:max-w-[240px] lg:justify-end">
-            @for (tag of member.tags; track tag) {
-              <span
-                class="inline-flex items-center rounded-full px-3 py-1.5 text-xs font-semibold"
-                [ngClass]="{
-                  'bg-[rgba(183,121,31,0.12)] text-[var(--ncm-warning)]':
-                    tag === 'Needs attention' || tag === 'Missed follow-up',
-                  'bg-[rgba(36,122,82,0.1)] text-[var(--ncm-primary-strong)]':
-                    tag === 'Progressing' || tag === 'New member',
-                  'bg-[var(--ncm-surface-soft)] text-[var(--ncm-text-muted)]':
-                    tag !== 'Needs attention' &&
-                    tag !== 'Missed follow-up' &&
-                    tag !== 'Progressing' &&
-                    tag !== 'New member'
-                }"
-              >
-                {{ tag }}
-              </span>
-            }
-          </div>
-        </div>
-      </section>
-
-      <section class="grid gap-4 md:grid-cols-2 2xl:grid-cols-4">
-        @for (card of metricCards(); track card.label) {
-          <article
-            class="rounded-[28px] border bg-white p-6 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:shadow-md"
-            [ngClass]="{
-              'border-[rgba(36,122,82,0.16)] ring-1 ring-[rgba(36,122,82,0.08)] bg-[linear-gradient(180deg,#ffffff_0%,#f4fbf7_100%)]':
-                card.emphasized,
-              'border-[color:var(--ncm-border)]': !card.emphasized
-            }"
-          >
-            <div class="flex h-full flex-col justify-between gap-5">
-              <div>
-                <p class="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--ncm-text-soft)]">
-                  {{ card.label }}
-                </p>
-                <p class="mt-3 text-3xl font-extrabold tracking-[-0.05em] text-[var(--ncm-text)]">
-                  {{ card.value }}
-                </p>
-              </div>
-
-              <div class="space-y-3">
-                <span
-                  class="inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold"
-                  [ngClass]="badgeClass(card.trendType)"
-                >
-                  {{ card.trend }}
-                </span>
-                <p class="text-sm leading-6 text-[var(--ncm-text-muted)]">{{ card.helper }}</p>
-              </div>
-            </div>
-          </article>
-        }
-      </section>
-
-      <section
-        class="rounded-[32px] border border-[color:var(--ncm-border)] bg-white p-6 shadow-sm transition duration-200 hover:shadow-md lg:p-7"
-      >
-        <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-          <div>
-            <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--ncm-text-soft)]">
-              Progress visuals
-            </p>
-            <h3 class="mt-2 text-xl font-extrabold text-[var(--ncm-text)]">Body composition trend</h3>
-          </div>
-
-          <div class="flex flex-wrap gap-2">
-            @for (range of rangeOptions; track range) {
-              <button
-                type="button"
-                class="inline-flex items-center rounded-full border px-3.5 py-2 text-sm font-medium transition duration-200 hover:-translate-y-0.5 hover:shadow-sm"
-                [ngClass]="{
-                  'border-[rgba(36,122,82,0.14)] bg-[var(--ncm-primary-soft)] text-[var(--ncm-primary-strong)]':
-                    selectedRange() === range,
-                  'border-[color:var(--ncm-border)] bg-white text-[var(--ncm-text-muted)] hover:bg-[var(--ncm-surface-soft)]':
-                    selectedRange() !== range
-                }"
-                (click)="setRange(range)"
-              >
-                {{ range }}
-              </button>
-            }
-          </div>
-        </div>
-
-        <div class="mt-6 grid gap-5 xl:grid-cols-[minmax(0,1fr)_280px]">
-          <div class="space-y-5">
-            <article class="rounded-[28px] border border-[color:var(--ncm-border)] bg-[var(--ncm-surface-soft)] p-5 transition duration-200 hover:shadow-sm">
-              <div class="flex flex-wrap items-center justify-between gap-3">
-                <div>
-                  <p class="text-sm font-semibold text-[var(--ncm-text)]">Weight trend</p>
-                  <p class="mt-1 text-xs text-[var(--ncm-text-soft)]">Minimal view for consultation speed</p>
-                </div>
-                <div class="flex items-center gap-2">
-                  <span class="inline-flex items-center rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-100">
-                    ↓ 1.8 kg
-                  </span>
-                  <span class="text-sm font-semibold text-[var(--ncm-success)]">This month</span>
-                </div>
-              </div>
-
-              <div class="mt-5 overflow-hidden rounded-[24px] border border-[rgba(24,24,27,0.05)] bg-white px-3 py-3">
-                <svg viewBox="0 0 360 140" class="h-40 w-full">
-                  <line x1="0" y1="24" x2="360" y2="24" stroke="rgba(24,24,27,0.04)" />
-                  <line x1="0" y1="72" x2="360" y2="72" stroke="rgba(24,24,27,0.04)" />
-                  <line x1="0" y1="120" x2="360" y2="120" stroke="rgba(24,24,27,0.08)" />
-                  <path
-                    [attr.d]="weightPath()"
-                    fill="none"
-                    stroke="var(--ncm-primary)"
-                    stroke-width="3"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                  @for (point of weightDots(); track point.x) {
-                    <circle [attr.cx]="point.x" [attr.cy]="point.y" r="4.5" fill="white" stroke="var(--ncm-primary)" stroke-width="2.5" />
-                  }
-                </svg>
-                <div class="mt-2 grid grid-cols-4 gap-2 text-xs text-[var(--ncm-text-soft)]">
-                  @for (point of weightPoints(); track point.label) {
-                    <span>{{ point.label }}</span>
-                  }
-                </div>
-              </div>
-
-              <div class="mt-4 flex items-center justify-between rounded-2xl bg-white px-4 py-3">
-                <div>
-                  <p class="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--ncm-text-soft)]">Current</p>
-                  <p class="mt-1 text-lg font-bold text-[var(--ncm-text)]">{{ metricCards()[0].value }}</p>
-                </div>
-                <div class="text-right">
-                  <p class="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--ncm-text-soft)]">Target pace</p>
-                  <p class="mt-1 text-sm font-semibold text-[var(--ncm-primary-strong)]">Healthy reduction</p>
-                </div>
-              </div>
-            </article>
-
-            <article class="rounded-[28px] border border-[color:var(--ncm-border)] bg-[var(--ncm-surface-soft)] p-5 transition duration-200 hover:shadow-sm">
-              <div class="flex flex-wrap items-center justify-between gap-3">
-                <div>
-                  <p class="text-sm font-semibold text-[var(--ncm-text)]">Body fat trend</p>
-                  <p class="mt-1 text-xs text-[var(--ncm-text-soft)]">Consistent reduction over selected range</p>
-                </div>
-                <div class="flex items-center gap-2">
-                  <span class="inline-flex items-center rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-100">
-                    ↓ 0.8%
-                  </span>
-                  <span class="text-sm font-semibold text-[var(--ncm-success)]">Direction positive</span>
-                </div>
-              </div>
-
-              <div class="mt-5 overflow-hidden rounded-[24px] border border-[rgba(24,24,27,0.05)] bg-white px-3 py-3">
-                <svg viewBox="0 0 360 140" class="h-40 w-full">
-                  <line x1="0" y1="24" x2="360" y2="24" stroke="rgba(24,24,27,0.04)" />
-                  <line x1="0" y1="72" x2="360" y2="72" stroke="rgba(24,24,27,0.04)" />
-                  <line x1="0" y1="120" x2="360" y2="120" stroke="rgba(24,24,27,0.08)" />
-                  <path
-                    [attr.d]="bodyFatPath()"
-                    fill="none"
-                    stroke="#4f8f6b"
-                    stroke-width="3"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                  @for (point of bodyFatDots(); track point.x) {
-                    <circle [attr.cx]="point.x" [attr.cy]="point.y" r="4.5" fill="white" stroke="#4f8f6b" stroke-width="2.5" />
-                  }
-                </svg>
-                <div class="mt-2 grid grid-cols-4 gap-2 text-xs text-[var(--ncm-text-soft)]">
-                  @for (point of bodyFatPoints(); track point.label) {
-                    <span>{{ point.label }}</span>
-                  }
-                </div>
-              </div>
-
-              <div class="mt-4 flex items-center justify-between rounded-2xl bg-white px-4 py-3">
-                <div>
-                  <p class="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--ncm-text-soft)]">Current</p>
-                  <p class="mt-1 text-lg font-bold text-[var(--ncm-text)]">{{ metricCards()[1].value }}</p>
-                </div>
-                <div class="text-right">
-                  <p class="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--ncm-text-soft)]">Coach read</p>
-                  <p class="mt-1 text-sm font-semibold text-[var(--ncm-primary-strong)]">Composition improving</p>
-                </div>
-              </div>
-            </article>
-          </div>
-
-          <aside
-            class="rounded-[28px] border border-[rgba(36,122,82,0.14)] bg-[linear-gradient(180deg,#ffffff_0%,#f4fbf7_100%)] p-5 shadow-sm transition duration-200 hover:shadow-md"
-          >
-            <p class="text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--ncm-text-soft)]">
-              Insight summary
-            </p>
-            <div class="mt-4 space-y-3">
-              @for (item of insightItems; track item.title) {
-                <div class="rounded-2xl border border-white/80 bg-white/80 p-4">
-                  <p class="text-sm font-semibold text-[var(--ncm-text)]">{{ item.title }}</p>
-                  <p class="mt-1 text-sm leading-6 text-[var(--ncm-text-muted)]">
-                    {{ item.detail }}
-                  </p>
-                </div>
-              }
-            </div>
-          </aside>
-        </div>
-      </section>
-
-      <section
-        class="rounded-[32px] border border-[color:var(--ncm-border)] bg-white p-6 shadow-sm transition duration-200 hover:shadow-md lg:p-7"
-      >
-        <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-          <div>
-            <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--ncm-text-soft)]">
-              Evaluation workspace
-            </p>
-            <h3 class="mt-2 text-xl font-extrabold text-[var(--ncm-text)]">Open full evaluation workspace</h3>
-            <p class="mt-2 max-w-2xl text-sm leading-7 text-[var(--ncm-text-muted)]">
-              Enter all visit values for this member in one screen. The evaluation workspace keeps every field visible,
-              reduces scrolling, and makes plus/minus entry much faster during consultation.
-            </p>
-          </div>
-
+      <div class="flex flex-wrap gap-2">
+        @for (range of rangeOptions; track range) {
           <button
             type="button"
-            class="inline-flex items-center justify-center rounded-2xl bg-[var(--ncm-primary)] px-5 py-3 text-sm font-semibold text-white shadow-[0_16px_28px_rgba(36,122,82,0.22)] transition duration-200 hover:-translate-y-0.5 hover:bg-[var(--ncm-primary-strong)] hover:shadow-[0_20px_34px_rgba(36,122,82,0.28)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[rgba(36,122,82,0.14)] active:translate-y-0"
-            (click)="openEvaluationWorkspace()"
+            class="inline-flex items-center rounded-full border px-3.5 py-2 text-sm font-medium transition duration-200"
+            [ngClass]="{
+              'border-[rgba(36,122,82,0.14)] bg-[var(--ncm-primary-soft)] text-[var(--ncm-primary-strong)]':
+                selectedRange() === range,
+              'border-[color:var(--ncm-border)] bg-white text-[var(--ncm-text-muted)] hover:bg-[var(--ncm-surface-soft)]':
+                selectedRange() !== range
+            }"
+            (click)="setRange(range)"
           >
-            Enter evaluation
+            {{ range }}
           </button>
-        </div>
-
-        <div class="mt-6 grid gap-4 xl:grid-cols-[minmax(0,1fr)_220px]">
-          <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-            @for (item of evaluationSummary(); track item.label) {
-              <article class="rounded-[24px] border border-[rgba(24,24,27,0.06)] bg-[var(--ncm-surface-soft)] p-4">
-                <p class="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--ncm-text-soft)]">
-                  {{ item.label }}
-                </p>
-                <p class="mt-2 text-sm font-semibold text-[var(--ncm-text)]">
-                  {{ item.value }}
-                </p>
-              </article>
-            }
-          </div>
-
-          <aside class="rounded-[24px] border border-[rgba(36,122,82,0.1)] bg-[linear-gradient(180deg,#fcfefd_0%,#f4fbf7_100%)] p-4">
-            <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--ncm-text-soft)]">
-              Consultation mode
-            </p>
-            <p class="mt-2 text-sm font-semibold text-[var(--ncm-text)]">All metrics visible</p>
-            <p class="mt-2 text-sm leading-6 text-[var(--ncm-text-muted)]">
-              Weight, body fat, visceral fat, muscle, BMI, BMR, notes, and reference fields stay on one screen for fast capture.
-            </p>
-          </aside>
-        </div>
-      </section>
-
-      <section
-        class="rounded-[32px] border border-[color:var(--ncm-border)] bg-white p-6 shadow-sm transition duration-200 hover:shadow-md lg:p-7"
-      >
-        <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-          <div>
-            <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--ncm-text-soft)]">
-              Evaluation history
-            </p>
-            <h3 class="mt-2 text-xl font-extrabold text-[var(--ncm-text)]">Latest records first</h3>
-          </div>
-          <span
-            class="inline-flex items-center rounded-full bg-[var(--ncm-surface-soft)] px-3 py-1.5 text-xs font-semibold text-[var(--ncm-text-muted)]"
-          >
-            {{ history().length }} records
-          </span>
-        </div>
-
-        <div class="mt-6 space-y-4">
-          @for (item of history(); track item.id) {
-            <article
-              class="relative rounded-[28px] border p-5 transition duration-200 hover:-translate-y-0.5 hover:shadow-md"
-              [ngClass]="{
-                'border-[rgba(36,122,82,0.16)] bg-[linear-gradient(180deg,#ffffff_0%,#f4fbf7_100%)] ring-1 ring-[rgba(36,122,82,0.08)]':
-                  item.highlighted,
-                'border-[color:var(--ncm-border)] bg-white': !item.highlighted
-              }"
-            >
-              <span
-                class="absolute bottom-5 left-5 top-5 w-px bg-[linear-gradient(180deg,rgba(36,122,82,0.18)_0%,rgba(36,122,82,0.03)_100%)]"
-              ></span>
-              <div class="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
-                <div class="min-w-0 pl-5">
-                  <div class="flex flex-wrap items-center gap-3">
-                    <h4 class="text-base font-bold text-[var(--ncm-text)]">{{ item.date }}</h4>
-                    <span class="inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold" [ngClass]="badgeClass(item.trendType)">
-                      {{ item.trend }}
-                    </span>
-                    @if (item.highlighted) {
-                      <span class="inline-flex items-center rounded-full bg-[var(--ncm-primary-soft)] px-2.5 py-1 text-xs font-semibold text-[var(--ncm-primary-strong)]">
-                        Latest
-                      </span>
-                    }
-                  </div>
-
-                  <div class="mt-4 grid gap-3 sm:grid-cols-3">
-                    <div>
-                      <p class="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--ncm-text-soft)]">Weight</p>
-                      <p class="mt-1 font-semibold text-[var(--ncm-text)]">{{ item.weight }}</p>
-                    </div>
-                    <div>
-                      <p class="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--ncm-text-soft)]">Body fat</p>
-                      <p class="mt-1 font-semibold text-[var(--ncm-text)]">{{ item.bodyFat }}</p>
-                    </div>
-                    <div>
-                      <p class="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--ncm-text-soft)]">Visceral fat</p>
-                      <p class="mt-1 font-semibold text-[var(--ncm-text)]">{{ item.visceralFat }}</p>
-                    </div>
-                  </div>
-
-                  <p class="mt-4 max-w-3xl text-sm leading-7 text-[var(--ncm-text-muted)]">
-                    {{ item.notes }}
-                  </p>
-                </div>
-
-                <div class="flex flex-col items-start gap-3 xl:items-end">
-                  <div class="rounded-2xl bg-[var(--ncm-surface-soft)] px-3 py-2 text-sm text-[var(--ncm-text-muted)]">
-                    Entered by <span class="font-semibold text-[var(--ncm-text)]">{{ item.enteredBy }}</span>
-                  </div>
-                  <button
-                    type="button"
-                    class="inline-flex items-center justify-center rounded-2xl border border-[color:var(--ncm-border)] bg-white px-4 py-2.5 text-sm font-semibold text-[var(--ncm-text)] shadow-sm transition duration-200 hover:-translate-y-0.5 hover:bg-[var(--ncm-surface-soft)] hover:shadow-md focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[rgba(24,24,27,0.08)] active:translate-y-0"
-                  >
-                    View full record
-                  </button>
-                </div>
-              </div>
-            </article>
-          }
-        </div>
-      </section>
+        }
+      </div>
     </div>
 
-    <aside class="xl:sticky xl:top-28">
-      <div
-        class="rounded-[30px] border border-[rgba(20,35,28,0.08)] bg-[linear-gradient(180deg,#1c3127_0%,#14231c_100%)] p-6 text-white shadow-[0_24px_44px_rgba(20,35,28,0.24)] transition duration-200 hover:shadow-[0_28px_52px_rgba(20,35,28,0.28)]"
-      >
+    <div class="mt-5 grid gap-4 xl:grid-cols-2">
+      <article class="rounded-[20px] border border-[color:var(--ncm-border)] bg-[var(--ncm-surface-soft)] p-4">
         <div class="flex items-center justify-between gap-3">
-          <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-white/55">
-            Attention status
-          </p>
-          <span class="inline-flex items-center rounded-full bg-[rgba(255,255,255,0.08)] px-2.5 py-1 text-xs font-semibold text-[#c7ecd5]">
-            Coach priority
+          <div>
+            <p class="text-sm font-semibold text-[var(--ncm-text)]">Weight trend</p>
+            <p class="mt-1 text-xs text-[var(--ncm-text-soft)]">Selected range</p>
+          </div>
+          <span class="inline-flex items-center rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-100">
+            {{ metricCards()[0].trend }}
           </span>
         </div>
-        <h3 class="mt-4 text-2xl font-extrabold tracking-[-0.05em] text-white">
-          Missed follow-up and fat-loss pace slowed
-        </h3>
-        <p class="mt-3 text-sm leading-7 text-white/72">
-          Member momentum is still recoverable, but this is the point where coach intervention
-          should feel timely and confident.
+
+        <div class="mt-4 overflow-hidden rounded-[18px] border border-[rgba(24,24,27,0.05)] bg-white px-3 py-3">
+          <svg viewBox="0 0 360 140" class="h-36 w-full">
+            <line x1="0" y1="24" x2="360" y2="24" stroke="rgba(24,24,27,0.04)" />
+            <line x1="0" y1="72" x2="360" y2="72" stroke="rgba(24,24,27,0.04)" />
+            <line x1="0" y1="120" x2="360" y2="120" stroke="rgba(24,24,27,0.08)" />
+            <path
+              [attr.d]="weightPath()"
+              fill="none"
+              stroke="var(--ncm-primary)"
+              stroke-width="3"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            @for (point of weightDots(); track point.x) {
+              <circle [attr.cx]="point.x" [attr.cy]="point.y" r="4" fill="white" stroke="var(--ncm-primary)" stroke-width="2.5" />
+            }
+          </svg>
+          <div class="mt-2 grid grid-cols-4 gap-2 text-xs text-[var(--ncm-text-soft)]">
+            @for (point of weightPoints(); track point.label) {
+              <span>{{ point.label }}</span>
+            }
+          </div>
+        </div>
+      </article>
+
+      <article class="rounded-[20px] border border-[color:var(--ncm-border)] bg-[var(--ncm-surface-soft)] p-4">
+        <div class="flex items-center justify-between gap-3">
+          <div>
+            <p class="text-sm font-semibold text-[var(--ncm-text)]">Body fat trend</p>
+            <p class="mt-1 text-xs text-[var(--ncm-text-soft)]">Selected range</p>
+          </div>
+          <span class="inline-flex items-center rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-100">
+            {{ metricCards()[1].trend }}
+          </span>
+        </div>
+
+        <div class="mt-4 overflow-hidden rounded-[18px] border border-[rgba(24,24,27,0.05)] bg-white px-3 py-3">
+          <svg viewBox="0 0 360 140" class="h-36 w-full">
+            <line x1="0" y1="24" x2="360" y2="24" stroke="rgba(24,24,27,0.04)" />
+            <line x1="0" y1="72" x2="360" y2="72" stroke="rgba(24,24,27,0.04)" />
+            <line x1="0" y1="120" x2="360" y2="120" stroke="rgba(24,24,27,0.08)" />
+            <path
+              [attr.d]="bodyFatPath()"
+              fill="none"
+              stroke="#4f8f6b"
+              stroke-width="3"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            @for (point of bodyFatDots(); track point.x) {
+              <circle [attr.cx]="point.x" [attr.cy]="point.y" r="4" fill="white" stroke="#4f8f6b" stroke-width="2.5" />
+            }
+          </svg>
+          <div class="mt-2 grid grid-cols-4 gap-2 text-xs text-[var(--ncm-text-soft)]">
+            @for (point of bodyFatPoints(); track point.label) {
+              <span>{{ point.label }}</span>
+            }
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="rounded-[24px] border border-[color:var(--ncm-border)] bg-white px-5 py-5 shadow-sm">
+    <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+      <div>
+        <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--ncm-text-soft)]">
+          Evaluation history
         </p>
-
-        <div class="mt-5 grid grid-cols-3 gap-2">
-          @for (signal of actionSignals; track signal.label) {
-            <div class="rounded-2xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] px-3 py-3">
-              <p class="text-[10px] font-semibold uppercase tracking-[0.16em] text-white/45">{{ signal.label }}</p>
-              <p class="mt-2 text-sm font-semibold text-white">{{ signal.value }}</p>
-            </div>
-          }
-        </div>
-
-        <div class="mt-6 space-y-3">
-          <div class="rounded-[24px] border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.06)] p-4">
-            <p class="text-xs font-semibold uppercase tracking-[0.16em] text-[#b6e3c7]">Next best action</p>
-            <p class="mt-2 text-sm leading-6 text-white/80">
-              Review adherence blockers, save a fresh evaluation, and send a same-day follow-up message.
-            </p>
-          </div>
-          <div class="rounded-[24px] border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.06)] p-4">
-            <p class="text-xs font-semibold uppercase tracking-[0.16em] text-[#b6e3c7]">Coach note</p>
-            <p class="mt-2 text-sm leading-6 text-white/80">
-              Appetite variability and sleep inconsistency may explain the small plateau.
-            </p>
-          </div>
-        </div>
-
-        <button
-          type="button"
-          class="mt-6 inline-flex w-full items-center justify-center rounded-[24px] bg-white px-4 py-3.5 text-sm font-semibold text-[#163126] shadow-[0_18px_34px_rgba(6,18,12,0.22)] transition duration-200 hover:-translate-y-0.5 hover:bg-[#f3fbf6] hover:shadow-[0_22px_40px_rgba(6,18,12,0.28)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[rgba(255,255,255,0.12)] active:translate-y-0"
-          (click)="openEvaluationWorkspace()"
-        >
-          Enter evaluation
-        </button>
-
-        <div class="mt-4 space-y-3">
-          @for (action of quickActions; track action.label) {
-            <button
-              type="button"
-              class="inline-flex w-full items-center justify-between rounded-[24px] border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.06)] px-4 py-3 text-left text-sm font-semibold text-white transition duration-200 hover:-translate-y-0.5 hover:bg-[rgba(255,255,255,0.08)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[rgba(255,255,255,0.12)]"
-            >
-              <span class="flex items-center gap-3">
-                <span
-                  class="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[rgba(255,255,255,0.08)]"
-                >
-                  <ncm-icon [name]="action.icon" [size]="17" />
-                </span>
-                {{ action.label }}
-              </span>
-              <span class="rotate-180 text-white/70">
-                <ncm-icon name="chevron-left" [size]="16" />
-              </span>
-            </button>
-          }
-        </div>
+        <h3 class="mt-2 text-xl font-extrabold text-[var(--ncm-text)]">Latest records first</h3>
       </div>
-    </aside>
-  </div>
-  }
+      <span
+        class="inline-flex items-center rounded-full bg-[var(--ncm-surface-soft)] px-3 py-1.5 text-xs font-semibold text-[var(--ncm-text-muted)]"
+      >
+        {{ history().length }} records
+      </span>
+    </div>
+
+    <div class="mt-5 space-y-3">
+      @for (item of history(); track item.id) {
+        <article
+          class="rounded-[18px] border px-4 py-4 transition duration-200 hover:border-[rgba(36,122,82,0.18)] hover:bg-[rgba(255,255,255,0.98)]"
+          [ngClass]="{
+            'border-[rgba(36,122,82,0.16)] bg-[linear-gradient(180deg,#ffffff_0%,#f4fbf7_100%)]':
+              item.highlighted,
+            'border-[color:var(--ncm-border)] bg-white': !item.highlighted
+          }"
+        >
+          <div class="grid gap-4 xl:grid-cols-[minmax(0,1.3fr)_minmax(320px,1fr)_auto] xl:items-start">
+            <div class="min-w-0">
+              <div class="flex flex-wrap items-center gap-2">
+                <h4 class="text-sm font-bold text-[var(--ncm-text)]">{{ item.date }}</h4>
+                <span class="inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-semibold" [ngClass]="badgeClass(item.trendType)">
+                  {{ item.trend }}
+                </span>
+                @if (item.highlighted) {
+                  <span class="inline-flex items-center rounded-full bg-[var(--ncm-primary-soft)] px-2.5 py-1 text-[11px] font-semibold text-[var(--ncm-primary-strong)]">
+                    Latest
+                  </span>
+                }
+              </div>
+
+              <p class="mt-2 text-sm leading-6 text-[var(--ncm-text-muted)]">
+                {{ item.notes }}
+              </p>
+            </div>
+
+            <div class="grid gap-x-5 gap-y-2 sm:grid-cols-3">
+              <div>
+                <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--ncm-text-soft)]">
+                  Weight
+                </p>
+                <p class="mt-1 text-sm font-semibold text-[var(--ncm-text)]">{{ item.weight }}</p>
+              </div>
+              <div>
+                <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--ncm-text-soft)]">
+                  Body fat
+                </p>
+                <p class="mt-1 text-sm font-semibold text-[var(--ncm-text)]">{{ item.bodyFat }}</p>
+              </div>
+              <div>
+                <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--ncm-text-soft)]">
+                  Visceral fat
+                </p>
+                <p class="mt-1 text-sm font-semibold text-[var(--ncm-text)]">{{ item.visceralFat }}</p>
+              </div>
+            </div>
+
+            <div class="flex flex-col items-start gap-2 xl:items-end">
+              <div class="rounded-[14px] bg-[var(--ncm-surface-soft)] px-3 py-2 text-sm text-[var(--ncm-text-muted)]">
+                Entered by <span class="font-semibold text-[var(--ncm-text)]">{{ item.enteredBy }}</span>
+              </div>
+              <button
+                type="button"
+                class="inline-flex items-center justify-center rounded-[14px] border border-[color:var(--ncm-border)] bg-white px-4 py-2.5 text-sm font-semibold text-[var(--ncm-text)] transition duration-200 hover:bg-[var(--ncm-surface-soft)]"
+              >
+                View full record
+              </button>
+            </div>
+          </div>
+        </article>
+      }
+    </div>
+  </section>
 </div>
