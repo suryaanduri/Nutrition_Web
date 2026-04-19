@@ -1,4 +1,4 @@
-<div class="space-y-4">
+<div class="space-y-3">
   @if (feedback()) {
     <div class="fixed right-4 top-24 z-30 sm:right-6 lg:right-8">
       <div
@@ -13,25 +13,25 @@
     </div>
   }
 
-  <section class="rounded-[22px] border border-[color:var(--ncm-border)] bg-white px-5 py-4 shadow-sm">
+  <section class="rounded-[20px] border border-[color:var(--ncm-border)] bg-white px-4 py-3.5 shadow-sm">
     <div class="flex flex-wrap items-center justify-between gap-3">
-      <div>
-        <h3 class="text-[1.3rem] font-extrabold tracking-[-0.04em] text-[var(--ncm-text)]">
+      <div class="min-w-0">
+        <h3 class="text-[1.18rem] font-extrabold tracking-[-0.04em] text-[var(--ncm-text)]">
           Feed Moderation Queue
         </h3>
-        <p class="mt-1 text-sm text-[var(--ncm-text-soft)]">
+        <p class="mt-0.5 text-[13px] text-[var(--ncm-text-soft)]">
           Review pending member posts and publish safely.
         </p>
       </div>
 
       <span
-        class="inline-flex items-center rounded-full bg-[var(--ncm-primary-soft)] px-3 py-1.5 text-sm font-semibold text-[var(--ncm-primary-strong)]"
+        class="inline-flex items-center rounded-full bg-[var(--ncm-primary-soft)] px-3 py-1 text-xs font-semibold text-[var(--ncm-primary-strong)]"
       >
         {{ pendingCount() }} pending
       </span>
     </div>
 
-    <div class="mt-3 flex flex-wrap items-center gap-2 text-[12px]">
+    <div class="mt-2.5 flex flex-wrap items-center gap-1.5 text-[11px]">
       <span class="inline-flex items-center rounded-full bg-[var(--ncm-surface-soft)] px-2.5 py-1 font-semibold text-[var(--ncm-text-muted)]">
         Pending {{ pendingCount() }}
       </span>
@@ -44,10 +44,10 @@
     </div>
   </section>
 
-  <section class="rounded-[20px] border border-[color:var(--ncm-border)] bg-white px-4 py-4 shadow-sm">
-    <div class="flex flex-wrap items-center gap-2.5">
+  <section class="rounded-[18px] border border-[color:var(--ncm-border)] bg-white px-3.5 py-3 shadow-sm">
+    <div class="flex flex-wrap items-center gap-2">
       <label
-        class="group flex min-w-[240px] flex-1 items-center gap-2.5 rounded-[14px] border border-[color:var(--ncm-border)] bg-[var(--ncm-surface-soft)] px-3 py-2.5 transition duration-200 focus-within:border-[rgba(36,122,82,0.22)] focus-within:bg-white focus-within:shadow-[0_0_0_3px_rgba(36,122,82,0.08)] lg:max-w-[320px]"
+        class="group flex min-w-[220px] flex-1 items-center gap-2 rounded-[12px] border border-[color:var(--ncm-border)] bg-[var(--ncm-surface-soft)] px-3 py-2.5 transition duration-200 focus-within:border-[rgba(36,122,82,0.22)] focus-within:bg-white focus-within:shadow-[0_0_0_3px_rgba(36,122,82,0.08)] lg:max-w-[280px]"
       >
         <span class="text-[var(--ncm-text-soft)] transition duration-200 group-focus-within:text-[var(--ncm-primary)]">
           <ncm-icon name="search" [size]="16" />
@@ -61,9 +61,9 @@
         />
       </label>
 
-      <label class="min-w-[132px]">
+      <label class="min-w-[124px]">
         <select
-          class="w-full rounded-[14px] border border-[color:var(--ncm-border)] bg-white px-3 py-2.5 text-sm text-[var(--ncm-text)] outline-none transition focus:border-[rgba(36,122,82,0.22)] focus:shadow-[0_0_0_3px_rgba(36,122,82,0.08)]"
+          class="w-full rounded-[12px] border border-[color:var(--ncm-border)] bg-white px-3 py-2.5 text-sm text-[var(--ncm-text)] outline-none transition focus:border-[rgba(36,122,82,0.22)] focus:shadow-[0_0_0_3px_rgba(36,122,82,0.08)]"
           [value]="selectedStatus()"
           (change)="setStatus(($any($event.target).value ?? 'Pending').toString())"
         >
@@ -73,9 +73,9 @@
         </select>
       </label>
 
-      <label class="min-w-[144px]">
+      <label class="min-w-[136px]">
         <select
-          class="w-full rounded-[14px] border border-[color:var(--ncm-border)] bg-white px-3 py-2.5 text-sm text-[var(--ncm-text)] outline-none transition focus:border-[rgba(36,122,82,0.22)] focus:shadow-[0_0_0_3px_rgba(36,122,82,0.08)]"
+          class="w-full rounded-[12px] border border-[color:var(--ncm-border)] bg-white px-3 py-2.5 text-sm text-[var(--ncm-text)] outline-none transition focus:border-[rgba(36,122,82,0.22)] focus:shadow-[0_0_0_3px_rgba(36,122,82,0.08)]"
           [value]="selectedType()"
           (change)="setType(($any($event.target).value ?? 'All content').toString())"
         >
@@ -85,9 +85,9 @@
         </select>
       </label>
 
-      <label class="min-w-[144px]">
+      <label class="min-w-[136px]">
         <select
-          class="w-full rounded-[14px] border border-[color:var(--ncm-border)] bg-white px-3 py-2.5 text-sm text-[var(--ncm-text)] outline-none transition focus:border-[rgba(36,122,82,0.22)] focus:shadow-[0_0_0_3px_rgba(36,122,82,0.08)]"
+          class="w-full rounded-[12px] border border-[color:var(--ncm-border)] bg-white px-3 py-2.5 text-sm text-[var(--ncm-text)] outline-none transition focus:border-[rgba(36,122,82,0.22)] focus:shadow-[0_0_0_3px_rgba(36,122,82,0.08)]"
           [value]="selectedSort()"
           (change)="setSort(($any($event.target).value ?? 'Newest first').toString())"
         >
@@ -99,7 +99,7 @@
 
       <button
         type="button"
-        class="inline-flex items-center rounded-[14px] border border-[color:var(--ncm-border)] bg-white px-3 py-2.5 text-sm font-semibold text-[var(--ncm-text-muted)] transition duration-200 hover:bg-[var(--ncm-surface-soft)]"
+        class="inline-flex items-center rounded-[12px] border border-[color:var(--ncm-border)] bg-white px-3 py-2.5 text-sm font-semibold text-[var(--ncm-text-muted)] transition duration-200 hover:bg-[var(--ncm-surface-soft)]"
         (click)="resetFilters()"
       >
         Reset
@@ -107,8 +107,8 @@
     </div>
   </section>
 
-  <div class="grid gap-4 xl:grid-cols-[minmax(0,1fr)_320px] xl:items-start">
-    <div class="space-y-3">
+  <div class="grid gap-3 xl:grid-cols-[minmax(0,1fr)_280px] xl:items-start">
+    <div class="space-y-2.5">
       <div class="flex items-center justify-between gap-3 px-1">
         <p class="text-sm font-semibold text-[var(--ncm-text)]">{{ queueLabel() }}</p>
 
@@ -179,10 +179,10 @@
           </button>
         </section>
       } @else {
-        <section class="space-y-2.5">
+        <section class="space-y-2">
           @for (post of filteredPosts(); track post.id) {
             <article
-              class="group cursor-pointer rounded-[18px] border bg-white px-4 py-4 shadow-sm transition duration-200 hover:border-[rgba(36,122,82,0.18)] hover:bg-[rgba(255,255,255,0.98)]"
+              class="group cursor-pointer rounded-[16px] border bg-white px-3.5 py-3.5 shadow-sm transition duration-200 hover:border-[rgba(36,122,82,0.18)] hover:bg-[rgba(255,255,255,0.98)]"
               [ngClass]="[
                 priorityClass(post.priority),
                 selectedPost().id === post.id ? 'ring-1 ring-[rgba(36,122,82,0.08)]' : ''
@@ -191,43 +191,43 @@
               role="button"
               (click)="selectPost(post.id)"
             >
-              <div class="grid gap-4 xl:grid-cols-[minmax(0,1.35fr)_210px] xl:items-start">
+              <div class="grid gap-3 xl:grid-cols-[minmax(0,1.45fr)_182px] xl:items-start">
                 <div class="min-w-0">
-                  <div class="flex items-start gap-3">
+                  <div class="flex items-start gap-2.5">
                     <div
-                      class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--ncm-primary-soft)] text-sm font-bold text-[var(--ncm-primary-strong)]"
+                      class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--ncm-primary-soft)] text-sm font-bold text-[var(--ncm-primary-strong)]"
                     >
                       {{ post.memberName.charAt(0) }}
                     </div>
 
                     <div class="min-w-0 flex-1">
                       <div class="flex flex-wrap items-center gap-2">
-                        <h4 class="truncate text-[1rem] font-bold tracking-[-0.03em] text-[var(--ncm-text)]">
+                        <h4 class="truncate text-[0.96rem] font-bold tracking-[-0.03em] text-[var(--ncm-text)]">
                           {{ post.memberName }}
                         </h4>
                         <span
-                          class="inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-semibold"
+                          class="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold"
                           [ngClass]="statusClass(post.status)"
                         >
                           {{ post.status }}
                         </span>
-                        <span class="text-[12px] text-[var(--ncm-text-soft)]">{{ post.submittedAt }}</span>
+                        <span class="text-[11px] text-[var(--ncm-text-soft)]">{{ post.submittedAt }}</span>
                       </div>
 
-                      <div class="mt-1 flex flex-wrap items-center gap-2 text-[12px] text-[var(--ncm-text-soft)]">
+                      <div class="mt-0.5 flex flex-wrap items-center gap-2 text-[11px] text-[var(--ncm-text-soft)]">
                         <span>{{ post.memberId }}</span>
                         <span>•</span>
                         <span>{{ post.contentType }}</span>
                       </div>
 
-                      <p class="mt-2 line-clamp-2 text-sm leading-6 text-[var(--ncm-text-muted)]">
+                      <p class="mt-1.5 line-clamp-2 text-[13px] leading-5 text-[var(--ncm-text-muted)]">
                         {{ post.textPreview }}
                       </p>
 
-                      <div class="mt-2.5 flex flex-wrap gap-1.5">
+                      <div class="mt-2 flex flex-wrap gap-1.5">
                         @for (flag of post.flags; track flag) {
                           <span
-                            class="inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-semibold"
+                            class="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold"
                             [ngClass]="flagClass(flag)"
                           >
                             {{ flag }}
@@ -240,13 +240,13 @@
 
                 <div class="grid gap-2 xl:justify-items-end">
                   @if (post.imageLabel) {
-                    <div class="flex w-full items-center gap-3 rounded-[14px] border border-[color:var(--ncm-border)] bg-[var(--ncm-surface-soft)] px-3 py-2.5 xl:max-w-[210px]">
+                    <div class="flex w-full items-center gap-2.5 rounded-[12px] border border-[color:var(--ncm-border)] bg-[var(--ncm-surface-soft)] px-2.5 py-2 xl:max-w-[182px]">
                       <div
-                        class="h-10 w-10 shrink-0 rounded-[12px] bg-gradient-to-br"
+                        class="h-8 w-8 shrink-0 rounded-[10px] bg-gradient-to-br"
                         [ngClass]="post.imageTone ? post.imageTone : 'from-emerald-100 via-lime-50 to-white'"
                       ></div>
                       <div class="min-w-0">
-                        <p class="truncate text-[12px] font-semibold text-[var(--ncm-text)]">{{ post.imageLabel }}</p>
+                        <p class="truncate text-[11px] font-semibold text-[var(--ncm-text)]">{{ post.imageLabel }}</p>
                       </div>
                     </div>
                   }
@@ -254,14 +254,14 @@
                   <div class="flex flex-wrap gap-2 xl:justify-end">
                     <button
                       type="button"
-                      class="inline-flex h-9 items-center justify-center rounded-[14px] border border-[color:var(--ncm-border)] bg-white px-3 text-sm font-semibold text-[var(--ncm-text)] transition duration-200 hover:bg-[var(--ncm-surface-soft)]"
+                      class="inline-flex h-8 items-center justify-center rounded-[12px] border border-[color:var(--ncm-border)] bg-white px-3 text-[13px] font-semibold text-[var(--ncm-text)] transition duration-200 hover:bg-[var(--ncm-surface-soft)]"
                       (click)="selectPost(post.id); $event.stopPropagation()"
                     >
                       Preview
                     </button>
                     <button
                       type="button"
-                      class="inline-flex h-9 items-center justify-center rounded-[14px] bg-[var(--ncm-primary)] px-3 text-sm font-semibold text-white transition duration-200 hover:bg-[var(--ncm-primary-strong)]"
+                      class="inline-flex h-8 items-center justify-center rounded-[12px] bg-[var(--ncm-primary)] px-3 text-[13px] font-semibold text-white transition duration-200 hover:bg-[var(--ncm-primary-strong)]"
                       [disabled]="post.status !== 'Pending'"
                       (click)="selectPost(post.id); moderateSelected('approve'); $event.stopPropagation()"
                     >
@@ -269,7 +269,7 @@
                     </button>
                     <button
                       type="button"
-                      class="inline-flex h-9 items-center justify-center rounded-[14px] border border-[rgba(194,65,59,0.18)] bg-white px-3 text-sm font-semibold text-[var(--ncm-danger)] transition duration-200 hover:bg-[rgba(194,65,59,0.04)]"
+                      class="inline-flex h-8 items-center justify-center rounded-[12px] border border-[rgba(194,65,59,0.18)] bg-white px-3 text-[13px] font-semibold text-[var(--ncm-danger)] transition duration-200 hover:bg-[rgba(194,65,59,0.04)]"
                       [disabled]="post.status !== 'Pending'"
                       (click)="selectPost(post.id); moderateSelected('reject'); $event.stopPropagation()"
                     >
@@ -285,84 +285,94 @@
     </div>
 
     <aside>
-      <section class="rounded-[22px] border border-[color:var(--ncm-border)] bg-white p-5 shadow-sm">
+      <section class="rounded-[20px] border border-[color:var(--ncm-border)] bg-white p-4 shadow-sm">
         <div class="flex items-start justify-between gap-3">
           <div>
             <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--ncm-text-soft)]">
               Selected post
             </p>
-            <h4 class="mt-2 text-[1.1rem] font-extrabold text-[var(--ncm-text)]">
+            <h4 class="mt-1.5 text-[1rem] font-extrabold text-[var(--ncm-text)]">
               {{ selectedPost().memberName }}
             </h4>
           </div>
           <span
-            class="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold"
+            class="inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-semibold"
             [ngClass]="statusClass(selectedPost().status)"
           >
             {{ selectedPost().status }}
           </span>
         </div>
 
-        <div class="mt-4 grid gap-2.5">
-          <div class="rounded-[16px] bg-[var(--ncm-surface-soft)] px-3.5 py-3">
-            <div class="flex items-start justify-between gap-3">
-              <div>
-                <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--ncm-text-soft)]">
-                  Member
-                </p>
-                <p class="mt-1 text-sm font-semibold text-[var(--ncm-text)]">
-                  {{ selectedPost().memberName }}
-                </p>
+        <div class="mt-3 grid gap-2">
+          <div class="rounded-[14px] bg-[var(--ncm-surface-soft)] px-3 py-3">
+            <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
+              <div class="flex items-start justify-between gap-3">
+                <div>
+                  <p class="text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--ncm-text-soft)]">
+                    Member
+                  </p>
+                  <p class="mt-1 text-[13px] font-semibold text-[var(--ncm-text)]">
+                    {{ selectedPost().memberName }}
+                  </p>
+                </div>
+                <div class="text-right">
+                  <p class="text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--ncm-text-soft)]">
+                    Type
+                  </p>
+                  <p class="mt-1 text-[13px] font-semibold text-[var(--ncm-text)]">{{ selectedPost().contentType }}</p>
+                </div>
               </div>
-              <div class="text-right">
-                <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--ncm-text-soft)]">
-                  Content type
-                </p>
-                <p class="mt-1 text-sm font-semibold text-[var(--ncm-text)]">{{ selectedPost().contentType }}</p>
+              <div class="flex items-start justify-between gap-3 border-t border-[rgba(24,24,27,0.06)] pt-3 sm:border-t-0 sm:pt-0 xl:border-t xl:pt-3">
+                <div>
+                  <p class="text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--ncm-text-soft)]">
+                    Submitted
+                  </p>
+                  <p class="mt-1 text-[13px] font-semibold text-[var(--ncm-text)]">{{ selectedPost().submittedAt }}</p>
+                </div>
+                <div class="text-right">
+                  <p class="text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--ncm-text-soft)]">
+                    Goal
+                  </p>
+                  <p class="mt-1 text-[13px] font-semibold text-[var(--ncm-text)]">{{ selectedPost().memberGoal }}</p>
+                </div>
               </div>
-            </div>
-            <div class="mt-3 border-t border-[rgba(24,24,27,0.06)] pt-3">
-              <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--ncm-text-soft)]">
-                Submitted
-              </p>
-              <p class="mt-1 text-sm font-semibold text-[var(--ncm-text)]">{{ selectedPost().submittedAt }}</p>
             </div>
           </div>
 
-          <article class="rounded-[16px] border border-[color:var(--ncm-border)] bg-[var(--ncm-surface-soft)] p-4">
-            <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--ncm-text-soft)]">
+          <article class="rounded-[14px] border border-[color:var(--ncm-border)] bg-[var(--ncm-surface-soft)] p-3.5">
+            <p class="text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--ncm-text-soft)]">
               Full text
             </p>
-            <p class="mt-3 text-sm leading-6 text-[var(--ncm-text-muted)]">{{ selectedPost().fullText }}</p>
+            <p class="mt-2 text-[13px] leading-5 text-[var(--ncm-text-muted)]">{{ selectedPost().fullText }}</p>
           </article>
 
           @if (selectedPost().imageLabel) {
-            <article class="rounded-[16px] border border-[color:var(--ncm-border)] bg-[var(--ncm-surface-soft)] p-4">
-              <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--ncm-text-soft)]">
+            <article class="rounded-[14px] border border-[color:var(--ncm-border)] bg-[var(--ncm-surface-soft)] p-3.5">
+              <p class="text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--ncm-text-soft)]">
                 Image preview
               </p>
               <div
-                class="mt-3 aspect-[4/3] rounded-[18px] bg-gradient-to-br"
+                class="mt-2 aspect-[4/3] rounded-[14px] bg-gradient-to-br"
                 [ngClass]="selectedPost().imageTone ? selectedPost().imageTone : 'from-emerald-100 via-lime-50 to-white'"
               ></div>
-              <p class="mt-3 text-sm font-semibold text-[var(--ncm-text)]">{{ selectedPost().imageLabel }}</p>
+              <p class="mt-2.5 text-[13px] font-semibold text-[var(--ncm-text)]">{{ selectedPost().imageLabel }}</p>
             </article>
           }
 
-          <div class="rounded-[16px] bg-[var(--ncm-surface-soft)] px-3.5 py-3">
-            <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--ncm-text-soft)]">
+          <div class="rounded-[14px] bg-[var(--ncm-surface-soft)] px-3 py-3">
+            <p class="text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--ncm-text-soft)]">
               Moderation note
             </p>
-            <p class="mt-2 text-[13px] leading-5 text-[var(--ncm-text-muted)]">
+            <p class="mt-2 text-[12.5px] leading-5 text-[var(--ncm-text-muted)]">
               {{ selectedPost().reviewReason }}
             </p>
           </div>
         </div>
 
-        <div class="mt-4 grid gap-2.5">
+        <div class="mt-3 grid gap-2">
           <button
             type="button"
-            class="inline-flex w-full items-center justify-center rounded-[14px] bg-[var(--ncm-primary)] px-4 py-2.5 text-sm font-semibold text-white transition duration-200 hover:bg-[var(--ncm-primary-strong)]"
+            class="inline-flex w-full items-center justify-center rounded-[12px] bg-[var(--ncm-primary)] px-4 py-2.5 text-sm font-semibold text-white transition duration-200 hover:bg-[var(--ncm-primary-strong)]"
             [disabled]="selectedPost().status !== 'Pending'"
             (click)="moderateSelected('approve')"
           >
@@ -370,7 +380,7 @@
           </button>
           <button
             type="button"
-            class="inline-flex w-full items-center justify-center rounded-[14px] border border-[rgba(194,65,59,0.18)] bg-white px-4 py-2.5 text-sm font-semibold text-[var(--ncm-danger)] transition duration-200 hover:bg-[rgba(194,65,59,0.04)]"
+            class="inline-flex w-full items-center justify-center rounded-[12px] border border-[rgba(194,65,59,0.18)] bg-white px-4 py-2.5 text-sm font-semibold text-[var(--ncm-danger)] transition duration-200 hover:bg-[rgba(194,65,59,0.04)]"
             [disabled]="selectedPost().status !== 'Pending'"
             (click)="moderateSelected('reject')"
           >
