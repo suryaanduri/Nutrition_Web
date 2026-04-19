@@ -140,7 +140,7 @@
               >
                 <app-conversation-list-item
                   [conversation]="conversation"
-                  [selected]="selectedConversation()?.id === conversation.id"
+                  [selected]="selectedConversation()!.id === conversation.id"
                 />
               </button>
             }
