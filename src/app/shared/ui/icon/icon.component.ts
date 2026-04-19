@@ -15,7 +15,8 @@ type IconName =
   | 'spark'
   | 'trend'
   | 'calendar'
-  | 'target';
+  | 'target'
+  | 'logout';
 
 @Component({
   selector: 'ncm-icon',
@@ -177,6 +178,14 @@ const ICONS: Record<
       { d: 'M12 20a8 8 0 1 0 0-16 8 8 0 0 0 0 16Z' },
       { d: 'M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z' },
       { d: 'M12 12h.01', width: 3 }
+    ]
+  },
+  logout: {
+    viewBox: '0 0 24 24',
+    paths: [
+      { d: 'M10 5H7.5A1.5 1.5 0 0 0 6 6.5v11A1.5 1.5 0 0 0 7.5 19H10' },
+      { d: 'M14.5 8.5 18 12l-3.5 3.5' },
+      { d: 'M11 12h7' }
     ]
   }
 };

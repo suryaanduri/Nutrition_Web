@@ -45,6 +45,12 @@ interface NavItem {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppShellLayoutComponent {
+  protected readonly workspaceName = 'Nourish Nutrition Center';
+  protected readonly workspaceSubtitle = 'Nutrition operations workspace';
+  protected readonly loggedInUserName = 'Ava Nelson';
+  protected readonly loggedInUserRole = 'Center Admin';
+  protected readonly loggedInUserInitials = 'AN';
+
   protected readonly navItems: NavItem[] = [
     {
       key: 'dashboard',
@@ -128,7 +134,7 @@ export class AppShellLayoutComponent {
   protected readonly currentEvaluationPreset = computed(() =>
     getEvaluationEditorPreset(this.evaluationEditorMode() ?? 'add', this.selectedEvaluationId())
   );
-  protected readonly desktopSidebarWidth = computed(() => (this.sidebarCollapsed() ? 96 : 288));
+  protected readonly desktopSidebarWidth = computed(() => 288);
 
   constructor() {
     this.syncViewportState();
@@ -190,10 +196,7 @@ export class AppShellLayoutComponent {
   protected toggleSidebar(): void {
     if (this.isMobile()) {
       this.mobileNavOpen.update((value) => !value);
-      return;
     }
-
-    this.sidebarCollapsed.update((value) => !value);
   }
 
   protected closeMobileNav(): void {
