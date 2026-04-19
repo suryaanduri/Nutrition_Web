@@ -264,6 +264,8 @@
             (addEvaluation)="openAddEvaluation()"
             (editEvaluation)="openEditEvaluation($event)"
           />
+        } @else if (isFeed()) {
+          <app-feed-moderation-queue-screen />
         } @else if (isMembers()) {
           <app-members-list-screen (memberSelected)="openMemberDetail($event)" />
         } @else {

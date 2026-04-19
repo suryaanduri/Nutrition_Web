@@ -11,6 +11,7 @@ import { DashboardScreenComponent } from '../../features/dashboard/dashboard-scr
 import { EvaluationEditorScreenComponent } from '../../features/evaluations/evaluation-editor-screen.component';
 import { EvaluationsListScreenComponent } from '../../features/evaluations/evaluations-list-screen.component';
 import { getEvaluationEditorPreset } from '../../features/evaluations/evaluations.data';
+import { FeedModerationQueueScreenComponent } from '../../features/feed/feed-moderation-queue-screen.component';
 import { MembersListScreenComponent } from '../../features/members/members-list-screen.component';
 import { MemberDetail } from '../../features/members/member-detail/member-detail';
 
@@ -32,6 +33,7 @@ interface NavItem {
     DashboardScreenComponent,
     EvaluationEditorScreenComponent,
     EvaluationsListScreenComponent,
+    FeedModerationQueueScreenComponent,
     MembersListScreenComponent,
     MemberDetail
   ],
@@ -106,6 +108,7 @@ export class AppShellLayoutComponent {
   protected readonly isDashboard = computed(() => this.activeNav() === 'dashboard');
   protected readonly isMembers = computed(() => this.activeNav() === 'members');
   protected readonly isEvaluations = computed(() => this.activeNav() === 'evaluations');
+  protected readonly isFeed = computed(() => this.activeNav() === 'feed');
   protected readonly isEvaluationEditor = computed(
     () => this.activeNav() === 'evaluations' && this.evaluationEditorMode() !== null
   );
