@@ -7,6 +7,7 @@ type CenterStatus = 'Active' | 'Inactive';
 type CenterFilter = 'All status' | CenterStatus;
 type CenterSort = 'Recently created' | 'Center name' | 'City';
 type CenterScreenMode = 'list' | 'create';
+type CenterFormMode = 'create' | 'edit';
 
 interface CenterRecord {
   id: string;
@@ -43,10 +44,12 @@ export class CentersManagementScreenComponent {
   protected readonly statusOptions: CenterFilter[] = ['All status', 'Active', 'Inactive'];
   protected readonly sortOptions: CenterSort[] = ['Recently created', 'Center name', 'City'];
   protected readonly screenMode = signal<CenterScreenMode>('list');
+  protected readonly formMode = signal<CenterFormMode>('create');
   protected readonly query = signal('');
   protected readonly selectedStatus = signal<CenterFilter>('All status');
   protected readonly selectedSort = signal<CenterSort>('Recently created');
   protected readonly saveFeedback = signal('');
+  protected readonly editingCenterId = signal<string | null>(null);
 
   protected readonly centers = signal<CenterRecord[]>([
     {
@@ -189,6 +192,12 @@ export class CentersManagementScreenComponent {
   protected readonly resultsLabel = computed(
     () => `${this.filteredCenters().length} center records`
   );
+  protected readonly formTitle = computed(() =>
+    this.formMode() === 'edit' ? 'Edit Nutritional Center' : 'Create Nutritional Center'
+  );
+  protected readonly formSubmitLabel = computed(() =>
+    this.formMode() === 'edit' ? 'Save Changes' : 'Create Center'
+  );
   protected readonly showTemporaryPassword = computed(
     () => this.onboardingForm.controls.inviteMethod.value === 'Temporary password'
   );
@@ -209,6 +218,8 @@ export class CentersManagementScreenComponent {
   }
 
   protected openCreateFlow(): void {
+    this.formMode.set('create');
+    this.editingCenterId.set(null);
     this.screenMode.set('create');
     this.onboardingForm.reset({
       centerName: '',
@@ -232,8 +243,41 @@ export class CentersManagementScreenComponent {
     this.onboardingForm.markAsUntouched();
   }
 
+  protected openEditFlow(centerId: string): void {
+    const center = this.centers().find((record) => record.id === centerId);
+    if (!center) {
+      return;
+    }
+
+    this.formMode.set('edit');
+    this.editingCenterId.set(centerId);
+    this.screenMode.set('create');
+    this.onboardingForm.reset({
+      centerName: center.centerName,
+      centerCode: center.centerCode,
+      contactEmail: center.contactEmail,
+      contactPhone: center.contactPhone,
+      addressLine1: center.addressLine1,
+      addressLine2: center.addressLine2 ?? '',
+      city: center.city,
+      state: center.state,
+      pincode: center.pincode,
+      status: center.status,
+      adminName: center.adminName,
+      adminEmail: center.adminEmail,
+      adminPhone: center.adminPhone,
+      role: center.adminRole,
+      inviteMethod: center.inviteMethod,
+      temporaryPassword: ''
+    });
+    this.onboardingForm.markAsPristine();
+    this.onboardingForm.markAsUntouched();
+  }
+
   protected closeCreateFlow(): void {
     this.screenMode.set('list');
+    this.formMode.set('create');
+    this.editingCenterId.set(null);
   }
 
   protected setQuery(value: string): void {
@@ -261,17 +305,23 @@ export class CentersManagementScreenComponent {
     }
 
     const raw = this.onboardingForm.getRawValue();
+    const editingId = this.editingCenterId();
+    const existingCenter = editingId
+      ? this.centers().find((record) => record.id === editingId) ?? null
+      : null;
+
     const today = new Date();
-    const id = `CTR-${Math.floor(10000 + Math.random() * 89999)}`;
-    const createdStamp = today.toISOString().slice(0, 10);
-    const createdDate = today.toLocaleDateString('en-GB', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric'
-    });
+    const createdStamp = existingCenter?.createdStamp ?? today.toISOString().slice(0, 10);
+    const createdDate =
+      existingCenter?.createdDate ??
+      today.toLocaleDateString('en-GB', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric'
+      });
 
     const center: CenterRecord = {
-      id,
+      id: existingCenter?.id ?? `CTR-${Math.floor(10000 + Math.random() * 89999)}`,
       centerName: raw.centerName.trim(),
       centerCode: raw.centerCode.trim().toUpperCase(),
       contactEmail: raw.contactEmail.trim(),
@@ -291,14 +341,23 @@ export class CentersManagementScreenComponent {
       createdStamp
     };
 
-    this.centers.update((records) => [center, ...records]);
-    this.saveFeedback.set(
-      `${center.centerName} created with ${center.adminName} as Center Admin.`
-    );
+    if (existingCenter) {
+      this.centers.update((records) =>
+        records.map((record) => (record.id === existingCenter.id ? center : record))
+      );
+      this.saveFeedback.set(`${center.centerName} updated successfully.`);
+    } else {
+      this.centers.update((records) => [center, ...records]);
+      this.saveFeedback.set(
+        `${center.centerName} created with ${center.adminName} as Center Admin.`
+      );
+    }
 
     window.setTimeout(() => this.saveFeedback.set(''), 2600);
 
     this.screenMode.set('list');
+    this.formMode.set('create');
+    this.editingCenterId.set(null);
   }
 
   protected fieldHasError(

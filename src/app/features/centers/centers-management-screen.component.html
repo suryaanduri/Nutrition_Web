@@ -154,12 +154,14 @@
                 <button
                   type="button"
                   class="inline-flex h-9 items-center justify-center rounded-[14px] border border-[color:var(--ncm-border)] bg-white px-3 text-sm font-semibold text-[var(--ncm-text)] transition duration-200 hover:bg-[var(--ncm-surface-soft)]"
+                  (click)="openEditFlow(center.id)"
                 >
                   Open
                 </button>
                 <button
                   type="button"
                   class="inline-flex h-9 items-center justify-center rounded-[14px] bg-[var(--ncm-primary)] px-3 text-sm font-semibold text-white transition duration-200 hover:bg-[var(--ncm-primary-strong)]"
+                  (click)="openEditFlow(center.id)"
                 >
                   Edit
                 </button>
@@ -191,7 +193,7 @@
         <div class="flex flex-wrap items-start justify-between gap-4">
           <div class="min-w-0">
             <h3 class="truncate text-[1.35rem] font-extrabold tracking-[-0.04em] text-[var(--ncm-text)]">
-              Create Nutritional Center
+              {{ formTitle() }}
             </h3>
             <p class="mt-1 text-sm text-[var(--ncm-text-soft)]">
               Onboard center and assign admin in one flow
@@ -496,7 +498,7 @@
             class="inline-flex items-center justify-center rounded-[14px] bg-[var(--ncm-primary)] px-4 py-2.5 text-sm font-semibold text-white transition duration-200 hover:bg-[var(--ncm-primary-strong)]"
             (click)="submit()"
           >
-            Create Center
+            {{ formSubmitLabel() }}
           </button>
         </div>
       </div>
