@@ -16,7 +16,7 @@ import { FeedModerationQueueScreenComponent } from '../../features/feed/feed-mod
 import { MembersListScreenComponent } from '../../features/members/members-list-screen.component';
 import { MemberDetail } from '../../features/members/member-detail/member-detail';
 
-type NavKey = 'dashboard' | 'members' | 'evaluations' | 'feed' | 'chat';
+type NavKey = 'dashboard' | 'members' | 'evaluations' | 'chat' | 'feed' ;
 type HeaderVariant = 'overview' | 'workspace';
 
 interface NavItem {
@@ -67,16 +67,16 @@ export class AppShellLayoutComponent {
       label: 'Evaluations',
       description: 'Review assessments, goals, and follow-ups'
     },
-    {
-      key: 'feed',
-      label: 'Feed',
-      description: 'Content calendar, publishing, and reach'
-    },
-    {
+       {
       key: 'chat',
       label: 'Chat',
       description: 'Priority conversations and live member support',
       badge: '14'
+    },
+    {
+      key: 'feed',
+      label: 'Feed',
+      description: 'Content calendar, publishing, and reach'
     }
   ];
 
