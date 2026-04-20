@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
 type IconName =
   | 'dashboard'
   | 'members'
+  | 'centers'
   | 'evaluations'
   | 'feed'
   | 'approvals'
@@ -82,6 +83,16 @@ const ICONS: Record<
       { d: 'M11 13a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z' },
       { d: 'M17.5 8a2.5 2.5 0 1 1 0 5' },
       { d: 'M19.5 19.5a3.5 3.5 0 0 0-2.75-3.42' }
+    ]
+  },
+  centers: {
+    viewBox: '0 0 24 24',
+    paths: [
+      { d: 'M4.5 19.5h15' },
+      { d: 'M6 19.5v-8.75c0-.3.14-.58.38-.76L11.5 6l5.12 3.99c.24.18.38.46.38.76v8.75' },
+      { d: 'M9.25 13.5h1.5' },
+      { d: 'M13.25 13.5h1.5' },
+      { d: 'M10.75 19.5v-4.25h2.5v4.25' }
     ]
   },
   evaluations: {

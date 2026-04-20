@@ -7,6 +7,7 @@ import {
   signal
 } from '@angular/core';
 import { IconComponent } from '../../shared/ui/icon/icon.component';
+import { CentersManagementScreenComponent } from '../../features/centers/centers-management-screen.component';
 import { DashboardScreenComponent } from '../../features/dashboard/dashboard-screen.component';
 import { ChatInboxScreenComponent } from '../../features/chat/chat-inbox-screen.component';
 import { EvaluationEditorScreenComponent } from '../../features/evaluations/evaluation-editor-screen.component';
@@ -16,7 +17,7 @@ import { FeedModerationQueueScreenComponent } from '../../features/feed/feed-mod
 import { MembersListScreenComponent } from '../../features/members/members-list-screen.component';
 import { MemberDetail } from '../../features/members/member-detail/member-detail';
 
-type NavKey = 'dashboard' | 'members' | 'evaluations' | 'chat' | 'feed' ;
+type NavKey = 'dashboard' | 'members' | 'centers' | 'evaluations' | 'chat' | 'feed';
 type HeaderVariant = 'overview' | 'workspace';
 
 interface NavItem {
@@ -32,6 +33,7 @@ interface NavItem {
   imports: [
     CommonModule,
     IconComponent,
+    CentersManagementScreenComponent,
     ChatInboxScreenComponent,
     DashboardScreenComponent,
     EvaluationEditorScreenComponent,
@@ -48,7 +50,7 @@ export class AppShellLayoutComponent {
   protected readonly workspaceName = 'Nourish Nutrition Center';
   protected readonly workspaceSubtitle = 'Nutrition operations workspace';
   protected readonly loggedInUserName = 'Ava Nelson';
-  protected readonly loggedInUserRole = 'Center Admin';
+  protected readonly loggedInUserRole = 'Super Admin';
   protected readonly loggedInUserInitials = 'AN';
 
   protected readonly navItems: NavItem[] = [
@@ -61,6 +63,11 @@ export class AppShellLayoutComponent {
       key: 'members',
       label: 'Members',
       description: 'Track onboarding, adherence, and engagement'
+    },
+    {
+      key: 'centers',
+      label: 'Centers',
+      description: 'Manage locations, center admins, and onboarding'
     },
     {
       key: 'evaluations',
@@ -111,6 +118,7 @@ export class AppShellLayoutComponent {
   );
   protected readonly isDashboard = computed(() => this.activeNav() === 'dashboard');
   protected readonly isMembers = computed(() => this.activeNav() === 'members');
+  protected readonly isCenters = computed(() => this.activeNav() === 'centers');
   protected readonly isEvaluations = computed(() => this.activeNav() === 'evaluations');
   protected readonly isFeed = computed(() => this.activeNav() === 'feed');
   protected readonly isChat = computed(() => this.activeNav() === 'chat');

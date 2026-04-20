@@ -1,0 +1,505 @@
+<div class="relative flex min-h-full flex-col">
+  @if (saveFeedback()) {
+    <div class="fixed right-4 top-24 z-30 sm:right-6 lg:right-8">
+      <div class="rounded-2xl border border-emerald-100 bg-white px-4 py-3 text-sm font-semibold text-emerald-700 shadow-[0_18px_34px_rgba(15,23,42,0.08)]">
+        {{ saveFeedback() }}
+      </div>
+    </div>
+  }
+
+  @if (screenMode() === 'list') {
+    <section class="px-1 py-2">
+      <div class="rounded-[22px] border border-[color:var(--ncm-border)] bg-white px-4 py-4 shadow-sm">
+        <div class="flex flex-wrap items-start justify-between gap-4">
+          <div class="min-w-0">
+            <h3 class="truncate text-[1.35rem] font-extrabold tracking-[-0.04em] text-[var(--ncm-text)]">
+              {{ pageTitle() }}
+            </h3>
+            <p class="mt-1 text-sm text-[var(--ncm-text-soft)]">
+              {{ pageDescription() }}
+            </p>
+          </div>
+
+          <button
+            type="button"
+            class="inline-flex items-center justify-center rounded-[14px] bg-[var(--ncm-primary)] px-4 py-2 text-sm font-semibold text-white transition duration-200 hover:bg-[var(--ncm-primary-strong)]"
+            (click)="openCreateFlow()"
+          >
+            + Add Center
+          </button>
+        </div>
+
+        <div class="mt-3 flex flex-wrap items-center gap-2">
+          <label
+            class="group flex min-w-[240px] flex-1 items-center gap-2.5 rounded-[14px] border border-[color:var(--ncm-border)] bg-white px-3 py-2.5 transition duration-200 focus-within:border-[rgba(36,122,82,0.22)] focus-within:shadow-[0_0_0_3px_rgba(36,122,82,0.08)] lg:max-w-[340px]"
+          >
+            <span class="text-[var(--ncm-text-soft)] transition duration-200 group-focus-within:text-[var(--ncm-primary)]">
+              <ncm-icon name="search" [size]="16" />
+            </span>
+            <input
+              type="search"
+              class="w-full border-0 bg-transparent p-0 text-sm text-[var(--ncm-text)] outline-none placeholder:text-[var(--ncm-text-soft)]"
+              placeholder="Search by center, city, or admin..."
+              [value]="query()"
+              (input)="setQuery(($any($event.target).value ?? '').toString())"
+            />
+          </label>
+
+          <label class="min-w-[148px]">
+            <select
+              class="w-full rounded-[14px] border border-[color:var(--ncm-border)] bg-[var(--ncm-surface-soft)] px-3 py-2.5 text-sm text-[var(--ncm-text)] outline-none transition focus:border-[rgba(36,122,82,0.22)] focus:bg-white focus:shadow-[0_0_0_3px_rgba(36,122,82,0.08)]"
+              [value]="selectedStatus()"
+              (change)="setStatus(($any($event.target).value ?? 'All status').toString())"
+            >
+              @for (status of statusOptions; track status) {
+                <option [value]="status">{{ status }}</option>
+              }
+            </select>
+          </label>
+
+          <label class="min-w-[168px]">
+            <select
+              class="w-full rounded-[14px] border border-[color:var(--ncm-border)] bg-[var(--ncm-surface-soft)] px-3 py-2.5 text-sm text-[var(--ncm-text)] outline-none transition focus:border-[rgba(36,122,82,0.22)] focus:bg-white focus:shadow-[0_0_0_3px_rgba(36,122,82,0.08)]"
+              [value]="selectedSort()"
+              (change)="setSort(($any($event.target).value ?? 'Recently created').toString())"
+            >
+              @for (sort of sortOptions; track sort) {
+                <option [value]="sort">{{ sort }}</option>
+              }
+            </select>
+          </label>
+
+          <button
+            type="button"
+            class="inline-flex items-center rounded-[14px] border border-[color:var(--ncm-border)] bg-white px-3 py-2.5 text-sm font-semibold text-[var(--ncm-text-muted)] transition duration-200 hover:bg-[var(--ncm-surface-soft)]"
+            (click)="resetFilters()"
+          >
+            Reset
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section class="mt-2 flex flex-col">
+      <div class="flex items-center justify-between gap-3 px-1 pb-2">
+        <p class="text-sm font-semibold text-[var(--ncm-text)]">{{ resultsLabel() }}</p>
+        <span
+          class="inline-flex items-center rounded-full bg-[var(--ncm-surface-soft)] px-2.5 py-1 text-[11px] font-semibold text-[var(--ncm-text-muted)]"
+        >
+          Super Admin view
+        </span>
+      </div>
+
+      <div class="space-y-2 pr-1">
+        @for (center of filteredCenters(); track center.id) {
+          <article
+            class="cursor-pointer rounded-[18px] border border-[color:var(--ncm-border)] bg-white px-4 py-4 shadow-sm transition duration-200 hover:border-[rgba(36,122,82,0.18)] hover:bg-[rgba(255,255,255,0.98)]"
+          >
+            <div class="grid gap-4 xl:grid-cols-[minmax(0,1.5fr)_minmax(360px,1fr)_auto] xl:items-center">
+              <div class="min-w-0">
+                <div class="flex flex-wrap items-center gap-2">
+                  <h4 class="truncate text-[1rem] font-bold tracking-[-0.03em] text-[var(--ncm-text)]">
+                    {{ center.centerName }}
+                  </h4>
+                  <span class="text-xs text-[var(--ncm-text-soft)]">
+                    {{ center.id }}
+                    @if (center.centerCode) {
+                      <span> · {{ center.centerCode }}</span>
+                    }
+                  </span>
+                </div>
+                <p class="mt-1 text-sm text-[var(--ncm-text-muted)]">
+                  {{ center.addressLine1 }} · {{ center.city }}, {{ center.state }}
+                </p>
+                <div class="mt-2 flex flex-wrap items-center gap-2">
+                  <span
+                    class="inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-semibold"
+                    [ngClass]="statusClass(center.status)"
+                  >
+                    {{ center.status }}
+                  </span>
+                  <span
+                    class="inline-flex items-center rounded-full bg-[var(--ncm-surface-soft)] px-2.5 py-1 text-[11px] font-semibold text-[var(--ncm-text-muted)]"
+                  >
+                    Created {{ center.createdDate }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="grid gap-x-5 gap-y-2 sm:grid-cols-3">
+                <div class="min-w-0">
+                  <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--ncm-text-soft)]">
+                    Admin
+                  </p>
+                  <p class="mt-1 text-sm font-semibold text-[var(--ncm-text)]">{{ center.adminName }}</p>
+                  <p class="mt-0.5 text-xs text-[var(--ncm-text-soft)]">{{ center.adminRole }}</p>
+                </div>
+                <div class="min-w-0">
+                  <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--ncm-text-soft)]">
+                    Admin contact
+                  </p>
+                  <p class="mt-1 truncate text-sm font-semibold text-[var(--ncm-text)]">{{ center.adminEmail }}</p>
+                  <p class="mt-0.5 text-xs text-[var(--ncm-text-soft)]">{{ center.adminPhone }}</p>
+                </div>
+                <div class="min-w-0">
+                  <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--ncm-text-soft)]">
+                    Center contact
+                  </p>
+                  <p class="mt-1 truncate text-sm font-semibold text-[var(--ncm-text)]">{{ center.contactEmail }}</p>
+                  <p class="mt-0.5 text-xs text-[var(--ncm-text-soft)]">{{ center.contactPhone }}</p>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-2 xl:justify-end">
+                <button
+                  type="button"
+                  class="inline-flex h-9 items-center justify-center rounded-[14px] border border-[color:var(--ncm-border)] bg-white px-3 text-sm font-semibold text-[var(--ncm-text)] transition duration-200 hover:bg-[var(--ncm-surface-soft)]"
+                >
+                  Open
+                </button>
+                <button
+                  type="button"
+                  class="inline-flex h-9 items-center justify-center rounded-[14px] bg-[var(--ncm-primary)] px-3 text-sm font-semibold text-white transition duration-200 hover:bg-[var(--ncm-primary-strong)]"
+                >
+                  Edit
+                </button>
+              </div>
+            </div>
+          </article>
+        } @empty {
+          <section class="rounded-[22px] border border-[color:var(--ncm-border)] bg-white p-5 shadow-sm">
+            <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--ncm-text-soft)]">
+              No matching centers
+            </p>
+            <h4 class="mt-3 text-xl font-extrabold text-[var(--ncm-text)]">
+              No center records match the active search and filters.
+            </h4>
+            <button
+              type="button"
+              class="mt-5 inline-flex items-center justify-center rounded-[14px] border border-[color:var(--ncm-border)] bg-[var(--ncm-surface-soft)] px-4 py-2.5 text-sm font-semibold text-[var(--ncm-text)] transition duration-200 hover:bg-white"
+              (click)="resetFilters()"
+            >
+              Clear filters
+            </button>
+          </section>
+        }
+      </div>
+    </section>
+  } @else {
+    <form class="mt-1 flex min-h-0 flex-1 flex-col" [formGroup]="onboardingForm">
+      <section class="rounded-[20px] border border-[color:var(--ncm-border)] bg-white px-4 py-4 shadow-sm">
+        <div class="flex flex-wrap items-start justify-between gap-4">
+          <div class="min-w-0">
+            <h3 class="truncate text-[1.35rem] font-extrabold tracking-[-0.04em] text-[var(--ncm-text)]">
+              Create Nutritional Center
+            </h3>
+            <p class="mt-1 text-sm text-[var(--ncm-text-soft)]">
+              Onboard center and assign admin in one flow
+            </p>
+          </div>
+
+          <button
+            type="button"
+            class="inline-flex items-center justify-center rounded-[14px] border border-[color:var(--ncm-border)] bg-white px-4 py-2 text-sm font-semibold text-[var(--ncm-text)] transition duration-200 hover:bg-[var(--ncm-surface-soft)]"
+            (click)="closeCreateFlow()"
+          >
+            Back to list
+          </button>
+        </div>
+      </section>
+
+      <div class="mt-3 space-y-3 pb-24">
+        <section class="rounded-[18px] border border-[color:var(--ncm-border)] bg-white px-4 py-4 shadow-sm">
+          <div class="border-b border-[color:rgba(24,24,27,0.08)] pb-3">
+            <h4 class="text-[1rem] font-extrabold tracking-[-0.03em] text-[var(--ncm-text)]">
+              Nutritional Center Details
+            </h4>
+          </div>
+
+          <div class="mt-3 grid gap-3 md:grid-cols-2">
+            <label class="block md:col-span-2">
+              <span class="mb-1.5 block text-sm font-semibold text-[var(--ncm-text)]">Center Name</span>
+              <input
+                type="text"
+                formControlName="centerName"
+                class="w-full rounded-[14px] border bg-white px-3 py-2.5 text-sm text-[var(--ncm-text)] outline-none transition"
+                [ngClass]="{
+                  'border-[rgba(194,65,59,0.28)] bg-[rgba(255,247,246,0.8)]': fieldHasError('centerName'),
+                  'border-[color:var(--ncm-border)]': !fieldHasError('centerName')
+                }"
+              />
+              @if (fieldHasError('centerName')) {
+                <span class="mt-1.5 block text-xs font-medium text-[var(--ncm-danger)]">
+                  Center name is required.
+                </span>
+              }
+            </label>
+
+            <label class="block">
+              <span class="mb-1.5 block text-sm font-semibold text-[var(--ncm-text)]">Center Code</span>
+              <input
+                type="text"
+                formControlName="centerCode"
+                class="w-full rounded-[14px] border border-[color:var(--ncm-border)] bg-white px-3 py-2.5 text-sm text-[var(--ncm-text)] outline-none transition"
+              />
+            </label>
+
+            <label class="block">
+              <span class="mb-1.5 block text-sm font-semibold text-[var(--ncm-text)]">Status</span>
+              <select
+                formControlName="status"
+                class="w-full rounded-[14px] border border-[color:var(--ncm-border)] bg-white px-3 py-2.5 text-sm text-[var(--ncm-text)] outline-none transition"
+              >
+                <option value="Active">Active</option>
+                <option value="Inactive">Inactive</option>
+              </select>
+            </label>
+
+            <label class="block">
+              <span class="mb-1.5 block text-sm font-semibold text-[var(--ncm-text)]">Email</span>
+              <input
+                type="email"
+                formControlName="contactEmail"
+                class="w-full rounded-[14px] border bg-white px-3 py-2.5 text-sm text-[var(--ncm-text)] outline-none transition"
+                [ngClass]="{
+                  'border-[rgba(194,65,59,0.28)] bg-[rgba(255,247,246,0.8)]': fieldHasError('contactEmail'),
+                  'border-[color:var(--ncm-border)]': !fieldHasError('contactEmail')
+                }"
+              />
+              @if (fieldHasError('contactEmail')) {
+                <span class="mt-1.5 block text-xs font-medium text-[var(--ncm-danger)]">
+                  Enter a valid center email.
+                </span>
+              }
+            </label>
+
+            <label class="block">
+              <span class="mb-1.5 block text-sm font-semibold text-[var(--ncm-text)]">Phone</span>
+              <input
+                type="tel"
+                formControlName="contactPhone"
+                class="w-full rounded-[14px] border bg-white px-3 py-2.5 text-sm text-[var(--ncm-text)] outline-none transition"
+                [ngClass]="{
+                  'border-[rgba(194,65,59,0.28)] bg-[rgba(255,247,246,0.8)]': fieldHasError('contactPhone'),
+                  'border-[color:var(--ncm-border)]': !fieldHasError('contactPhone')
+                }"
+              />
+              @if (fieldHasError('contactPhone')) {
+                <span class="mt-1.5 block text-xs font-medium text-[var(--ncm-danger)]">
+                  Enter a valid phone number.
+                </span>
+              }
+            </label>
+
+            <label class="block md:col-span-2">
+              <span class="mb-1.5 block text-sm font-semibold text-[var(--ncm-text)]">Address Line 1</span>
+              <input
+                type="text"
+                formControlName="addressLine1"
+                class="w-full rounded-[14px] border bg-white px-3 py-2.5 text-sm text-[var(--ncm-text)] outline-none transition"
+                [ngClass]="{
+                  'border-[rgba(194,65,59,0.28)] bg-[rgba(255,247,246,0.8)]': fieldHasError('addressLine1'),
+                  'border-[color:var(--ncm-border)]': !fieldHasError('addressLine1')
+                }"
+              />
+              @if (fieldHasError('addressLine1')) {
+                <span class="mt-1.5 block text-xs font-medium text-[var(--ncm-danger)]">
+                  Address line 1 is required.
+                </span>
+              }
+            </label>
+
+            <label class="block md:col-span-2">
+              <span class="mb-1.5 block text-sm font-semibold text-[var(--ncm-text)]">Address Line 2</span>
+              <input
+                type="text"
+                formControlName="addressLine2"
+                class="w-full rounded-[14px] border border-[color:var(--ncm-border)] bg-white px-3 py-2.5 text-sm text-[var(--ncm-text)] outline-none transition"
+              />
+            </label>
+
+            <label class="block">
+              <span class="mb-1.5 block text-sm font-semibold text-[var(--ncm-text)]">City</span>
+              <input
+                type="text"
+                formControlName="city"
+                class="w-full rounded-[14px] border bg-white px-3 py-2.5 text-sm text-[var(--ncm-text)] outline-none transition"
+                [ngClass]="{
+                  'border-[rgba(194,65,59,0.28)] bg-[rgba(255,247,246,0.8)]': fieldHasError('city'),
+                  'border-[color:var(--ncm-border)]': !fieldHasError('city')
+                }"
+              />
+              @if (fieldHasError('city')) {
+                <span class="mt-1.5 block text-xs font-medium text-[var(--ncm-danger)]">
+                  City is required.
+                </span>
+              }
+            </label>
+
+            <label class="block">
+              <span class="mb-1.5 block text-sm font-semibold text-[var(--ncm-text)]">State</span>
+              <input
+                type="text"
+                formControlName="state"
+                class="w-full rounded-[14px] border bg-white px-3 py-2.5 text-sm text-[var(--ncm-text)] outline-none transition"
+                [ngClass]="{
+                  'border-[rgba(194,65,59,0.28)] bg-[rgba(255,247,246,0.8)]': fieldHasError('state'),
+                  'border-[color:var(--ncm-border)]': !fieldHasError('state')
+                }"
+              />
+              @if (fieldHasError('state')) {
+                <span class="mt-1.5 block text-xs font-medium text-[var(--ncm-danger)]">
+                  State is required.
+                </span>
+              }
+            </label>
+
+            <label class="block md:max-w-[240px]">
+              <span class="mb-1.5 block text-sm font-semibold text-[var(--ncm-text)]">Pincode</span>
+              <input
+                type="text"
+                formControlName="pincode"
+                class="w-full rounded-[14px] border bg-white px-3 py-2.5 text-sm text-[var(--ncm-text)] outline-none transition"
+                [ngClass]="{
+                  'border-[rgba(194,65,59,0.28)] bg-[rgba(255,247,246,0.8)]': fieldHasError('pincode'),
+                  'border-[color:var(--ncm-border)]': !fieldHasError('pincode')
+                }"
+              />
+              @if (fieldHasError('pincode')) {
+                <span class="mt-1.5 block text-xs font-medium text-[var(--ncm-danger)]">
+                  Enter a valid pincode.
+                </span>
+              }
+            </label>
+          </div>
+        </section>
+
+        <section class="rounded-[18px] border border-[color:var(--ncm-border)] bg-white px-4 py-4 shadow-sm">
+          <div class="border-b border-[color:rgba(24,24,27,0.08)] pb-3">
+            <h4 class="text-[1rem] font-extrabold tracking-[-0.03em] text-[var(--ncm-text)]">
+              Center Admin User
+            </h4>
+          </div>
+
+          <div class="mt-3 grid gap-3 md:grid-cols-2">
+            <label class="block md:col-span-2">
+              <span class="mb-1.5 block text-sm font-semibold text-[var(--ncm-text)]">Full Name</span>
+              <input
+                type="text"
+                formControlName="adminName"
+                class="w-full rounded-[14px] border bg-white px-3 py-2.5 text-sm text-[var(--ncm-text)] outline-none transition"
+                [ngClass]="{
+                  'border-[rgba(194,65,59,0.28)] bg-[rgba(255,247,246,0.8)]': fieldHasError('adminName'),
+                  'border-[color:var(--ncm-border)]': !fieldHasError('adminName')
+                }"
+              />
+              @if (fieldHasError('adminName')) {
+                <span class="mt-1.5 block text-xs font-medium text-[var(--ncm-danger)]">
+                  Admin full name is required.
+                </span>
+              }
+            </label>
+
+            <label class="block">
+              <span class="mb-1.5 block text-sm font-semibold text-[var(--ncm-text)]">Email</span>
+              <input
+                type="email"
+                formControlName="adminEmail"
+                class="w-full rounded-[14px] border bg-white px-3 py-2.5 text-sm text-[var(--ncm-text)] outline-none transition"
+                [ngClass]="{
+                  'border-[rgba(194,65,59,0.28)] bg-[rgba(255,247,246,0.8)]': fieldHasError('adminEmail'),
+                  'border-[color:var(--ncm-border)]': !fieldHasError('adminEmail')
+                }"
+              />
+              @if (fieldHasError('adminEmail')) {
+                <span class="mt-1.5 block text-xs font-medium text-[var(--ncm-danger)]">
+                  Enter a valid admin email.
+                </span>
+              }
+            </label>
+
+            <label class="block">
+              <span class="mb-1.5 block text-sm font-semibold text-[var(--ncm-text)]">Phone</span>
+              <input
+                type="tel"
+                formControlName="adminPhone"
+                class="w-full rounded-[14px] border bg-white px-3 py-2.5 text-sm text-[var(--ncm-text)] outline-none transition"
+                [ngClass]="{
+                  'border-[rgba(194,65,59,0.28)] bg-[rgba(255,247,246,0.8)]': fieldHasError('adminPhone'),
+                  'border-[color:var(--ncm-border)]': !fieldHasError('adminPhone')
+                }"
+              />
+              @if (fieldHasError('adminPhone')) {
+                <span class="mt-1.5 block text-xs font-medium text-[var(--ncm-danger)]">
+                  Enter a valid phone number.
+                </span>
+              }
+            </label>
+
+            <label class="block">
+              <span class="mb-1.5 block text-sm font-semibold text-[var(--ncm-text)]">Invite Method</span>
+              <select
+                formControlName="inviteMethod"
+                class="w-full rounded-[14px] border border-[color:var(--ncm-border)] bg-white px-3 py-2.5 text-sm text-[var(--ncm-text)] outline-none transition"
+              >
+                <option value="Temporary password">Temporary password</option>
+                <option value="Invite setup later">Invite setup later</option>
+              </select>
+            </label>
+
+            <label class="block">
+              <span class="mb-1.5 block text-sm font-semibold text-[var(--ncm-text)]">Role</span>
+              <input
+                type="text"
+                formControlName="role"
+                readonly
+                class="w-full rounded-[14px] border border-[color:var(--ncm-border)] bg-[var(--ncm-surface-soft)] px-3 py-2.5 text-sm font-semibold text-[var(--ncm-text)] outline-none"
+              />
+            </label>
+
+            @if (showTemporaryPassword()) {
+              <label class="block md:col-span-2 md:max-w-[320px]">
+                <span class="mb-1.5 block text-sm font-semibold text-[var(--ncm-text)]">
+                  Temporary Password
+                </span>
+                <input
+                  type="text"
+                  formControlName="temporaryPassword"
+                  class="w-full rounded-[14px] border bg-white px-3 py-2.5 text-sm text-[var(--ncm-text)] outline-none transition"
+                  [ngClass]="{
+                    'border-[rgba(194,65,59,0.28)] bg-[rgba(255,247,246,0.8)]': fieldHasError('temporaryPassword'),
+                    'border-[color:var(--ncm-border)]': !fieldHasError('temporaryPassword')
+                  }"
+                />
+                @if (fieldHasError('temporaryPassword')) {
+                  <span class="mt-1.5 block text-xs font-medium text-[var(--ncm-danger)]">
+                    Temporary password must be at least 8 characters.
+                  </span>
+                }
+              </label>
+            }
+          </div>
+        </section>
+      </div>
+
+      <div class="sticky bottom-0 z-20 border-t border-[color:var(--ncm-border)] bg-white/96 px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-white/92 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between gap-3">
+          <button
+            type="button"
+            class="inline-flex items-center justify-center rounded-[14px] border border-[color:var(--ncm-border)] bg-white px-4 py-2.5 text-sm font-semibold text-[var(--ncm-text)] transition duration-200 hover:bg-[var(--ncm-surface-soft)]"
+            (click)="closeCreateFlow()"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            class="inline-flex items-center justify-center rounded-[14px] bg-[var(--ncm-primary)] px-4 py-2.5 text-sm font-semibold text-white transition duration-200 hover:bg-[var(--ncm-primary-strong)]"
+            (click)="submit()"
+          >
+            Create Center
+          </button>
+        </div>
+      </div>
+    </form>
+  }
+</div>
