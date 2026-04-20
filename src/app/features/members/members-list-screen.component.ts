@@ -1,5 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, output, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  input,
+  output,
+  signal
+} from '@angular/core';
 import { IconComponent } from '../../shared/ui/icon/icon.component';
 import {
   MemberDrawerMode,
@@ -45,6 +53,7 @@ interface MemberRecord {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MembersListScreenComponent {
+  readonly createRequestToken = input(0);
   readonly memberSelected = output<string>();
 
   protected readonly statusOptions: StatusFilter[] = [
@@ -262,6 +271,14 @@ export class MembersListScreenComponent {
   protected readonly drawerSuccessMessage = computed(() =>
     this.drawerMode() === 'edit' ? 'Member details updated.' : 'added to the member list.'
   );
+
+  constructor() {
+    effect(() => {
+      if (this.createRequestToken() > 0) {
+        this.openAddMemberDrawer();
+      }
+    });
+  }
 
   protected setQuery(value: string): void {
     this.query.set(value);

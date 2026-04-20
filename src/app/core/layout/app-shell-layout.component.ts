@@ -92,6 +92,7 @@ export class AppShellLayoutComponent {
   protected readonly mobileNavOpen = signal(false);
   protected readonly isMobile = signal(false);
   protected readonly selectedMemberId = signal<string | null>(null);
+  protected readonly memberCreateRequestToken = signal(0);
   protected readonly evaluationEditorMode = signal<'add' | 'edit' | null>(null);
   protected readonly selectedEvaluationId = signal<string | null>(null);
   protected readonly selectedEvaluationMemberId = signal<string | null>(null);
@@ -175,6 +176,27 @@ export class AppShellLayoutComponent {
 
   protected closeMemberDetail(): void {
     this.selectedMemberId.set(null);
+  }
+
+  protected openMembersList(): void {
+    this.activeNav.set('members');
+    this.selectedMemberId.set(null);
+    if (this.isMobile()) {
+      this.mobileNavOpen.set(false);
+    }
+  }
+
+  protected openAddMember(): void {
+    this.openMembersList();
+    this.memberCreateRequestToken.update((value) => value + 1);
+  }
+
+  protected openEvaluationsList(): void {
+    this.activeNav.set('evaluations');
+    this.closeEvaluationEditor();
+    if (this.isMobile()) {
+      this.mobileNavOpen.set(false);
+    }
   }
 
   protected openAddEvaluation(): void {

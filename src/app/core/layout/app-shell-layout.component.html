@@ -196,7 +196,12 @@
           } @else if (isMemberDetail()) {
             <app-member-detail (back)="closeMemberDetail()" (addEvaluation)="openAddEvaluation()" />
           } @else if (isCenters()) {
-            <app-centers-management-screen />
+            <app-centers-management-screen
+              (navigateMembers)="openMembersList()"
+              (navigateMembersForAdd)="openAddMember()"
+              (navigateEvaluations)="openEvaluationsList()"
+              (addEvaluation)="openAddEvaluation()"
+            />
           } @else if (isEvaluationEditor()) {
             <app-evaluation-editor-screen
               [preset]="currentEvaluationPreset()"
@@ -215,7 +220,10 @@
               (addEvaluation)="openAddEvaluation()"
             />
           } @else if (isMembers()) {
-            <app-members-list-screen (memberSelected)="openMemberDetail($event)" />
+            <app-members-list-screen
+              [createRequestToken]="memberCreateRequestToken()"
+              (memberSelected)="openMemberDetail($event)"
+            />
           } @else {
             <section class="rounded-[32px] border border-[color:var(--ncm-border)] bg-white p-8 shadow-[var(--ncm-shadow-soft)] transition duration-200 hover:shadow-md">
               <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--ncm-text-soft)]">
