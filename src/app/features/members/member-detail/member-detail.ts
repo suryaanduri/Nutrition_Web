@@ -1,11 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { IconComponent } from '../../../shared/ui/icon/icon.component';
 import {
   GenderOption,
   MemberFormDrawerComponent,
   MemberFormValue
 } from '../member-form-drawer.component';
+import { MembersService } from '../members.service';
+import { EvaluationsService } from '../../evaluations/evaluations.service';
 
 type RangeKey = '7D' | '30D' | '90D';
 type TrendType = 'up' | 'down' | 'neutral';
@@ -44,69 +47,33 @@ interface TrendPoint {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MemberDetail {
-  readonly addEvaluation = output<void>();
-  readonly back = output<void>();
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly membersService = inject(MembersService);
+  private readonly evaluationsService = inject(EvaluationsService);
 
   readonly selectedRange = signal<RangeKey>('30D');
   readonly rangeOptions: RangeKey[] = ['7D', '30D', '90D'];
   readonly editDrawerOpen = signal(false);
 
   readonly member = signal({
-    id: 'MBR-1042',
-    name: 'Rhea Sharma',
-    email: 'rhea.sharma@nourish.app',
-    phone: '+91 98765 10245',
+    id: '',
+    name: 'Member',
+    email: '',
+    phone: '',
     dob: '1996-05-14',
     height: '164',
-    age: 29,
+    age: 0,
     gender: 'Female' as GenderOption,
-    goal: 'PCOS-focused fat loss',
-    coach: 'Ava Nelson',
-    status: 'Needs attention',
-    tags: ['Needs attention', 'Missed follow-up'],
-    program: 'PCOS Reset Intensive',
-    joinedOn: 'Joined 12 Jan 2026'
+    goal: '',
+    coach: 'Unassigned',
+    status: 'Active',
+    tags: ['Active'],
+    program: '',
+    joinedOn: ''
   });
 
-  readonly history = signal<EvaluationHistoryItem[]>([
-    {
-      id: 1,
-      date: '10 Apr 2026 · 10:30 AM',
-      weight: '68.4 kg',
-      bodyFat: '31.2%',
-      visceralFat: '8.4',
-      notes:
-        'Good adherence overall. Slight appetite drop this week. Asked to improve sleep consistency and hydration.',
-      enteredBy: 'Ava Nelson',
-      trend: 'Improving',
-      trendType: 'up',
-      highlighted: true
-    },
-    {
-      id: 2,
-      date: '03 Apr 2026 · 09:10 AM',
-      weight: '69.1 kg',
-      bodyFat: '31.9%',
-      visceralFat: '8.7',
-      notes:
-        'Weight plateau noted. Recommended higher protein breakfast and tighter weekend meal tracking.',
-      enteredBy: 'Ava Nelson',
-      trend: 'Plateau',
-      trendType: 'neutral'
-    },
-    {
-      id: 3,
-      date: '27 Mar 2026 · 11:05 AM',
-      weight: '69.8 kg',
-      bodyFat: '32.6%',
-      visceralFat: '9.0',
-      notes:
-        'Initial positive drop from previous cycle. Energy levels better. Continue current plan.',
-      enteredBy: 'Coach Admin',
-      trend: 'Strong start',
-      trendType: 'up'
-    }
-  ]);
+  readonly history = signal<EvaluationHistoryItem[]>([]);
 
   readonly weightData = signal<Record<RangeKey, TrendPoint[]>>({
     '7D': [
@@ -221,12 +188,22 @@ export class MemberDetail {
     this.buildDots(this.bodyFatPoints().map((point) => point.value))
   );
 
+  constructor() {
+    const memberId = this.route.snapshot.paramMap.get('memberId');
+    if (memberId) {
+      this.loadMember(memberId);
+      this.loadHistory(memberId);
+    }
+  }
+
   setRange(range: RangeKey): void {
     this.selectedRange.set(range);
   }
 
   openAddEvaluation(): void {
-    this.addEvaluation.emit();
+    void this.router.navigate(['/evaluations/new'], {
+      queryParams: { memberId: this.member().id }
+    });
   }
 
   openEditMember(): void {
@@ -238,24 +215,26 @@ export class MemberDetail {
   }
 
   saveMember(payload: MemberFormValue): void {
-    this.member.update((member) => ({
-      ...member,
-      name: payload.fullName,
-      email: payload.email,
-      phone: payload.phone,
-      dob: payload.dob,
-      height: payload.height,
-      age: this.ageFromDob(payload.dob),
-      gender: payload.gender,
-      goal: this.goalLabel(payload.goal),
-      coach: payload.coach,
-      program: this.programLabel(payload.goal)
-    }));
-    this.closeEditMember();
+    this.membersService
+      .updateMember(this.member().id, {
+        fullName: payload.fullName,
+        dob: payload.dob,
+        email: payload.email,
+        phone: payload.phone.replace(/\D/g, ''),
+        heightCm: Number(payload.height),
+        gender: payload.gender,
+        goal: payload.goal
+      })
+      .subscribe({
+        next: () => {
+          this.loadMember(this.member().id);
+          this.closeEditMember();
+        }
+      });
   }
 
   goBack(): void {
-    this.back.emit();
+    void this.router.navigate(['/members']);
   }
 
   badgeClass(type: TrendType): string {
@@ -385,5 +364,59 @@ export class MemberDetail {
       x: padding + index * stepX,
       y: height - padding - ((value - min) / range) * (height - padding * 2)
     }));
+  }
+
+  private loadMember(memberId: string): void {
+    this.membersService.getMember(memberId).subscribe({
+      next: (member) =>
+        this.member.set({
+          id: member.id,
+          name: member.fullName,
+          email: member.email,
+          phone: member.phone,
+          dob: member.dob.slice(0, 10),
+          height: member.heightCm,
+          age: this.ageFromDob(member.dob),
+          gender: (['Female', 'Male', 'Other'].includes(member.gender) ? member.gender : 'Other') as GenderOption,
+          goal: member.goal,
+          coach: member.assignedCoach?.fullName ?? 'Unassigned',
+          status: member.status === 'ACTIVE' ? 'Active' : 'Needs attention',
+          tags: [member.status === 'ACTIVE' ? 'Active' : 'Needs attention'],
+          program: member.goal,
+          joinedOn: `Joined ${new Date(member.createdAt).toLocaleDateString('en-IN')}`
+        })
+    });
+  }
+
+  private loadHistory(memberId: string): void {
+    this.evaluationsService.listMemberEvaluations(memberId).subscribe({
+      next: (items) => {
+        const history = items.map((item, index) => ({
+          id: index + 1,
+          date: new Date(item.recordedAt).toLocaleString('en-IN'),
+          weight: `${item.weight} kg`,
+          bodyFat: item.bodyFat ? `${item.bodyFat}%` : '--',
+          visceralFat: item.visceralFatPercent ?? '--',
+          notes: `BMI ${item.bmi}`,
+          enteredBy: item.member.assignedCoach?.fullName ?? 'Staff',
+          trend: 'Recorded',
+          trendType: 'neutral' as TrendType,
+          highlighted: index === 0
+        }));
+
+        this.history.set(history);
+        const weightData = history
+          .slice(0, 4)
+          .reverse()
+          .map((entry, index) => ({ label: `W${index + 1}`, value: this.valueFromMetric(entry.weight) }));
+        const bodyFatData = history
+          .slice(0, 4)
+          .reverse()
+          .map((entry, index) => ({ label: `W${index + 1}`, value: this.valueFromMetric(entry.bodyFat) || 0 }));
+
+        this.weightData.update((data) => ({ ...data, '30D': weightData.length ? weightData : data['30D'] }));
+        this.bodyFatData.update((data) => ({ ...data, '30D': bodyFatData.length ? bodyFatData : data['30D'] }));
+      }
+    });
   }
 }

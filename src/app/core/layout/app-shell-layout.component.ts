@@ -4,225 +4,108 @@ import {
   Component,
   HostListener,
   computed,
+  inject,
   signal
 } from '@angular/core';
+import { NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
+import { filter } from 'rxjs';
+import { AuthService } from '../auth/auth.service';
+import { SessionService } from '../auth/session.service';
 import { IconComponent } from '../../shared/ui/icon/icon.component';
-import { CentersManagementScreenComponent } from '../../features/centers/centers-management-screen.component';
-import { DashboardScreenComponent } from '../../features/dashboard/dashboard-screen.component';
-import { ChatInboxScreenComponent } from '../../features/chat/chat-inbox-screen.component';
-import { EvaluationEditorScreenComponent } from '../../features/evaluations/evaluation-editor-screen.component';
-import { EvaluationsListScreenComponent } from '../../features/evaluations/evaluations-list-screen.component';
-import { getEvaluationEditorPreset } from '../../features/evaluations/evaluations.data';
-import { FeedModerationQueueScreenComponent } from '../../features/feed/feed-moderation-queue-screen.component';
-import { MembersListScreenComponent } from '../../features/members/members-list-screen.component';
-import { MemberDetail } from '../../features/members/member-detail/member-detail';
 
 type NavKey = 'dashboard' | 'members' | 'centers' | 'evaluations' | 'chat' | 'feed';
-type HeaderVariant = 'overview' | 'workspace';
 
 interface NavItem {
   key: NavKey;
   label: string;
   description: string;
+  route: string;
   badge?: string;
+  roles?: Array<'SUPER_ADMIN' | 'CENTER_ADMIN' | 'COACH'>;
 }
 
 @Component({
   selector: 'app-shell-layout',
   standalone: true,
-  imports: [
-    CommonModule,
-    IconComponent,
-    CentersManagementScreenComponent,
-    ChatInboxScreenComponent,
-    DashboardScreenComponent,
-    EvaluationEditorScreenComponent,
-    EvaluationsListScreenComponent,
-    FeedModerationQueueScreenComponent,
-    MembersListScreenComponent,
-    MemberDetail
-  ],
+  imports: [CommonModule, RouterLink, RouterOutlet, IconComponent],
   templateUrl: './app-shell-layout.component.html',
   styleUrl: './app-shell-layout.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppShellLayoutComponent {
-  protected readonly workspaceName = 'Nourish Nutrition Center';
+  private readonly router = inject(Router);
+  private readonly authService = inject(AuthService);
+  protected readonly session = inject(SessionService);
+
+  protected readonly workspaceName = 'NCM Platform';
   protected readonly workspaceSubtitle = 'Nutrition operations workspace';
-  protected readonly loggedInUserName = 'Ava Nelson';
-  protected readonly loggedInUserRole = 'Super Admin';
-  protected readonly loggedInUserInitials = 'AN';
 
-  protected readonly navItems: NavItem[] = [
-    {
-      key: 'dashboard',
-      label: 'Dashboard',
-      description: 'Performance, schedule, and operational signals'
-    },
-    {
-      key: 'members',
-      label: 'Members',
-      description: 'Track onboarding, adherence, and engagement'
-    },
-    {
-      key: 'centers',
-      label: 'Centers',
-      description: 'Manage locations, center admins, and onboarding'
-    },
-    {
-      key: 'evaluations',
-      label: 'Evaluations',
-      description: 'Review assessments, goals, and follow-ups'
-    },
-       {
-      key: 'chat',
-      label: 'Chat',
-      description: 'Priority conversations and live member support',
-      badge: '14'
-    },
-    {
-      key: 'feed',
-      label: 'Feed',
-      description: 'Content calendar, publishing, and reach'
-    }
-  ];
+  protected readonly navItems = computed<NavItem[]>(() => {
+    const role = this.session.role();
 
-  protected readonly activeNav = signal<NavKey>('dashboard');
+    const items: NavItem[] = [
+      {
+        key: 'dashboard',
+        label: 'Dashboard',
+        description: 'Performance, schedule, and operational signals',
+        route: '/dashboard'
+      },
+      {
+        key: 'members',
+        label: 'Members',
+        description: 'Track onboarding, adherence, and engagement',
+        route: '/members'
+      },
+      {
+        key: 'centers',
+        label: 'Centers',
+        description: 'Manage locations, center admins, and onboarding',
+        route: '/centers',
+        roles: ['SUPER_ADMIN']
+      },
+      {
+        key: 'evaluations',
+        label: 'Evaluations',
+        description: 'Review assessments, goals, and follow-ups',
+        route: '/evaluations'
+      },
+      {
+        key: 'chat',
+        label: 'Chat',
+        description: 'Priority conversations and live member support',
+        route: '/chat',
+        badge: role === 'SUPER_ADMIN' ? undefined : 'Live',
+        roles: ['CENTER_ADMIN', 'COACH']
+      },
+      {
+        key: 'feed',
+        label: 'Feed',
+        description: 'Content calendar, publishing, and reach',
+        route: '/feed'
+      }
+    ];
+
+    return items.filter((item) => !item.roles || (role ? item.roles.includes(role) : false));
+  });
+
   protected readonly sidebarCollapsed = signal(false);
   protected readonly mobileNavOpen = signal(false);
   protected readonly isMobile = signal(false);
-  protected readonly selectedMemberId = signal<string | null>(null);
-  protected readonly memberCreateRequestToken = signal(0);
-  protected readonly evaluationEditorMode = signal<'add' | 'edit' | null>(null);
-  protected readonly selectedEvaluationId = signal<string | null>(null);
-  protected readonly selectedEvaluationMemberId = signal<string | null>(null);
-
-  protected readonly currentNav = computed(
-    () => this.navItems.find((item) => item.key === this.activeNav()) ?? this.navItems[0]
-  );
-
-  protected readonly pageTitle = computed(() =>
-    this.isMemberDetail()
-      ? 'Member Detail'
-      : this.isEvaluationEditor()
-        ? this.evaluationEditorMode() === 'edit'
-          ? 'Edit Evaluation'
-          : 'Add Evaluation'
-        : this.currentNav().label
-  );
-  protected readonly pageDescription = computed(() =>
-    this.isMemberDetail()
-      ? 'Progress, evaluations, adherence, and next best actions for this member'
-      : this.isEvaluationEditor()
-        ? 'Fast evaluation entry with member context, derived BMI, and compact history reference'
-      : this.currentNav().description
-  );
-  protected readonly isDashboard = computed(() => this.activeNav() === 'dashboard');
-  protected readonly isMembers = computed(() => this.activeNav() === 'members');
-  protected readonly isCenters = computed(() => this.activeNav() === 'centers');
-  protected readonly isEvaluations = computed(() => this.activeNav() === 'evaluations');
-  protected readonly isFeed = computed(() => this.activeNav() === 'feed');
-  protected readonly isChat = computed(() => this.activeNav() === 'chat');
-  protected readonly isEvaluationEditor = computed(
-    () => this.activeNav() === 'evaluations' && this.evaluationEditorMode() !== null
-  );
-  protected readonly isMemberDetail = computed(
-    () => this.activeNav() === 'members' && this.selectedMemberId() !== null
-  );
-  protected readonly isWorkspaceScreen = computed(
-    () => this.isEvaluationEditor() || this.isFeed() || this.isChat()
-  );
-  protected readonly headerVariant = computed<HeaderVariant>(() =>
-    this.isWorkspaceScreen() ? 'workspace' : 'overview'
-  );
-  protected readonly currentEvaluationPreset = computed(() =>
-    getEvaluationEditorPreset(
-      this.evaluationEditorMode() ?? 'add',
-      this.selectedEvaluationId(),
-      this.selectedEvaluationMemberId() ?? this.selectedMemberId()
-    )
-  );
+  protected readonly activeNav = signal<NavKey>('dashboard');
   protected readonly desktopSidebarWidth = computed(() => (this.sidebarCollapsed() ? 96 : 288));
 
   constructor() {
     this.syncViewportState();
+    this.syncActiveNav(this.router.url);
+
+    this.router.events
+      .pipe(filter((event) => event instanceof NavigationEnd))
+      .subscribe((event) => this.syncActiveNav((event as NavigationEnd).urlAfterRedirects));
   }
 
   @HostListener('window:resize')
   protected onResize(): void {
     this.syncViewportState();
-  }
-
-  protected selectNavItem(key: NavKey): void {
-    this.activeNav.set(key);
-    if (key !== 'members') {
-      this.selectedMemberId.set(null);
-    }
-    if (key !== 'evaluations') {
-      this.closeEvaluationEditor();
-    }
-    if (this.isMobile()) {
-      this.mobileNavOpen.set(false);
-    }
-  }
-
-  protected openMemberDetail(memberId: string): void {
-    this.activeNav.set('members');
-    this.selectedMemberId.set(memberId);
-    if (this.isMobile()) {
-      this.mobileNavOpen.set(false);
-    }
-  }
-
-  protected closeMemberDetail(): void {
-    this.selectedMemberId.set(null);
-  }
-
-  protected openMembersList(): void {
-    this.activeNav.set('members');
-    this.selectedMemberId.set(null);
-    if (this.isMobile()) {
-      this.mobileNavOpen.set(false);
-    }
-  }
-
-  protected openAddMember(): void {
-    this.openMembersList();
-    this.memberCreateRequestToken.update((value) => value + 1);
-  }
-
-  protected openEvaluationsList(): void {
-    this.activeNav.set('evaluations');
-    this.closeEvaluationEditor();
-    if (this.isMobile()) {
-      this.mobileNavOpen.set(false);
-    }
-  }
-
-  protected openAddEvaluation(): void {
-    this.activeNav.set('evaluations');
-    this.evaluationEditorMode.set('add');
-    this.selectedEvaluationId.set(null);
-    this.selectedEvaluationMemberId.set(this.selectedMemberId());
-    if (this.isMobile()) {
-      this.mobileNavOpen.set(false);
-    }
-  }
-
-  protected openEditEvaluation(recordId: string): void {
-    this.activeNav.set('evaluations');
-    this.evaluationEditorMode.set('edit');
-    this.selectedEvaluationId.set(recordId);
-    this.selectedEvaluationMemberId.set(null);
-    if (this.isMobile()) {
-      this.mobileNavOpen.set(false);
-    }
-  }
-
-  protected closeEvaluationEditor(): void {
-    this.evaluationEditorMode.set(null);
-    this.selectedEvaluationId.set(null);
-    this.selectedEvaluationMemberId.set(null);
   }
 
   protected toggleSidebar(): void {
@@ -238,6 +121,11 @@ export class AppShellLayoutComponent {
     this.mobileNavOpen.set(false);
   }
 
+  protected logout(): void {
+    this.authService.logout();
+    void this.router.navigate(['/login']);
+  }
+
   private syncViewportState(): void {
     const mobile = window.innerWidth < 1024;
     this.isMobile.set(mobile);
@@ -245,5 +133,34 @@ export class AppShellLayoutComponent {
     if (!mobile) {
       this.mobileNavOpen.set(false);
     }
+  }
+
+  private syncActiveNav(url: string): void {
+    if (url.startsWith('/members')) {
+      this.activeNav.set('members');
+      return;
+    }
+
+    if (url.startsWith('/centers')) {
+      this.activeNav.set('centers');
+      return;
+    }
+
+    if (url.startsWith('/evaluations')) {
+      this.activeNav.set('evaluations');
+      return;
+    }
+
+    if (url.startsWith('/chat')) {
+      this.activeNav.set('chat');
+      return;
+    }
+
+    if (url.startsWith('/feed')) {
+      this.activeNav.set('feed');
+      return;
+    }
+
+    this.activeNav.set('dashboard');
   }
 }

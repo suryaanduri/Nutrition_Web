@@ -34,7 +34,7 @@
   </section>
 
   <section class="grid gap-3 md:grid-cols-2 2xl:grid-cols-4">
-    @for (card of summaryCards; track card.label) {
+    @for (card of summaryCards(); track card.label) {
       <article class="rounded-[16px] border border-[color:var(--ncm-border)] bg-white px-4 py-3.5 shadow-sm">
         <div class="flex items-start justify-between gap-3">
           <div
@@ -83,12 +83,12 @@
           </h4>
         </div>
         <span class="inline-flex items-center rounded-full bg-[var(--ncm-surface-soft)] px-3 py-1 text-[11px] font-semibold text-[var(--ncm-text-muted)]">
-          {{ priorityActions.length }} active
+          {{ priorityActions().length }} active
         </span>
       </div>
 
       <div class="mt-3.5 grid gap-2">
-        @for (item of priorityActions; track item.title) {
+        @for (item of priorityActions(); track item.title) {
           <article
             class="rounded-[15px] border px-3.5 py-3 transition duration-200 hover:bg-[rgba(255,255,255,0.98)]"
             [ngClass]="{
@@ -143,7 +143,7 @@
       </div>
 
       <div class="mt-3.5 space-y-2">
-        @for (item of activity; track item.title) {
+        @for (item of activity(); track item.title) {
           <article class="rounded-[13px] border border-[rgba(24,24,27,0.06)] bg-[rgba(248,249,248,0.8)] px-3 py-2.5">
             <div class="flex items-start gap-2.5">
               <div
@@ -194,7 +194,7 @@
         </div>
 
         <div class="divide-y divide-[color:var(--ncm-border)] bg-white">
-          @for (member of recentMembers; track member.name) {
+          @for (member of recentMembers(); track member.name) {
             <article class="grid gap-3 px-4 py-3 transition duration-200 hover:bg-[var(--ncm-surface-soft)] lg:grid-cols-[1.2fr_1fr_1fr_1fr_auto] lg:items-center">
               <div class="flex items-center gap-3">
                 <div
@@ -245,7 +245,7 @@
       </div>
 
       <div class="mt-4 space-y-2">
-        @for (evaluation of evaluations; track evaluation.member + evaluation.time) {
+        @for (evaluation of evaluations(); track evaluation.member + evaluation.time) {
           <article class="grid gap-2 rounded-[14px] border border-[color:var(--ncm-border)] bg-[var(--ncm-surface-soft)] px-4 py-3 transition duration-200 hover:bg-white lg:grid-cols-[1.15fr_1fr_0.8fr_auto] lg:items-center">
             <div class="min-w-0">
               <p class="truncate text-[13px] font-semibold text-[var(--ncm-text)]">{{ evaluation.member }}</p>

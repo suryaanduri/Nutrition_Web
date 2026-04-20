@@ -53,9 +53,9 @@
       </div>
 
       <nav class="mt-4 flex-1 space-y-1" aria-label="Primary">
-        @for (item of navItems; track item.key) {
-          <button
-            type="button"
+        @for (item of navItems(); track item.key) {
+          <a
+            [routerLink]="item.route"
             class="group flex w-full items-center gap-3 rounded-[16px] border px-3 py-2.5 text-left transition"
             [ngClass]="{
               'border-[rgba(73,102,214,0.18)] bg-[linear-gradient(180deg,#eef3ff_0%,#e8efff_100%)] text-[var(--ncm-text)] shadow-sm':
@@ -65,7 +65,6 @@
               'justify-center px-2': sidebarCollapsed() && !isMobile()
             }"
             [attr.aria-current]="activeNav() === item.key ? 'page' : null"
-            (click)="selectNavItem(item.key)"
           >
             <span
               class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border bg-white"
@@ -93,7 +92,7 @@
                 {{ item.badge }}
               </span>
             }
-          </button>
+          </a>
         }
       </nav>
 
@@ -158,14 +157,14 @@
               <div
                 class="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--ncm-primary-soft)] text-sm font-bold text-[var(--ncm-primary-strong)]"
               >
-                {{ loggedInUserInitials }}
+                {{ session.user()?.email?.slice(0, 2)?.toUpperCase() }}
               </div>
               <div class="min-w-0">
                 <p class="truncate text-sm font-semibold text-[var(--ncm-text)]">
-                  {{ loggedInUserName }}
+                  {{ session.user()?.email }}
                 </p>
                 <p class="truncate text-xs text-[var(--ncm-text-soft)]">
-                  {{ loggedInUserRole }}
+                  {{ session.user()?.role?.replaceAll('_', ' ') }}
                 </p>
               </div>
             </div>
@@ -173,6 +172,7 @@
             <button
               type="button"
               class="inline-flex items-center gap-2 rounded-[12px] border border-[rgba(206,114,96,0.24)] bg-[rgba(255,245,242,0.92)] px-3 py-2 text-sm font-semibold text-[#c55a48] transition hover:bg-[rgba(255,239,235,1)]"
+              (click)="logout()"
             >
               <ncm-icon name="logout" [size]="16" />
               <span class="hidden sm:inline">Logout</span>
@@ -183,61 +183,10 @@
 
       <main
         class="flex flex-1 min-h-0 flex-col overflow-y-auto px-4 sm:px-6 lg:px-8"
-        [ngClass]="{
-          'py-4 lg:py-5': headerVariant() === 'overview',
-          'py-3 lg:py-4': headerVariant() === 'workspace'
-        }"
+        [ngClass]="{ 'py-4 lg:py-5': true }"
       >
-        <div
-          class="flex-1 min-h-0"
-        >
-          @if (isDashboard()) {
-            <app-dashboard-screen />
-          } @else if (isMemberDetail()) {
-            <app-member-detail (back)="closeMemberDetail()" (addEvaluation)="openAddEvaluation()" />
-          } @else if (isCenters()) {
-            <app-centers-management-screen
-              (navigateMembers)="openMembersList()"
-              (navigateMembersForAdd)="openAddMember()"
-              (navigateEvaluations)="openEvaluationsList()"
-              (addEvaluation)="openAddEvaluation()"
-            />
-          } @else if (isEvaluationEditor()) {
-            <app-evaluation-editor-screen
-              [preset]="currentEvaluationPreset()"
-              (cancelled)="closeEvaluationEditor()"
-            />
-          } @else if (isEvaluations()) {
-            <app-evaluations-list-screen
-              (addEvaluation)="openAddEvaluation()"
-              (editEvaluation)="openEditEvaluation($event)"
-            />
-          } @else if (isFeed()) {
-            <app-feed-moderation-queue-screen />
-          } @else if (isChat()) {
-            <app-chat-inbox-screen
-              (openMember)="openMemberDetail($event)"
-              (addEvaluation)="openAddEvaluation()"
-            />
-          } @else if (isMembers()) {
-            <app-members-list-screen
-              [createRequestToken]="memberCreateRequestToken()"
-              (memberSelected)="openMemberDetail($event)"
-            />
-          } @else {
-            <section class="rounded-[32px] border border-[color:var(--ncm-border)] bg-white p-8 shadow-[var(--ncm-shadow-soft)] transition duration-200 hover:shadow-md">
-              <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--ncm-text-soft)]">
-                Module in progress
-              </p>
-              <h3 class="mt-3 text-2xl font-extrabold tracking-[-0.04em] text-[var(--ncm-text)]">
-                {{ pageTitle() }} screen plugs into the same premium shell.
-              </h3>
-              <p class="mt-3 max-w-2xl text-sm leading-7 text-[var(--ncm-text-muted)]">
-                The layout system, spacing scale, table surfaces, and panel styles are already in
-                place. Next, we can generate this module with the same health-tech visual language.
-              </p>
-            </section>
-          }
+        <div class="flex-1 min-h-0">
+          <router-outlet />
         </div>
       </main>
     </div>

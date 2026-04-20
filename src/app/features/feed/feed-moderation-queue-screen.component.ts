@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { IconComponent } from '../../shared/ui/icon/icon.component';
+import { FeedService } from './feed.service';
 
 type ModerationStatus = 'Pending' | 'Approved' | 'Rejected';
 type ContentType = 'Text' | 'Image' | 'Text + Image';
@@ -45,98 +46,13 @@ interface FeedbackMessage {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FeedModerationQueueScreenComponent {
+  private readonly feedService = inject(FeedService);
+
   protected readonly statusOptions: StatusFilter[] = ['Pending', 'Approved', 'Rejected'];
   protected readonly typeOptions: TypeFilter[] = ['All content', 'Text', 'Image', 'Text + Image'];
   protected readonly sortOptions: SortFilter[] = ['Newest first', 'Oldest first', 'Priority'];
 
-  protected readonly posts = signal<ModerationPost[]>([
-    {
-      id: 'POST-1009',
-      memberId: 'MBR-1042',
-      memberName: 'Rhea Sharma',
-      memberGoal: 'PCOS-focused fat loss',
-      submittedAt: 'Today · 9:18 AM',
-      submittedMinutesAgo: 58,
-      contentType: 'Text + Image',
-      status: 'Pending',
-      textPreview: 'Morning meal prep is finally feeling sustainable. Sharing my breakfast and hydration check-in for accountability.',
-      fullText:
-        'Morning meal prep is finally feeling sustainable. Sharing my breakfast and hydration check-in for accountability. I stayed within plan yesterday and hit my water target for the first time this week.',
-      imageLabel: 'Breakfast bowl and hydration tracker',
-      imageTone: 'from-emerald-100 via-lime-50 to-white',
-      priority: 'priority',
-      flags: ['Pending approval', 'Member submission'],
-      reviewReason: 'Strong community post, but image and caption should be reviewed together before publishing.'
-    },
-    {
-      id: 'POST-1008',
-      memberId: 'MBR-0871',
-      memberName: 'Sana Qureshi',
-      memberGoal: 'Wedding cut support',
-      submittedAt: 'Today · 8:42 AM',
-      submittedMinutesAgo: 94,
-      contentType: 'Text',
-      status: 'Pending',
-      textPreview: 'Week 6 reflection: energy is better, cravings are lower, and the community check-ins kept me consistent.',
-      fullText:
-        'Week 6 reflection: energy is better, cravings are lower, and the community check-ins kept me consistent. This is the first week I felt genuinely steady instead of forcing the routine.',
-      priority: 'standard',
-      flags: ['Pending approval'],
-      reviewReason: 'Text-only reflection with low moderation risk and clear community value.'
-    },
-    {
-      id: 'POST-1007',
-      memberId: 'MBR-0612',
-      memberName: 'Nadia Khan',
-      memberGoal: 'Postpartum recomposition',
-      submittedAt: 'Yesterday · 7:10 PM',
-      submittedMinutesAgo: 980,
-      contentType: 'Image',
-      status: 'Pending',
-      textPreview: 'Shared a progress snapshot from the evening walk and meal routine.',
-      fullText:
-        'Shared a progress snapshot from the evening walk and meal routine. The caption is short, but the image needs the main review attention.',
-      imageLabel: 'Evening walk progress photo',
-      imageTone: 'from-stone-100 via-orange-50 to-white',
-      priority: 'priority',
-      flags: ['Pending approval', 'Image review'],
-      reviewReason: 'Image-only submission needs a quick check for appropriateness and community tone.'
-    },
-    {
-      id: 'POST-1006',
-      memberId: 'MBR-0987',
-      memberName: 'Arjun Menon',
-      memberGoal: 'Metabolic reset',
-      submittedAt: 'Yesterday · 4:35 PM',
-      submittedMinutesAgo: 1135,
-      contentType: 'Text + Image',
-      status: 'Pending',
-      textPreview: 'Posting my grocery haul after coach feedback. It feels easier to plan the week when the staples are visible.',
-      fullText:
-        'Posting my grocery haul after coach feedback. It feels easier to plan the week when the staples are visible. Keeping this here so I stay committed through the weekend too.',
-      imageLabel: 'Grocery haul layout on kitchen counter',
-      imageTone: 'from-sky-100 via-cyan-50 to-white',
-      priority: 'standard',
-      flags: ['Pending approval', 'Member submission'],
-      reviewReason: 'Encouraging community content with both image and caption context.'
-    },
-    {
-      id: 'POST-1005',
-      memberId: 'MBR-0439',
-      memberName: 'Rahul Sethi',
-      memberGoal: 'Prediabetes reversal',
-      submittedAt: '2 days ago · 1:14 PM',
-      submittedMinutesAgo: 2940,
-      contentType: 'Text',
-      status: 'Pending',
-      textPreview: 'Quick note on staying steady through business travel and getting back to routine.',
-      fullText:
-        'Quick note on staying steady through business travel and getting back to routine. I wanted to share what helped me reset after three off-plan meals in a row.',
-      priority: 'priority',
-      flags: ['Pending approval', 'Needs closer look'],
-      reviewReason: 'Helpful member reflection, but the queue should surface it because it has been waiting the longest.'
-    }
-  ]);
+  protected readonly posts = signal<ModerationPost[]>([]);
 
   protected readonly queueState = signal<QueueState>('default');
   protected readonly query = signal('');
@@ -209,6 +125,10 @@ export class FeedModerationQueueScreenComponent {
   );
   protected readonly skeletonRows = Array.from({ length: 4 });
 
+  constructor() {
+    this.loadQueue();
+  }
+
   protected setQuery(value: string): void {
     this.query.set(value);
   }
@@ -239,6 +159,9 @@ export class FeedModerationQueueScreenComponent {
 
   protected setQueueState(state: QueueState): void {
     this.queueState.set(state);
+    if (state === 'default') {
+      this.loadQueue();
+    }
   }
 
   protected moderateSelected(action: ModerationAction): void {
@@ -255,17 +178,27 @@ export class FeedModerationQueueScreenComponent {
       return;
     }
 
-    const nextStatus: ModerationStatus = action === 'approve' ? 'Approved' : 'Rejected';
-    this.posts.update((posts) =>
-      posts.map((post) => (post.id === selected.id ? { ...post, status: nextStatus } : post))
-    );
+    const request =
+      action === 'approve'
+        ? this.feedService.approvePost(selected.id)
+        : this.feedService.rejectPost(selected.id);
 
-    this.feedback.set({
-      tone: 'success',
-      message:
-        action === 'approve'
-          ? `${selected.memberName}'s post was approved for the feed.`
-          : `${selected.memberName}'s post was rejected and removed from the queue.`
+    request.subscribe({
+      next: () => {
+        this.feedback.set({
+          tone: 'success',
+          message:
+            action === 'approve'
+              ? `${selected.memberName}'s post was approved for the feed.`
+              : `${selected.memberName}'s post was rejected and removed from the queue.`
+        });
+        this.loadQueue();
+      },
+      error: () =>
+        this.feedback.set({
+          tone: 'error',
+          message: 'Moderation action failed. Please retry.'
+        })
     });
   }
 
@@ -292,6 +225,37 @@ export class FeedModerationQueueScreenComponent {
     }
 
     return 'border-[color:var(--ncm-border)] hover:border-[rgba(36,122,82,0.18)]';
+  }
+
+  private loadQueue(): void {
+    this.queueState.set('loading');
+    this.feedService.getModerationQueue().subscribe({
+      next: (posts) => {
+        const mapped = posts.map((post, index) => ({
+          id: post.id,
+          memberId: post.authorMember?.id ?? post.id,
+          memberName: post.authorMember?.fullName ?? 'Staff post',
+          memberGoal: post.center.name,
+          submittedAt: new Date(post.createdAt).toLocaleString('en-IN'),
+          submittedMinutesAgo: Math.max(
+            0,
+            Math.floor((Date.now() - new Date(post.createdAt).getTime()) / 60000)
+          ),
+          contentType: 'Text',
+          status: post.status === 'APPROVED' ? 'Approved' : post.status === 'REJECTED' ? 'Rejected' : 'Pending',
+          textPreview: post.content,
+          fullText: post.content,
+          priority: index < 2 ? 'priority' : 'standard',
+          flags: ['Pending approval'],
+          reviewReason: `Submitted in ${post.center.name}`
+        } satisfies ModerationPost));
+
+        this.posts.set(mapped);
+        this.selectedPostId.set(mapped[0]?.id ?? '');
+        this.queueState.set('default');
+      },
+      error: () => this.queueState.set('error')
+    });
   }
 }
 

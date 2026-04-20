@@ -3,22 +3,22 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  effect,
-  input,
-  output,
+  inject,
   signal
 } from '@angular/core';
+import { Router } from '@angular/router';
 import { IconComponent } from '../../shared/ui/icon/icon.component';
 import {
   MemberDrawerMode,
   MemberFormDrawerComponent,
   MemberFormValue
 } from './member-form-drawer.component';
+import { MembersService, MemberResponse } from './members.service';
+import { UsersService } from '../users/users.service';
 
 type MemberStatus = 'Active' | 'Needs attention' | 'Inactive';
 type MemberTrend = 'up' | 'down' | 'steady';
 type GoalFilter = 'All goals' | 'Weight Loss' | 'Weight Gain' | 'PCOS' | 'Metabolic Reset';
-type GoalOption = Exclude<GoalFilter, 'All goals'>;
 type VisitFilter = 'Any time' | 'Today' | '7 days' | '30 days';
 type SortFilter = 'Recent' | 'Name' | 'Risk';
 type StatusFilter = 'All status' | MemberStatus;
@@ -42,6 +42,7 @@ interface MemberRecord {
   status: MemberStatus;
   flags: string[];
   trend: MemberTrend;
+  assignedCoachUserId?: string | null;
 }
 
 @Component({
@@ -53,8 +54,9 @@ interface MemberRecord {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MembersListScreenComponent {
-  readonly createRequestToken = input(0);
-  readonly memberSelected = output<string>();
+  private readonly router = inject(Router);
+  private readonly membersService = inject(MembersService);
+  private readonly usersService = inject(UsersService);
 
   protected readonly statusOptions: StatusFilter[] = [
     'All status',
@@ -72,129 +74,8 @@ export class MembersListScreenComponent {
   protected readonly visitOptions: VisitFilter[] = ['Any time', 'Today', '7 days', '30 days'];
   protected readonly sortOptions: SortFilter[] = ['Recent', 'Name', 'Risk'];
 
-  protected readonly members = signal<MemberRecord[]>([
-    {
-      id: 'MBR-1042',
-      name: 'Rhea Sharma',
-      email: 'rhea.sharma@nourish.app',
-      phone: '+91 98765 10245',
-      dob: '1996-05-14',
-      height: '164',
-      gender: 'Female',
-      goal: 'PCOS',
-      coach: 'Ava Nelson',
-      joinedOn: 'Joined 12 Jan 2026',
-      tagLine: 'Cycle regularity and fat loss phase',
-      lastWeight: '68.4 kg',
-      bodyFat: '31.2%',
-      lastVisitLabel: 'Today, 10:30 AM',
-      lastVisitDays: 0,
-      status: 'Needs attention',
-      flags: ['Needs attention', 'Missed follow-up'],
-      trend: 'down'
-    },
-    {
-      id: 'MBR-0987',
-      name: 'Arjun Menon',
-      email: 'arjun.menon@nourish.app',
-      phone: '+91 99887 44321',
-      dob: '1992-11-02',
-      height: '178',
-      gender: 'Male',
-      goal: 'Metabolic Reset',
-      coach: 'Ava Nelson',
-      joinedOn: 'Joined 03 Feb 2026',
-      tagLine: 'Energy recovery and insulin sensitivity',
-      lastWeight: '82.1 kg',
-      bodyFat: '24.8%',
-      lastVisitLabel: '2 days ago',
-      lastVisitDays: 2,
-      status: 'Active',
-      flags: ['New member'],
-      trend: 'up'
-    },
-    {
-      id: 'MBR-0871',
-      name: 'Sana Qureshi',
-      email: 'sana.qureshi@nourish.app',
-      phone: '+91 98111 77223',
-      dob: '1994-08-28',
-      height: '160',
-      gender: 'Female',
-      goal: 'Weight Loss',
-      coach: 'Mila Carter',
-      joinedOn: 'Joined 08 Mar 2026',
-      tagLine: 'Wedding cut with high adherence',
-      lastWeight: '59.8 kg',
-      bodyFat: '26.1%',
-      lastVisitLabel: 'Today, 8:45 AM',
-      lastVisitDays: 0,
-      status: 'Active',
-      flags: ['Progressing well'],
-      trend: 'up'
-    },
-    {
-      id: 'MBR-0773',
-      name: 'Kavya Iyer',
-      email: 'kavya.iyer@nourish.app',
-      phone: '+91 98454 88771',
-      dob: '1998-01-17',
-      height: '167',
-      gender: 'Female',
-      goal: 'Weight Gain',
-      coach: 'Rita Jones',
-      joinedOn: 'Joined 14 Mar 2026',
-      tagLine: 'Strength gain and recovery nutrition',
-      lastWeight: '51.3 kg',
-      bodyFat: '19.4%',
-      lastVisitLabel: '6 days ago',
-      lastVisitDays: 6,
-      status: 'Active',
-      flags: ['New member'],
-      trend: 'steady'
-    },
-    {
-      id: 'MBR-0612',
-      name: 'Nadia Khan',
-      email: 'nadia.khan@nourish.app',
-      phone: '+91 97000 11226',
-      dob: '1991-03-21',
-      height: '162',
-      gender: 'Female',
-      goal: 'Weight Loss',
-      coach: 'Mila Carter',
-      joinedOn: 'Joined 19 Feb 2026',
-      tagLine: 'Postpartum recomposition and sleep support',
-      lastWeight: '72.6 kg',
-      bodyFat: '34.7%',
-      lastVisitLabel: '13 days ago',
-      lastVisitDays: 13,
-      status: 'Needs attention',
-      flags: ['Needs attention'],
-      trend: 'down'
-    },
-    {
-      id: 'MBR-0439',
-      name: 'Rahul Sethi',
-      email: 'rahul.sethi@nourish.app',
-      phone: '+91 99550 21087',
-      dob: '1989-09-09',
-      height: '175',
-      gender: 'Male',
-      goal: 'Metabolic Reset',
-      coach: 'Coach Mila',
-      joinedOn: 'Joined 25 Jan 2026',
-      tagLine: 'Prediabetes reversal protocol',
-      lastWeight: '89.4 kg',
-      bodyFat: '29.8%',
-      lastVisitLabel: '27 days ago',
-      lastVisitDays: 27,
-      status: 'Inactive',
-      flags: ['Missed follow-up'],
-      trend: 'steady'
-    }
-  ]);
-
+  protected readonly members = signal<MemberRecord[]>([]);
+  protected readonly coachOptions = signal<Array<{ id: string; fullName: string }>>([]);
   protected readonly query = signal('');
   protected readonly selectedStatus = signal<StatusFilter>('All status');
   protected readonly selectedGoal = signal<GoalFilter>('All goals');
@@ -268,16 +149,9 @@ export class MembersListScreenComponent {
     };
   });
 
-  protected readonly drawerSuccessMessage = computed(() =>
-    this.drawerMode() === 'edit' ? 'Member details updated.' : 'added to the member list.'
-  );
-
   constructor() {
-    effect(() => {
-      if (this.createRequestToken() > 0) {
-        this.openAddMemberDrawer();
-      }
-    });
+    this.loadMembers();
+    this.loadCoaches();
   }
 
   protected setQuery(value: string): void {
@@ -309,107 +183,133 @@ export class MembersListScreenComponent {
   }
 
   protected openMember(memberId: string): void {
-    this.memberSelected.emit(memberId);
+    void this.router.navigate(['/members', memberId]);
   }
 
   protected openAddMemberDrawer(): void {
     this.drawerMode.set('create');
     this.editingMemberId.set(null);
     this.drawerOpen.set(true);
-    this.saveFeedback.set('');
   }
 
   protected openEditMemberDrawer(memberId: string): void {
     this.drawerMode.set('edit');
     this.editingMemberId.set(memberId);
     this.drawerOpen.set(true);
-    this.saveFeedback.set('');
   }
 
-  protected closeMemberDrawer(clearFeedback = true): void {
+  protected closeMemberDrawer(): void {
     this.drawerOpen.set(false);
-    this.editingMemberId.set(null);
-    if (clearFeedback) {
-      this.saveFeedback.set('');
-    }
   }
 
   protected saveMember(payload: MemberFormValue): void {
-    if (this.drawerMode() === 'edit' && payload.id) {
-      this.members.update((members) =>
-        members.map((member) =>
-          member.id === payload.id
-            ? {
-                ...member,
-                name: payload.fullName,
-                email: payload.email,
-                phone: payload.phone,
-                dob: payload.dob,
-                height: payload.height,
-                gender: payload.gender,
-                goal: payload.goal,
-                coach: payload.coach,
-                tagLine: this.tagLineForGoal(payload.goal)
-              }
-            : member
-        )
-      );
-      this.closeMemberDrawer(false);
-      this.saveFeedback.set(`${payload.fullName} updated successfully.`);
+    const coach = this.coachOptions().find((item) => item.fullName === payload.coach);
+    if (!coach) {
       return;
     }
 
-    const newMember: MemberRecord = {
-      id: `MBR-${Math.floor(1000 + Math.random() * 8999)}`,
-      name: payload.fullName,
-      email: payload.email,
-      phone: payload.phone,
+    const request = {
+      fullName: payload.fullName,
       dob: payload.dob,
-      height: payload.height,
       gender: payload.gender,
-      goal: payload.goal as GoalOption,
-      coach: payload.coach,
-      joinedOn: 'Joined today',
-      tagLine: `Newly onboarded with ${payload.goal.toLowerCase()} care plan`,
-      lastWeight: '--',
-      bodyFat: '--',
-      lastVisitLabel: 'New member',
-      lastVisitDays: 0,
-      status: 'Active',
-      flags: ['New member'],
-      trend: 'steady'
+      email: payload.email,
+      phone: payload.phone.replace(/\D/g, ''),
+      heightCm: Number(payload.height),
+      goal: payload.goal,
+      assignedCoachUserId: coach.id
     };
 
-    this.members.update((members) => [newMember, ...members]);
-    this.closeMemberDrawer(false);
-    this.saveFeedback.set(`${payload.fullName} added to the member list.`);
+    const action =
+      this.drawerMode() === 'edit' && payload.id
+        ? this.membersService.updateMember(payload.id, request)
+        : this.membersService.createMember(request);
+
+    action.subscribe({
+      next: () => {
+        this.saveFeedback.set(
+          this.drawerMode() === 'edit' ? 'Member updated successfully.' : 'Member created successfully.'
+        );
+        this.drawerOpen.set(false);
+        this.loadMembers();
+        setTimeout(() => this.saveFeedback.set(''), 2200);
+      }
+    });
   }
 
-  private tagLineForGoal(goal: GoalOption): string {
-    if (goal === 'PCOS') {
-      return 'Cycle regularity and fat loss phase';
-    }
+  private loadMembers(): void {
+    this.membersService.listMembers({ limit: 100 }).subscribe({
+      next: (response) => this.members.set(response.items.map((member) => this.mapMember(member)))
+    });
+  }
 
-    if (goal === 'Weight Gain') {
-      return 'Strength gain and recovery nutrition';
-    }
+  private loadCoaches(): void {
+    this.usersService.listUsers({ limit: 100, role: 'COACH' }).subscribe({
+      next: (response) =>
+        this.coachOptions.set(response.items.map((user) => ({ id: user.id, fullName: user.fullName })))
+    });
+  }
 
-    if (goal === 'Metabolic Reset') {
-      return 'Energy recovery and insulin sensitivity';
-    }
-
-    return 'Sustainable fat loss and adherence support';
+  private mapMember(member: MemberResponse): MemberRecord {
+    return {
+      id: member.id,
+      name: member.fullName,
+      email: member.email,
+      phone: member.phone,
+      dob: member.dob.slice(0, 10),
+      height: member.heightCm,
+      gender: (['Female', 'Male', 'Other'].includes(member.gender) ? member.gender : 'Other') as
+        | 'Female'
+        | 'Male'
+        | 'Other',
+      goal: toGoalOption(member.goal),
+      coach: member.assignedCoach?.fullName ?? 'Unassigned',
+      joinedOn: `Joined ${new Date(member.createdAt).toLocaleDateString('en-IN', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric'
+      })}`,
+      tagLine: member.goal,
+      lastWeight: '--',
+      bodyFat: '--',
+      lastVisitLabel: new Date(member.updatedAt).toLocaleDateString('en-IN'),
+      lastVisitDays: daysAgo(member.updatedAt),
+      status: toMemberStatus(member.status),
+      flags: member.status === 'ACTIVE' ? ['Active'] : ['Needs attention'],
+      trend: 'steady',
+      assignedCoachUserId: member.assignedCoach?.id ?? null
+    };
   }
 }
 
+function daysAgo(value: string): number {
+  return Math.max(0, Math.floor((Date.now() - new Date(value).getTime()) / (1000 * 60 * 60 * 24)));
+}
+
 function riskWeight(status: MemberStatus): number {
-  if (status === 'Needs attention') {
-    return 3;
+  return status === 'Needs attention' ? 3 : status === 'Active' ? 2 : 1;
+}
+
+function toMemberStatus(status: string): MemberStatus {
+  if (status === 'ACTIVE') {
+    return 'Active';
   }
 
-  if (status === 'Inactive') {
-    return 2;
+  if (status === 'INACTIVE') {
+    return 'Inactive';
   }
 
-  return 1;
+  return 'Needs attention';
+}
+
+function toGoalOption(goal: string): Exclude<GoalFilter, 'All goals'> {
+  if (goal.includes('Gain')) {
+    return 'Weight Gain';
+  }
+  if (goal.includes('PCOS')) {
+    return 'PCOS';
+  }
+  if (goal.includes('Metabolic')) {
+    return 'Metabolic Reset';
+  }
+  return 'Weight Loss';
 }

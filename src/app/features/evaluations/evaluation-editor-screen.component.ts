@@ -4,16 +4,19 @@ import {
   Component,
   computed,
   effect,
-  input,
+  inject,
   output,
   signal
 } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { IconComponent } from '../../shared/ui/icon/icon.component';
 import {
   EvaluationEditorPreset,
   EvaluationEditorViewState,
   EvaluationHistoryEntry
 } from './evaluations.data';
+import { EvaluationsService } from './evaluations.service';
+import { MembersService } from '../members/members.service';
 
 interface EvaluationEditorPayload {
   weightKg: number | null;
@@ -54,7 +57,41 @@ interface MeasurementField {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EvaluationEditorScreenComponent {
-  readonly preset = input.required<EvaluationEditorPreset>();
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly evaluationsService = inject(EvaluationsService);
+  private readonly membersService = inject(MembersService);
+
+  private readonly presetState = signal<EvaluationEditorPreset>({
+    mode: 'add',
+    evaluationId: null,
+    viewState: 'loading',
+    member: {
+      id: '',
+      name: 'Member',
+      age: 0,
+      gender: '',
+      heightCm: 0,
+      goal: '',
+      program: '',
+      status: '',
+      coach: 'Unassigned',
+      joinedOn: '',
+      summary: '',
+      tags: []
+    },
+    recordedAtLabel: new Date().toLocaleString('en-IN'),
+    weightKg: null,
+    trunkSubcutaneousFatPercent: null,
+    bodyFatPercent: null,
+    visceralFat: null,
+    skeletalMuscleKg: null,
+    bmrKcal: null,
+    bodyAgeYears: null,
+    history: []
+  });
+
+  readonly preset = this.presetState.asReadonly();
 
   readonly saved = output<EvaluationEditorPayload>();
   readonly cancelled = output<void>();
@@ -198,6 +235,8 @@ export class EvaluationEditorScreenComponent {
       this.viewState.set(preset.viewState ?? 'default');
       this.hydrateFromPreset(preset);
     });
+
+    this.loadPreset();
   }
 
   protected updateField(
@@ -230,7 +269,30 @@ export class EvaluationEditorScreenComponent {
       skeletalMuscleKg: this.parseNumber(this.skeletalMuscleKg())
     };
 
-    this.saved.emit(payload);
+    const memberId = this.preset().member.id;
+    const evaluationId = this.preset().evaluationId;
+    const request = {
+      weight: payload.weightKg!,
+      visceralFatPercent: payload.visceralFat,
+      trunkSubcutaneousFat: payload.trunkSubcutaneousFatPercent,
+      bodyFat: payload.bodyFatPercent,
+      bodyAge: payload.bodyAgeYears,
+      bmr: payload.bmrKcal,
+      skeletalMuscle: payload.skeletalMuscleKg
+    };
+
+    const action =
+      this.preset().mode === 'edit' && evaluationId
+        ? this.evaluationsService.updateEvaluation(evaluationId, request)
+        : this.evaluationsService.createEvaluation(memberId, request);
+
+    action.subscribe({
+      next: () => {
+        this.saved.emit(payload);
+        void this.router.navigate(['/evaluations']);
+      }
+    });
+
     this.savedPulse.set(true);
     if (this.savePulseTimer) {
       clearTimeout(this.savePulseTimer);
@@ -263,10 +325,11 @@ export class EvaluationEditorScreenComponent {
 
   protected cancel(): void {
     this.cancelled.emit();
+    void this.router.navigate(['/evaluations']);
   }
 
   protected retry(): void {
-    this.viewState.set('default');
+    this.loadPreset();
   }
 
   protected badgeClass(tone: EvaluationHistoryEntry['trendTone']): string {
@@ -376,4 +439,110 @@ export class EvaluationEditorScreenComponent {
   private formatNumber(value: number, digits = 1): string {
     return value.toFixed(digits);
   }
+
+  private loadPreset(): void {
+    const evaluationId = this.route.snapshot.paramMap.get('evaluationId');
+    const memberIdFromQuery = this.route.snapshot.queryParamMap.get('memberId');
+
+    if (evaluationId) {
+      this.evaluationsService.getEvaluation(evaluationId).subscribe({
+        next: (evaluation) => {
+          this.evaluationsService.listMemberEvaluations(evaluation.memberId).subscribe({
+            next: (history) =>
+              this.presetState.set({
+                mode: 'edit',
+                evaluationId: evaluation.id,
+                viewState: 'default',
+                member: {
+                  id: evaluation.member.id,
+                  name: evaluation.member.fullName,
+                  age: 0,
+                  gender: '',
+                  heightCm: Number(evaluation.member.heightCm),
+                  goal: '',
+                  program: evaluation.member.center.name,
+                  status: '',
+                  coach: evaluation.member.assignedCoach?.fullName ?? 'Unassigned',
+                  joinedOn: '',
+                  summary: '',
+                  tags: []
+                },
+                recordedAtLabel: new Date(evaluation.recordedAt).toLocaleString('en-IN'),
+                weightKg: Number(evaluation.weight),
+                trunkSubcutaneousFatPercent: numberOrNull(evaluation.trunkSubcutaneousFat),
+                bodyFatPercent: numberOrNull(evaluation.bodyFat),
+                visceralFat: numberOrNull(evaluation.visceralFatPercent),
+                skeletalMuscleKg: numberOrNull(evaluation.skeletalMuscle),
+                bmrKcal: numberOrNull(evaluation.bmr),
+                bodyAgeYears: evaluation.bodyAge,
+                history: history.map((item) => this.toHistoryEntry(item))
+              })
+          });
+        },
+        error: () => this.presetState.update((preset) => ({ ...preset, viewState: 'error' }))
+      });
+      return;
+    }
+
+    if (!memberIdFromQuery) {
+      this.presetState.update((preset) => ({ ...preset, viewState: 'error' }));
+      return;
+    }
+
+    this.membersService.getMember(memberIdFromQuery).subscribe({
+      next: (member) => {
+        this.evaluationsService.listMemberEvaluations(member.id).subscribe({
+          next: (history) =>
+            this.presetState.set({
+              mode: 'add',
+              evaluationId: null,
+              viewState: 'default',
+              member: {
+                id: member.id,
+                name: member.fullName,
+                age: 0,
+                gender: member.gender,
+                heightCm: Number(member.heightCm),
+                goal: member.goal,
+                program: member.goal,
+                status: member.status,
+                coach: member.assignedCoach?.fullName ?? 'Unassigned',
+                joinedOn: new Date(member.createdAt).toLocaleDateString('en-IN'),
+                summary: member.goal,
+                tags: []
+              },
+              recordedAtLabel: new Date().toLocaleString('en-IN'),
+              weightKg: null,
+              trunkSubcutaneousFatPercent: null,
+              bodyFatPercent: null,
+              visceralFat: null,
+              skeletalMuscleKg: null,
+              bmrKcal: null,
+              bodyAgeYears: null,
+              history: history.map((item) => this.toHistoryEntry(item))
+            })
+        });
+      },
+      error: () => this.presetState.update((preset) => ({ ...preset, viewState: 'error' }))
+    });
+  }
+
+  private toHistoryEntry(item: import('./evaluations.service').EvaluationResponse): EvaluationHistoryEntry {
+    return {
+      id: item.id,
+      date: new Date(item.recordedAt).toLocaleDateString('en-IN'),
+      weight: `${item.weight} kg`,
+      bmi: item.bmi,
+      bodyFat: item.bodyFat ? `${item.bodyFat}%` : '--',
+      visceralFat: item.visceralFatPercent ?? '--',
+      note: 'Recorded in system',
+      enteredBy: item.member.assignedCoach?.fullName ?? 'Staff',
+      trend: 'Recorded',
+      trendTone: 'neutral'
+    };
+  }
+}
+
+function numberOrNull(value: string | null): number | null {
+  return value === null ? null : Number(value);
 }
