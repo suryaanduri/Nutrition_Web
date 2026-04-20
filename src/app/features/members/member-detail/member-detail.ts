@@ -3,12 +3,15 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { ActivatedRoute, Router } from '@angular/router';
 import { IconComponent } from '../../../shared/ui/icon/icon.component';
 import {
+  AssignableStaffOption,
   GenderOption,
   MemberFormDrawerComponent,
   MemberFormValue
 } from '../member-form-drawer.component';
 import { MembersService } from '../members.service';
 import { EvaluationsService } from '../../evaluations/evaluations.service';
+import { UsersService } from '../../users/users.service';
+import { forkJoin } from 'rxjs';
 
 type RangeKey = '7D' | '30D' | '90D';
 type TrendType = 'up' | 'down' | 'neutral';
@@ -51,10 +54,12 @@ export class MemberDetail {
   private readonly router = inject(Router);
   private readonly membersService = inject(MembersService);
   private readonly evaluationsService = inject(EvaluationsService);
+  private readonly usersService = inject(UsersService);
 
   readonly selectedRange = signal<RangeKey>('30D');
   readonly rangeOptions: RangeKey[] = ['7D', '30D', '90D'];
   readonly editDrawerOpen = signal(false);
+  readonly assignableStaffOptions = signal<AssignableStaffOption[]>([]);
 
   readonly member = signal({
     id: '',
@@ -189,6 +194,7 @@ export class MemberDetail {
   );
 
   constructor() {
+    this.loadAssignableStaff();
     const memberId = this.route.snapshot.paramMap.get('memberId');
     if (memberId) {
       this.loadMember(memberId);
@@ -215,6 +221,11 @@ export class MemberDetail {
   }
 
   saveMember(payload: MemberFormValue): void {
+    const coach = this.assignableStaffOptions().find((item) => item.fullName === payload.coach);
+    if (!coach) {
+      return;
+    }
+
     this.membersService
       .updateMember(this.member().id, {
         fullName: payload.fullName,
@@ -223,7 +234,8 @@ export class MemberDetail {
         phone: payload.phone.replace(/\D/g, ''),
         heightCm: Number(payload.height),
         gender: payload.gender,
-        goal: payload.goal
+        goal: payload.goal,
+        assignedCoachUserId: coach.id
       })
       .subscribe({
         next: () => {
@@ -323,6 +335,24 @@ export class MemberDetail {
       return 'Metabolic reset and insulin stability';
     }
     return 'Sustainable fat loss';
+  }
+
+  private loadAssignableStaff(): void {
+    forkJoin([
+      this.usersService.listUsers({ limit: 100, role: 'COACH', status: 'ACTIVE' }),
+      this.usersService.listUsers({ limit: 100, role: 'CENTER_ADMIN', status: 'ACTIVE' })
+    ]).subscribe({
+      next: ([coachesResponse, adminsResponse]) =>
+        this.assignableStaffOptions.set(
+          [...coachesResponse.items, ...adminsResponse.items]
+            .map((user) => ({
+              id: user.id,
+              fullName: user.fullName,
+              role: user.role as AssignableStaffOption['role']
+            }))
+            .sort((left, right) => left.fullName.localeCompare(right.fullName))
+        )
+    });
   }
 
   private buildPath(values: number[]): string {

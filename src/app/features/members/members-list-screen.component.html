@@ -228,6 +228,7 @@
     [open]="drawerOpen()"
     [mode]="drawerMode()"
     [initialValue]="drawerInitialValue()"
+    [assignableStaffOptions]="coachOptions()"
     (cancelled)="closeMemberDrawer()"
     (saved)="saveMember($event)"
   />

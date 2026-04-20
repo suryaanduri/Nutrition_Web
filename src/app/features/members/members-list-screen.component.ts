@@ -9,12 +9,14 @@ import {
 import { Router } from '@angular/router';
 import { IconComponent } from '../../shared/ui/icon/icon.component';
 import {
+  AssignableStaffOption,
   MemberDrawerMode,
   MemberFormDrawerComponent,
   MemberFormValue
 } from './member-form-drawer.component';
 import { MembersService, MemberResponse } from './members.service';
 import { UsersService } from '../users/users.service';
+import { forkJoin } from 'rxjs';
 
 type MemberStatus = 'Active' | 'Needs attention' | 'Inactive';
 type MemberTrend = 'up' | 'down' | 'steady';
@@ -75,7 +77,7 @@ export class MembersListScreenComponent {
   protected readonly sortOptions: SortFilter[] = ['Recent', 'Name', 'Risk'];
 
   protected readonly members = signal<MemberRecord[]>([]);
-  protected readonly coachOptions = signal<Array<{ id: string; fullName: string }>>([]);
+  protected readonly coachOptions = signal<AssignableStaffOption[]>([]);
   protected readonly query = signal('');
   protected readonly selectedStatus = signal<StatusFilter>('All status');
   protected readonly selectedGoal = signal<GoalFilter>('All goals');
@@ -243,9 +245,20 @@ export class MembersListScreenComponent {
   }
 
   private loadCoaches(): void {
-    this.usersService.listUsers({ limit: 100, role: 'COACH' }).subscribe({
-      next: (response) =>
-        this.coachOptions.set(response.items.map((user) => ({ id: user.id, fullName: user.fullName })))
+    forkJoin([
+      this.usersService.listUsers({ limit: 100, role: 'COACH', status: 'ACTIVE' }),
+      this.usersService.listUsers({ limit: 100, role: 'CENTER_ADMIN', status: 'ACTIVE' })
+    ]).subscribe({
+      next: ([coachesResponse, adminsResponse]) =>
+        this.coachOptions.set(
+          [...coachesResponse.items, ...adminsResponse.items]
+            .map((user) => ({
+              id: user.id,
+              fullName: user.fullName,
+              role: user.role as AssignableStaffOption['role']
+            }))
+            .sort((left, right) => left.fullName.localeCompare(right.fullName))
+        )
     });
   }
 

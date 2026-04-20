@@ -27,6 +27,12 @@ export interface MemberFormValue {
   coach: string;
 }
 
+export interface AssignableStaffOption {
+  id: string;
+  fullName: string;
+  role: 'CENTER_ADMIN' | 'COACH';
+}
+
 @Component({
   selector: 'app-member-form-drawer',
   standalone: true,
@@ -40,6 +46,7 @@ export class MemberFormDrawerComponent {
   readonly open = input(false);
   readonly mode = input<MemberDrawerMode>('create');
   readonly initialValue = input<MemberFormValue | null>(null);
+  readonly assignableStaffOptions = input<AssignableStaffOption[]>([]);
 
   readonly cancelled = output<void>();
   readonly saved = output<MemberFormValue>();
@@ -50,13 +57,6 @@ export class MemberFormDrawerComponent {
     'Weight Gain',
     'PCOS',
     'Metabolic Reset'
-  ];
-  protected readonly coachOptions = [
-    'Ava Nelson',
-    'Mila Carter',
-    'Rita Jones',
-    'Coach Ava',
-    'Coach Mila'
   ];
 
   protected readonly memberForm = this.formBuilder.nonNullable.group({
@@ -80,6 +80,12 @@ export class MemberFormDrawerComponent {
   );
   protected readonly submitLabel = computed(() =>
     this.mode() === 'edit' ? 'Save Changes' : 'Save Member'
+  );
+  protected readonly coachOptions = computed(() =>
+    this.assignableStaffOptions().map((staff) => ({
+      label: staff.role === 'CENTER_ADMIN' ? `${staff.fullName} (Admin)` : staff.fullName,
+      value: staff.fullName
+    }))
   );
 
   constructor() {

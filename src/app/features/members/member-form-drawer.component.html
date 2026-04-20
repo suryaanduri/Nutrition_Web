@@ -203,8 +203,8 @@
               }"
             >
               <option value="">Select coach</option>
-              @for (coach of coachOptions; track coach) {
-                <option [value]="coach">{{ coach }}</option>
+              @for (coach of coachOptions(); track coach.value) {
+                <option [value]="coach.value">{{ coach.label }}</option>
               }
             </select>
             @if (fieldHasError('coach')) {

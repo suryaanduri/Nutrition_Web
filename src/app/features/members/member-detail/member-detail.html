@@ -310,6 +310,7 @@
     [open]="editDrawerOpen()"
     mode="edit"
     [initialValue]="memberDrawerValue()"
+    [assignableStaffOptions]="assignableStaffOptions()"
     (cancelled)="closeEditMember()"
     (saved)="saveMember($event)"
   />
