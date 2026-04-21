@@ -189,9 +189,9 @@
                     <h4 class="truncate text-[1rem] font-bold tracking-[-0.03em] text-[var(--ncm-text)]">
                       {{ record.memberName }}
                     </h4>
-                    <span class="text-xs text-[var(--ncm-text-soft)]">
+                    <!-- <span class="text-xs text-[var(--ncm-text-soft)]">
                       {{ record.memberId }} · {{ record.id }}
-                    </span>
+                    </span> -->
                   </div>
                   <p class="mt-1 text-sm text-[var(--ncm-text-muted)]">
                     {{ record.type }} evaluation
@@ -201,7 +201,7 @@
                   </p>
                 </div>
 
-                <div class="grid gap-x-5 gap-y-2 sm:grid-cols-4">
+                <div class="grid gap-x-5 gap-y-2 sm:grid-cols-3">
                   <div>
                     <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--ncm-text-soft)]">Date</p>
                     <p class="mt-1 text-sm font-semibold text-[var(--ncm-text)]">{{ record.scheduledLabel }}</p>
@@ -214,10 +214,10 @@
                     <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--ncm-text-soft)]">Coach</p>
                     <p class="mt-1 text-sm font-semibold text-[var(--ncm-text)]">{{ record.coach }}</p>
                   </div>
-                  <div>
+                  <!-- <div>
                     <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--ncm-text-soft)]">Latest update</p>
                     <p class="mt-1 text-sm font-semibold text-[var(--ncm-text)]">{{ record.relativeLabel }}</p>
-                  </div>
+                  </div> -->
                 </div>
 
                 <div class="flex items-center gap-2 xl:justify-end">
