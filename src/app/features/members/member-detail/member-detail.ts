@@ -143,12 +143,41 @@ export class MemberDetail {
 
   readonly metricCards = computed<MetricCard[]>(() => {
     const latest = this.latestEvaluation();
+    if (!latest) {
+      return [
+        {
+          label: 'Current Weight',
+          value: '--',
+          trend: 'No evaluations yet',
+          trendType: 'neutral'
+        },
+        {
+          label: 'Body Fat %',
+          value: '--',
+          trend: 'No evaluations yet',
+          trendType: 'neutral'
+        },
+        {
+          label: 'Last Visit',
+          value: 'No visits',
+          trend: 'Add an evaluation to start tracking',
+          trendType: 'neutral'
+        },
+        {
+          label: 'Goal Progress',
+          value: '--',
+          trend: 'Awaiting baseline',
+          trendType: 'neutral'
+        }
+      ];
+    }
+
     const previous = this.previousEvaluation();
     const latestWeight = this.valueFromMetric(latest.weight);
     const previousWeight = previous ? this.valueFromMetric(previous.weight) : latestWeight;
     const latestBodyFat = this.valueFromMetric(latest.bodyFat);
     const previousBodyFat = previous ? this.valueFromMetric(previous.bodyFat) : latestBodyFat;
-    const baselineWeight = this.valueFromMetric(this.history()[this.history().length - 1].weight);
+    const baselineWeight = this.valueFromMetric(this.history()[this.history().length - 1]?.weight ?? latest.weight);
     const progress = Math.max(
       0,
       Math.min(100, Math.round(((baselineWeight - latestWeight) / Math.max(baselineWeight - 64, 1)) * 100))
@@ -181,6 +210,8 @@ export class MemberDetail {
       }
     ];
   });
+  readonly weightTrendSummary = computed(() => this.metricCards()[0]?.trend ?? 'No evaluations yet');
+  readonly bodyFatTrendSummary = computed(() => this.metricCards()[1]?.trend ?? 'No evaluations yet');
 
   readonly weightPoints = computed(() => this.weightData()[this.selectedRange()]);
   readonly bodyFatPoints = computed(() => this.bodyFatData()[this.selectedRange()]);
