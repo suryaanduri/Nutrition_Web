@@ -98,12 +98,13 @@ export class FeedModerationQueueScreenComponent {
     return list;
   });
 
-  protected readonly selectedPost = computed(
+  protected readonly selectedPost = computed<ModerationPost | null>(
     () =>
       this.filteredPosts().find((post) => post.id === this.selectedPostId()) ??
       this.filteredPosts()[0] ??
       this.posts().find((post) => post.id === this.selectedPostId()) ??
-      this.posts()[0]
+      this.posts()[0] ??
+      null
   );
 
   protected readonly pendingCount = computed(
