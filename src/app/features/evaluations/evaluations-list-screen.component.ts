@@ -13,6 +13,7 @@ type ScreenState = 'default' | 'loading' | 'error';
 interface EvaluationRecordView {
   id: string;
   memberId: string;
+  memberCode: string;
   memberName: string;
   type: 'Recorded';
   summary: string;
@@ -143,6 +144,7 @@ export class EvaluationsListScreenComponent {
     this.evaluationsService.listEvaluations({ limit: 100 }).subscribe({
       next: (response) => {
         this.records.set(response.items.map((item) => this.mapRecord(item)));
+        console.log('Loaded evaluations:', this.records());
         this.screenState.set('default');
       },
       error: () => this.screenState.set('error')
@@ -151,12 +153,14 @@ export class EvaluationsListScreenComponent {
 
   private mapRecord(item: EvaluationResponse): EvaluationRecordView {
     const recordedAt = new Date(item.recordedAt);
+    console.log('Mapping evaluation record:',item )
     return {
       id: item.id,
       memberId: item.memberId,
+      memberCode: item.member.memberCode,
       memberName: item.member.fullName,
       type: 'Recorded',
-      summary: `Weight ${item.weight} kg · BMI ${item.bmi}`,
+      summary: `Weight ${item.weight} kg · BMI ${item.bmi} ·  Body fat ${item.bodyFat}%`,
       scheduledLabel: recordedAt.toLocaleDateString('en-IN', {
         day: '2-digit',
         month: 'short',

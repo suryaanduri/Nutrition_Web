@@ -27,6 +27,7 @@ type StatusFilter = 'All status' | MemberStatus;
 
 interface MemberRecord {
   id: string;
+  memberCode: string;
   name: string;
   email: string;
   phone: string;
@@ -265,6 +266,7 @@ export class MembersListScreenComponent {
   private mapMember(member: MemberResponse): MemberRecord {
     return {
       id: member.id,
+      memberCode: member.memberCode,
       name: member.fullName,
       email: member.email,
       phone: member.phone,
