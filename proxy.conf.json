@@ -1,7 +1,7 @@
 {
   "/api": {
     "target": "https://ncmbackend-1065621125925.asia-south1.run.app",
-    "secure": true,
-    "changeOrigin": true
+    "secure": false,
+    "changeOrigin": false
   }
 }
