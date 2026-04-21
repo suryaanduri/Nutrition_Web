@@ -1,4 +1,4 @@
-<div class="relative flex min-h-full flex-col">
+<div class="members-screen">
   @if (saveFeedback()) {
     <div class="fixed right-4 top-24 z-30 sm:right-6 lg:right-8">
       <div class="rounded-2xl border border-emerald-100 bg-white px-4 py-3 text-sm font-semibold text-emerald-700 shadow-[0_18px_34px_rgba(15,23,42,0.08)]">
@@ -7,214 +7,218 @@
     </div>
   }
 
-  <section class="px-1 py-2">
-    <div class="rounded-[22px] border border-[color:var(--ncm-border)] bg-white px-4 py-4 shadow-sm">
-      <div class="flex flex-wrap items-center justify-between gap-4 border-b border-[color:rgba(24,24,27,0.08)] pb-3">
-        <div class="min-w-0">
-          <h3 class="truncate text-[1.35rem] font-extrabold tracking-[-0.04em] text-[var(--ncm-text)]">
-            Members
-          </h3>
-          <p class="mt-1 text-sm text-[var(--ncm-text-soft)]">
-            Search, segment, and act on active member records.
+  <section class="members-shell">
+    <header class="members-hero">
+      <div class="members-hero__glow members-hero__glow--primary"></div>
+      <div class="members-hero__glow members-hero__glow--secondary"></div>
+
+      <div class="members-hero__top">
+        <div class="members-hero__copy">
+          <span class="members-hero__eyebrow">Member Directory</span>
+          <h1 class="members-hero__title">Members</h1>
+          <p class="members-hero__subtitle">
+            Search, segment, and act on active member records with a single, centralized roster.
           </p>
         </div>
 
         <button
           type="button"
-          class="inline-flex items-center justify-center rounded-[14px] bg-[var(--ncm-primary)] px-4 py-2 text-sm font-semibold text-white transition duration-200 hover:bg-[var(--ncm-primary-strong)]"
+          class="members-hero__cta"
           (click)="openAddMemberDrawer()"
         >
-          + Add Member
+          <span class="members-hero__cta-icon">+</span>
+          <span>Add Member</span>
         </button>
       </div>
 
-      <div class="mt-3 flex flex-wrap items-center gap-2">
-        <label
-          class="group flex min-w-[230px] flex-1 items-center gap-2.5 rounded-[14px] border border-[color:var(--ncm-border)] bg-white px-3 py-2.5 transition duration-200 focus-within:border-[rgba(36,122,82,0.22)] focus-within:shadow-[0_0_0_3px_rgba(36,122,82,0.08)] lg:max-w-[320px]"
-        >
-          <span class="text-[var(--ncm-text-soft)] transition duration-200 group-focus-within:text-[var(--ncm-primary)]">
+      <div class="members-toolbar">
+        <label class="members-search">
+          <span class="members-search__icon">
             <ncm-icon name="search" [size]="16" />
           </span>
           <input
             type="search"
-            class="w-full border-0 bg-transparent p-0 text-sm text-[var(--ncm-text)] outline-none placeholder:text-[var(--ncm-text-soft)]"
+            class="members-search__input"
             placeholder="Search by name, phone, or goal..."
             [value]="query()"
             (input)="setQuery(($any($event.target).value ?? '').toString())"
           />
         </label>
 
-        <label class="min-w-[140px]">
-          <select
-            class="w-full rounded-[14px] border border-[color:var(--ncm-border)] bg-[var(--ncm-surface-soft)] px-3 py-2.5 text-sm text-[var(--ncm-text)] outline-none transition focus:border-[rgba(36,122,82,0.22)] focus:bg-white focus:shadow-[0_0_0_3px_rgba(36,122,82,0.08)]"
-            [value]="selectedStatus()"
-            (change)="setStatus(($any($event.target).value ?? 'All status').toString())"
-          >
-            @for (status of statusOptions; track status) {
-              <option [value]="status">{{ status }}</option>
-            }
-          </select>
-        </label>
+        <div class="members-toolbar__filters">
+          <label class="members-select">
+            <span class="members-select__label">Status</span>
+            <select
+              class="members-select__control"
+              [value]="selectedStatus()"
+              (change)="setStatus(($any($event.target).value ?? 'All status').toString())"
+            >
+              @for (status of statusOptions; track status) {
+                <option [value]="status">{{ status }}</option>
+              }
+            </select>
+          </label>
 
-        <label class="min-w-[150px]">
-          <select
-            class="w-full rounded-[14px] border border-[color:var(--ncm-border)] bg-[var(--ncm-surface-soft)] px-3 py-2.5 text-sm text-[var(--ncm-text)] outline-none transition focus:border-[rgba(36,122,82,0.22)] focus:bg-white focus:shadow-[0_0_0_3px_rgba(36,122,82,0.08)]"
-            [value]="selectedGoal()"
-            (change)="setGoal(($any($event.target).value ?? 'All goals').toString())"
-          >
-            @for (goal of goalOptions; track goal) {
-              <option [value]="goal">{{ goal }}</option>
-            }
-          </select>
-        </label>
+          <label class="members-select">
+            <span class="members-select__label">Goal</span>
+            <select
+              class="members-select__control"
+              [value]="selectedGoal()"
+              (change)="setGoal(($any($event.target).value ?? 'All goals').toString())"
+            >
+              @for (goal of goalOptions; track goal) {
+                <option [value]="goal">{{ goal }}</option>
+              }
+            </select>
+          </label>
 
-        <label class="min-w-[128px]">
-          <select
-            class="w-full rounded-[14px] border border-[color:var(--ncm-border)] bg-[var(--ncm-surface-soft)] px-3 py-2.5 text-sm text-[var(--ncm-text)] outline-none transition focus:border-[rgba(36,122,82,0.22)] focus:bg-white focus:shadow-[0_0_0_3px_rgba(36,122,82,0.08)]"
-            [value]="selectedVisit()"
-            (change)="setVisit(($any($event.target).value ?? 'Any time').toString())"
-          >
-            @for (visit of visitOptions; track visit) {
-              <option [value]="visit">{{ visit }}</option>
-            }
-          </select>
-        </label>
+          <label class="members-select">
+            <span class="members-select__label">Time</span>
+            <select
+              class="members-select__control"
+              [value]="selectedVisit()"
+              (change)="setVisit(($any($event.target).value ?? 'Any time').toString())"
+            >
+              @for (visit of visitOptions; track visit) {
+                <option [value]="visit">{{ visit }}</option>
+              }
+            </select>
+          </label>
 
-        <label class="min-w-[128px]">
-          <select
-            class="w-full rounded-[14px] border border-[color:var(--ncm-border)] bg-[var(--ncm-surface-soft)] px-3 py-2.5 text-sm text-[var(--ncm-text)] outline-none transition focus:border-[rgba(36,122,82,0.22)] focus:bg-white focus:shadow-[0_0_0_3px_rgba(36,122,82,0.08)]"
-            [value]="selectedSort()"
-            (change)="setSort(($any($event.target).value ?? 'Recent').toString())"
-          >
-            @for (sort of sortOptions; track sort) {
-              <option [value]="sort">{{ sort }}</option>
-            }
-          </select>
-        </label>
+          <label class="members-select">
+            <span class="members-select__label">Sort</span>
+            <select
+              class="members-select__control"
+              [value]="selectedSort()"
+              (change)="setSort(($any($event.target).value ?? 'Recent').toString())"
+            >
+              @for (sort of sortOptions; track sort) {
+                <option [value]="sort">{{ sort }}</option>
+              }
+            </select>
+          </label>
+        </div>
 
         <button
           type="button"
-          class="inline-flex items-center rounded-[14px] border border-[color:var(--ncm-border)] bg-white px-3 py-2.5 text-sm font-semibold text-[var(--ncm-text-muted)] transition duration-200 hover:bg-[var(--ncm-surface-soft)]"
+          class="members-toolbar__reset"
           (click)="resetFilters()"
         >
           Reset
         </button>
       </div>
-    </div>
-  </section>
+    </header>
 
-  <section class="mt-2 flex flex-col">
-    <div class="flex items-center justify-between gap-3 px-1 pb-2">
-      <p class="text-sm font-semibold text-[var(--ncm-text)]">{{ memberCountLabel() }}</p>
-      <span
-        class="inline-flex items-center rounded-full bg-[var(--ncm-surface-soft)] px-2.5 py-1 text-[11px] font-semibold text-[var(--ncm-text-muted)]"
-      >
-        Live list
-      </span>
-    </div>
+    <section class="members-list-shell">
+      <div class="members-list-shell__header">
+        <div class="members-list-shell__heading">
+          <p class="members-list-shell__count">{{ memberCountLabel() }}</p>
+          <p class="members-list-shell__subtle">Member roster</p>
+        </div>
 
-    <div class="space-y-1.5 pr-1">
-      @for (member of filteredMembers(); track member.id) {
-        <article
-          class="group cursor-pointer rounded-[16px] border bg-white px-4 py-3 transition duration-200 hover:border-[rgba(36,122,82,0.2)] hover:bg-[rgba(255,255,255,0.98)]"
-          [ngClass]="{
-            'border-[rgba(194,65,59,0.22)] bg-[linear-gradient(180deg,#ffffff_0%,#fffaf9_100%)]':
-              member.status === 'Needs attention',
-            'border-[color:var(--ncm-border)]':
-              member.status !== 'Needs attention'
-          }"
-          tabindex="0"
-          role="button"
-          (click)="openMember(member.id)"
-        >
-          <div class="grid gap-3 xl:grid-cols-[minmax(0,1.5fr)_minmax(320px,1fr)_auto] xl:items-center">
-            <div class="flex min-w-0 items-center gap-3">
-              <div
-                class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--ncm-primary-soft)] text-sm font-bold text-[var(--ncm-primary-strong)]"
-              >
-                {{ member.name.charAt(0) }}
+        <span class="members-list-shell__badge">Live list</span>
+      </div>
+
+      <div class="members-list">
+        @for (member of filteredMembers(); track member.id) {
+          <article
+            class="member-card"
+            [ngClass]="{
+              'member-card--attention': member.status === 'Needs attention'
+            }"
+            tabindex="0"
+            role="button"
+            (click)="openMember(member.id)"
+          >
+            <div class="member-card__identity">
+              <div class="member-card__avatar">
+                <span>{{ member.name.charAt(0) }}</span>
               </div>
 
-              <div class="min-w-0">
-                <div class="flex flex-wrap items-center gap-2">
-                  <h4 class="truncate text-[0.98rem] font-bold tracking-[-0.03em] text-[var(--ncm-text)]">
-                    {{ member.name }}
-                  </h4>
-                  <span class="text-xs text-[var(--ncm-text-soft)]">{{ member.memberCode }}</span>
+              <div class="member-card__identity-copy">
+                <div class="member-card__title-row">
+                  <h4 class="member-card__name">{{ member.name }}</h4>
+                  <span class="member-card__code">{{ member.memberCode }}</span>
                 </div>
-                <p class="mt-0.5 text-sm text-[var(--ncm-text-muted)]">
-                  {{ member.goal }} 
-                </p>
 
-                <div class="mt-1.5 flex flex-wrap gap-1.5">
+                <p class="member-card__program">{{ member.goal }}</p>
+                <p class="member-card__secondary">{{ member.joinedOn }} · Coach {{ member.coach }}</p>
+              </div>
+            </div>
+
+            <div class="member-card__metrics-shell">
+              <div class="member-card__metrics-header">
+                <span class="member-card__metrics-kicker">Latest evaluation</span>
+              </div>
+
+              <div class="member-card__metrics">
+                <div class="member-card__metric">
+                  <span class="member-card__metric-label">Weight</span>
+                  <span class="member-card__metric-value">{{ member.lastWeight }} Kg</span>
+                </div>
+
+                <div class="member-card__metric">
+                  <span class="member-card__metric-label">Body fat</span>
+                  <span class="member-card__metric-value">{{ member.bodyFat }} %</span>
+                </div>
+
+                <div class="member-card__metric">
+                  <span class="member-card__metric-label">BMR</span>
+                  <span class="member-card__metric-value">{{ member.bmr }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="member-card__rail">
+              <div class="member-card__rail-head">
+                <div class="member-card__status">
                   @for (flag of member.flags; track flag) {
                     <span
-                      class="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold"
+                      class="member-card__flag"
                       [ngClass]="{
-                        'bg-[rgba(183,121,31,0.12)] text-[var(--ncm-warning)]':
+                        'member-card__flag--warning':
                           flag === 'Needs attention' || flag === 'Missed follow-up',
-                        'bg-[rgba(36,122,82,0.1)] text-[var(--ncm-primary-strong)]':
-                          flag === 'New member' || flag === 'Progressing well',
-                        'bg-[var(--ncm-surface-soft)] text-[var(--ncm-text-muted)]':
+                        'member-card__flag--positive':
+                          flag === 'New member' || flag === 'Progressing well' || flag === 'Active',
+                        'member-card__flag--neutral':
                           flag !== 'Needs attention' &&
                           flag !== 'Missed follow-up' &&
                           flag !== 'New member' &&
-                          flag !== 'Progressing well'
+                          flag !== 'Progressing well' &&
+                          flag !== 'Active'
                       }"
                     >
                       {{ flag }}
                     </span>
                   }
                 </div>
-              </div>
-            </div>
 
-            <div class="grid gap-x-5 gap-y-2 sm:grid-cols-3 xl:min-w-[360px] xl:justify-items-start">
-              <div class="min-w-0">
-                <span class="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--ncm-text-soft)]">
-                  Last weight
-                </span>
-                <p class="mt-1 text-sm font-semibold text-[var(--ncm-text)]">{{ member.lastWeight }} Kg</p>
+                <div class="member-card__visit">
+                  <span class="member-card__visit-label">Last visit</span>
+                  <span class="member-card__visit-value">{{ member.lastVisitLabel }}</span>
+                </div>
               </div>
-              <div class="min-w-0">
-                <span class="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--ncm-text-soft)]">
-                  Body fat
-                </span>
-                <p class="mt-1 text-sm font-semibold text-[var(--ncm-text)]">{{ member.bodyFat }} %</p>
-              </div>
-               <div class="min-w-0">
-                <span class="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--ncm-text-soft)]">
-                  BMR
-                </span>
-                <p class="mt-1 text-sm font-semibold text-[var(--ncm-text)]">{{ member.bodyFat }} %</p>
-              </div>
-              <div class="min-w-0">
-                <span class="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--ncm-text-soft)]">
-                  Last visit
-                </span>
-                <p class="mt-1 text-sm font-semibold text-[var(--ncm-text)]">{{ member.lastVisitLabel }}</p>
-              </div>
-            </div>
 
-            <div class="flex items-center justify-between gap-3 xl:justify-end">
-              <div class="flex items-center gap-2">
+              <div class="member-card__actions">
                 <button
                   type="button"
-                  class="inline-flex h-8 w-8 items-center justify-center rounded-[12px] border border-[color:var(--ncm-border)] bg-white text-[var(--ncm-text-muted)] transition duration-200 hover:border-[rgba(36,122,82,0.18)] hover:text-[var(--ncm-primary)]"
+                  class="member-card__icon-action"
                   aria-label="Call member"
                 >
                   <ncm-icon name="phone" [size]="15" />
                 </button>
+
                 <button
                   type="button"
-                  class="inline-flex h-8 items-center justify-center rounded-[12px] border border-[color:var(--ncm-border)] bg-white px-3 text-xs font-semibold text-[var(--ncm-text)] transition duration-200 hover:border-[rgba(36,122,82,0.18)] hover:text-[var(--ncm-primary)]"
+                  class="member-card__text-action"
                   (click)="$event.stopPropagation(); openEditMemberDrawer(member.id)"
                 >
                   Edit
                 </button>
+
                 <button
                   type="button"
-                  class="inline-flex h-8 w-8 items-center justify-center rounded-[12px] border border-[color:var(--ncm-border)] bg-white text-[var(--ncm-text)] transition duration-200 hover:border-[rgba(36,122,82,0.18)] hover:bg-[var(--ncm-surface-soft)]"
+                  class="member-card__icon-action member-card__icon-action--primary"
                   aria-label="View member"
                   (click)="$event.stopPropagation(); openMember(member.id)"
                 >
@@ -224,10 +228,28 @@
                 </button>
               </div>
             </div>
-          </div>
-        </article>
-      }
-    </div>
+          </article>
+        } @empty {
+          <section class="members-empty">
+            <div class="members-empty__icon">
+              <ncm-icon name="search" [size]="18" />
+            </div>
+            <p class="members-empty__eyebrow">No matching members</p>
+            <h3 class="members-empty__title">Nothing matches the current search and filter set.</h3>
+            <p class="members-empty__text">
+              Adjust your status, goal, time, or sort filters to reveal more member records.
+            </p>
+            <button
+              type="button"
+              class="members-empty__action"
+              (click)="resetFilters()"
+            >
+              Clear filters
+            </button>
+          </section>
+        }
+      </div>
+    </section>
   </section>
 
   <app-member-form-drawer

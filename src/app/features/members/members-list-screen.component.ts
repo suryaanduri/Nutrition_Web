@@ -40,6 +40,7 @@ interface MemberRecord {
   tagLine: string;
   lastWeight: string;
   bodyFat: string;
+  bmr: string;
   lastVisitLabel: string;
   lastVisitDays: number;
   status: MemberStatus;
@@ -286,7 +287,12 @@ export class MembersListScreenComponent {
       tagLine: member.goal,
       lastWeight: member.latestEvaluation?.weightKg ?? '--',
       bodyFat: member.latestEvaluation?.bodyFat ?? '--',
-      lastVisitLabel: new Date(member.updatedAt).toLocaleDateString('en-IN'),
+      bmr: member.latestEvaluation?.bmr ?? '--',
+      lastVisitLabel: new Date(member.updatedAt).toLocaleDateString('en-GB', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric'
+      }),
       lastVisitDays: daysAgo(member.updatedAt),
       status: toMemberStatus(member.status),
       flags: member.status === 'ACTIVE' ? ['Active'] : ['Needs attention'],
