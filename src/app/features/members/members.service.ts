@@ -21,6 +21,20 @@ export interface MemberResponse {
   updatedAt: string;
   center: { id: string; name: string; code: string };
   assignedCoach: { id: string; fullName: string; email: string; phone: string | null } | null;
+  latestEvaluation: {
+    id: string;
+    evaluatedAt: string;
+    weightKg: string;
+    visceralFatPercent: string | null;
+    trunkSubcutaneousFat: string | null;
+    bodyFat: string | null;
+    bodyAge: number | null;
+    bmi: string | null;
+    bmr: string | null;
+    skeletalMuscle: string | null;
+    createdAt: string;
+    updatedAt: string;
+  } | null;
 }
 
 export interface ListMembersQuery {

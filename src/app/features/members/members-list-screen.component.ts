@@ -284,8 +284,8 @@ export class MembersListScreenComponent {
         year: 'numeric'
       })}`,
       tagLine: member.goal,
-      lastWeight: '--',
-      bodyFat: '--',
+      lastWeight: member.latestEvaluation?.weightKg ?? '--',
+      bodyFat: member.latestEvaluation?.bodyFat ?? '--',
       lastVisitLabel: new Date(member.updatedAt).toLocaleDateString('en-IN'),
       lastVisitDays: daysAgo(member.updatedAt),
       status: toMemberStatus(member.status),
