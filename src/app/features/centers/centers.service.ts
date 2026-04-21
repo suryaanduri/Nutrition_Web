@@ -31,11 +31,23 @@ export interface CreateCenterOnboardingRequest {
     city: string;
     state: string;
     pincode: string;
+    status: string;
   };
   admin: {
     fullName: string;
     email: string;
     phone: string;
+  };
+}
+
+export interface CreateCenterOnboardingResponse {
+  center: CenterResponse;
+  initialAdmin: {
+    id: string;
+    fullName: string;
+    email: string;
+    phone: string | null;
+    temporaryPassword: string;
   };
 }
 
@@ -66,8 +78,11 @@ export class CentersService {
     return this.http.get<CenterResponse>(`${this.apiConfig.baseUrl}/centers/${centerId}`);
   }
 
-  createCenter(payload: CreateCenterOnboardingRequest): Observable<unknown> {
-    return this.http.post(`${this.apiConfig.baseUrl}/centers/onboard`, payload);
+  createCenter(payload: CreateCenterOnboardingRequest): Observable<CreateCenterOnboardingResponse> {
+    return this.http.post<CreateCenterOnboardingResponse>(
+      `${this.apiConfig.baseUrl}/centers/onboard`,
+      payload
+    );
   }
 
   updateCenter(centerId: string, payload: UpdateCenterRequest): Observable<CenterResponse> {

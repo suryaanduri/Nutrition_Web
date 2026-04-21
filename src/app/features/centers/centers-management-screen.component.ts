@@ -1,20 +1,29 @@
 import { CommonModule } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
   Component,
   computed,
   effect,
+  inject,
   output,
   signal
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IconComponent } from '../../shared/ui/icon/icon.component';
+import {
+  CenterResponse,
+  CentersService,
+  CreateCenterOnboardingRequest,
+  UpdateCenterRequest
+} from './centers.service';
+import { UsersService } from '../users/users.service';
 
 type CenterStatus = 'Active' | 'Inactive';
 type CenterFilter = 'All status' | CenterStatus;
 type CenterSort = 'Recently created' | 'Center name' | 'City';
 type CenterScreenMode = 'list' | 'detail' | 'create';
-type CenterFormMode = 'create' | 'edit';
+type CenterFormMode = 'create' | 'edit-center' | 'edit-admin';
 type AdminStatus = 'Active' | 'Invite pending';
 
 interface CenterMemberPreview {
@@ -59,6 +68,7 @@ interface CenterRecord {
   totalEvaluations: number;
   recentMembers: CenterMemberPreview[];
   recentActivity: CenterActivityItem[];
+  adminUserId: string | null;
 }
 
 @Component({
@@ -71,6 +81,8 @@ interface CenterRecord {
 })
 export class CentersManagementScreenComponent {
   private readonly formBuilder = new FormBuilder();
+  private readonly centersService = inject(CentersService);
+  private readonly usersService = inject(UsersService);
 
   readonly navigateMembers = output<void>();
   readonly navigateMembersForAdd = output<void>();
@@ -85,274 +97,27 @@ export class CentersManagementScreenComponent {
   protected readonly selectedStatus = signal<CenterFilter>('All status');
   protected readonly selectedSort = signal<CenterSort>('Recently created');
   protected readonly saveFeedback = signal('');
+  protected readonly submitError = signal('');
+  protected readonly isSaving = signal(false);
   protected readonly editingCenterId = signal<string | null>(null);
   protected readonly selectedCenterId = signal<string | null>(null);
 
-  protected readonly centers = signal<CenterRecord[]>([
-    {
-      id: 'CTR-24017',
-      centerName: 'Nourish Jubilee Hills',
-      centerCode: 'NJH',
-      contactEmail: 'jubilee@ncmplatform.app',
-      contactPhone: '+91 98765 34011',
-      addressLine1: 'Road No. 36, Jubilee Hills',
-      city: 'Hyderabad',
-      state: 'Telangana',
-      pincode: '500033',
-      status: 'Active',
-      adminName: 'Rhea Kapoor',
-      adminEmail: 'rhea.kapoor@ncmplatform.app',
-      adminPhone: '+91 98765 34022',
-      adminRole: 'Center Admin',
-      adminStatus: 'Active',
-      inviteMethod: 'Temporary password',
-      createdDate: '18 Apr 2026',
-      createdStamp: '2026-04-18',
-      totalMembers: 248,
-      activeMembers: 219,
-      needsAttentionMembers: 18,
-      inactiveMembers: 11,
-      totalEvaluations: 712,
-      recentMembers: [
-        {
-          id: 'MBR-1042',
-          name: 'Rhea Sharma',
-          status: 'Needs attention',
-          goal: 'PCOS',
-          lastVisitLabel: 'Today, 10:30 AM'
-        },
-        {
-          id: 'MBR-0987',
-          name: 'Arjun Menon',
-          status: 'Active',
-          goal: 'Metabolic Reset',
-          lastVisitLabel: '2 days ago'
-        },
-        {
-          id: 'MBR-0871',
-          name: 'Sana Qureshi',
-          status: 'Active',
-          goal: 'Weight Loss',
-          lastVisitLabel: 'Today, 8:45 AM'
-        },
-        {
-          id: 'MBR-0612',
-          name: 'Nadia Khan',
-          status: 'Needs attention',
-          goal: 'Weight Loss',
-          lastVisitLabel: '13 days ago'
-        }
-      ],
-      recentActivity: [
-        {
-          id: 'ACT-1',
-          title: 'New member added',
-          detail: 'Sana Qureshi was added to the center roster.',
-          time: '18 min ago'
-        },
-        {
-          id: 'ACT-2',
-          title: 'Evaluation recorded',
-          detail: 'Progress evaluation logged for Arjun Menon.',
-          time: '1 hr ago'
-        },
-        {
-          id: 'ACT-3',
-          title: 'Status updated',
-          detail: 'Nadia Khan marked as needs attention for follow-up.',
-          time: 'Today'
-        }
-      ]
-    },
-    {
-      id: 'CTR-24011',
-      centerName: 'Wellness Center Indiranagar',
-      centerCode: 'WCI',
-      contactEmail: 'indiranagar@ncmplatform.app',
-      contactPhone: '+91 98111 22041',
-      addressLine1: '100 Feet Road, Indiranagar',
-      city: 'Bengaluru',
-      state: 'Karnataka',
-      pincode: '560038',
-      status: 'Active',
-      adminName: 'Arjun Menon',
-      adminEmail: 'arjun.menon@ncmplatform.app',
-      adminPhone: '+91 98111 22055',
-      adminRole: 'Center Admin',
-      adminStatus: 'Invite pending',
-      inviteMethod: 'Invite setup later',
-      createdDate: '10 Apr 2026',
-      createdStamp: '2026-04-10',
-      totalMembers: 186,
-      activeMembers: 162,
-      needsAttentionMembers: 15,
-      inactiveMembers: 9,
-      totalEvaluations: 524,
-      recentMembers: [
-        {
-          id: 'MBR-1124',
-          name: 'Mira Dsouza',
-          status: 'Active',
-          goal: 'Weight Loss',
-          lastVisitLabel: 'Yesterday'
-        },
-        {
-          id: 'MBR-1109',
-          name: 'Vikram Rao',
-          status: 'Active',
-          goal: 'Metabolic Reset',
-          lastVisitLabel: '3 days ago'
-        },
-        {
-          id: 'MBR-1088',
-          name: 'Tara Jain',
-          status: 'Needs attention',
-          goal: 'PCOS',
-          lastVisitLabel: '5 days ago'
-        }
-      ],
-      recentActivity: [
-        {
-          id: 'ACT-4',
-          title: 'Evaluation recorded',
-          detail: 'Baseline evaluation added for Vikram Rao.',
-          time: '42 min ago'
-        },
-        {
-          id: 'ACT-5',
-          title: 'New member added',
-          detail: 'Mira Dsouza joined the center roster.',
-          time: 'Today'
-        }
-      ]
-    },
-    {
-      id: 'CTR-23984',
-      centerName: 'NCM Anna Nagar',
-      centerCode: 'ANA',
-      contactEmail: 'annanagar@ncmplatform.app',
-      contactPhone: '+91 99550 18008',
-      addressLine1: '2nd Avenue, Anna Nagar',
-      city: 'Chennai',
-      state: 'Tamil Nadu',
-      pincode: '600040',
-      status: 'Inactive',
-      adminName: 'Sana Qureshi',
-      adminEmail: 'sana.qureshi@ncmplatform.app',
-      adminPhone: '+91 99550 18021',
-      adminRole: 'Center Admin',
-      adminStatus: 'Active',
-      inviteMethod: 'Temporary password',
-      createdDate: '27 Mar 2026',
-      createdStamp: '2026-03-27',
-      totalMembers: 94,
-      activeMembers: 66,
-      needsAttentionMembers: 12,
-      inactiveMembers: 16,
-      totalEvaluations: 241,
-      recentMembers: [
-        {
-          id: 'MBR-0912',
-          name: 'Leena Roy',
-          status: 'Inactive',
-          goal: 'Weight Gain',
-          lastVisitLabel: '15 days ago'
-        },
-        {
-          id: 'MBR-0886',
-          name: 'Nikhil Bose',
-          status: 'Needs attention',
-          goal: 'Metabolic Reset',
-          lastVisitLabel: '7 days ago'
-        }
-      ],
-      recentActivity: [
-        {
-          id: 'ACT-6',
-          title: 'Status updated',
-          detail: 'Center moved to inactive operating state.',
-          time: '3 days ago'
-        }
-      ]
-    },
-    {
-      id: 'CTR-23960',
-      centerName: 'Nourish Pune West',
-      centerCode: 'NPW',
-      contactEmail: 'punewest@ncmplatform.app',
-      contactPhone: '+91 97000 77130',
-      addressLine1: 'Baner Road, Pune West',
-      city: 'Pune',
-      state: 'Maharashtra',
-      pincode: '411045',
-      status: 'Active',
-      adminName: 'Kavya Iyer',
-      adminEmail: 'kavya.iyer@ncmplatform.app',
-      adminPhone: '+91 97000 77141',
-      adminRole: 'Center Admin',
-      adminStatus: 'Active',
-      inviteMethod: 'Temporary password',
-      createdDate: '11 Mar 2026',
-      createdStamp: '2026-03-11',
-      totalMembers: 132,
-      activeMembers: 118,
-      needsAttentionMembers: 8,
-      inactiveMembers: 6,
-      totalEvaluations: 367,
-      recentMembers: [
-        {
-          id: 'MBR-0821',
-          name: 'Kavita More',
-          status: 'Active',
-          goal: 'Weight Loss',
-          lastVisitLabel: 'Today'
-        },
-        {
-          id: 'MBR-0794',
-          name: 'Rohan Kulkarni',
-          status: 'Active',
-          goal: 'Weight Gain',
-          lastVisitLabel: 'Yesterday'
-        },
-        {
-          id: 'MBR-0782',
-          name: 'Nisha Patil',
-          status: 'Needs attention',
-          goal: 'PCOS',
-          lastVisitLabel: '4 days ago'
-        }
-      ],
-      recentActivity: [
-        {
-          id: 'ACT-7',
-          title: 'Evaluation recorded',
-          detail: 'Body composition evaluation saved for Kavita More.',
-          time: '25 min ago'
-        },
-        {
-          id: 'ACT-8',
-          title: 'New member added',
-          detail: 'Rohan Kulkarni joined the center roster.',
-          time: 'Today'
-        }
-      ]
-    }
-  ]);
+  protected readonly centers = signal<CenterRecord[]>([]);
 
   protected readonly onboardingForm = this.formBuilder.nonNullable.group({
     centerName: ['', [Validators.required, Validators.minLength(3)]],
     centerCode: [''],
     contactEmail: ['', [Validators.required, Validators.email]],
-    contactPhone: ['', [Validators.required, Validators.pattern(/^[0-9+\-\s]{10,16}$/)]],
+    contactPhone: ['', [Validators.required, Validators.pattern(/^[0-9+\-\s]{10,20}$/)]],
     addressLine1: ['', [Validators.required, Validators.minLength(6)]],
     addressLine2: [''],
     city: ['', [Validators.required, Validators.minLength(2)]],
     state: ['', [Validators.required, Validators.minLength(2)]],
-    pincode: ['', [Validators.required, Validators.pattern(/^[A-Za-z0-9 -]{4,10}$/)]],
+    pincode: ['', [Validators.required, Validators.pattern(/^[0-9]{6}$/)]],
     status: ['Active', Validators.required],
     adminName: ['', [Validators.required, Validators.minLength(3)]],
     adminEmail: ['', [Validators.required, Validators.email]],
-    adminPhone: ['', [Validators.required, Validators.pattern(/^[0-9+\-\s]{10,16}$/)]],
+    adminPhone: ['', [Validators.required, Validators.pattern(/^[0-9+\-\s]{10,20}$/)]],
     role: ['Center Admin', Validators.required],
     inviteMethod: ['Temporary password', Validators.required],
     temporaryPassword: ['']
@@ -408,17 +173,25 @@ export class CentersManagementScreenComponent {
     }
 
     return this.screenMode() === 'create'
-      ? 'Onboard center and assign admin in one flow'
+      ? this.formMode() === 'edit-admin'
+        ? 'Update center admin details'
+        : this.formMode() === 'edit-center'
+          ? 'Update center details'
+          : 'Onboard center and assign admin in one flow'
       : 'Manage active centers, search records, and onboard new locations.';
   });
   protected readonly resultsLabel = computed(
     () => `${this.filteredCenters().length} center records`
   );
   protected readonly formTitle = computed(() =>
-    this.formMode() === 'edit' ? 'Edit Nutritional Center' : 'Create Nutritional Center'
+    this.formMode() === 'edit-admin'
+      ? 'Edit Center Admin'
+      : this.formMode() === 'edit-center'
+        ? 'Edit Nutritional Center'
+        : 'Create Nutritional Center'
   );
   protected readonly formSubmitLabel = computed(() =>
-    this.formMode() === 'edit' ? 'Save Changes' : 'Create Center'
+    this.formMode() === 'create' ? 'Create Center' : 'Save Changes'
   );
   protected readonly showTemporaryPassword = computed(
     () => this.onboardingForm.controls.inviteMethod.value === 'Temporary password'
@@ -478,6 +251,47 @@ export class CentersManagementScreenComponent {
 
       passwordControl.updateValueAndValidity({ emitEvent: false });
     });
+
+    effect(() => {
+      const centerControls = [
+        this.onboardingForm.controls.centerName,
+        this.onboardingForm.controls.centerCode,
+        this.onboardingForm.controls.contactEmail,
+        this.onboardingForm.controls.contactPhone,
+        this.onboardingForm.controls.addressLine1,
+        this.onboardingForm.controls.addressLine2,
+        this.onboardingForm.controls.city,
+        this.onboardingForm.controls.state,
+        this.onboardingForm.controls.pincode,
+        this.onboardingForm.controls.status
+      ];
+      const adminControls = [
+        this.onboardingForm.controls.centerCode,
+        this.onboardingForm.controls.adminName,
+        this.onboardingForm.controls.adminEmail,
+        this.onboardingForm.controls.adminPhone,
+        this.onboardingForm.controls.role,
+        this.onboardingForm.controls.inviteMethod,
+        this.onboardingForm.controls.temporaryPassword
+      ];
+
+      if (this.formMode() === 'edit-center') {
+        centerControls.forEach((control) => control.enable({ emitEvent: false }));
+        adminControls.forEach((control) => control.disable({ emitEvent: false }));
+      } else if (this.formMode() === 'edit-admin') {
+        centerControls.forEach((control) => control.disable({ emitEvent: false }));
+        adminControls.forEach((control) => control.enable({ emitEvent: false }));
+        this.onboardingForm.controls.centerCode.disable({ emitEvent: false });
+        this.onboardingForm.controls.role.disable({ emitEvent: false });
+        this.onboardingForm.controls.inviteMethod.disable({ emitEvent: false });
+        this.onboardingForm.controls.temporaryPassword.disable({ emitEvent: false });
+      } else {
+        centerControls.forEach((control) => control.enable({ emitEvent: false }));
+        adminControls.forEach((control) => control.enable({ emitEvent: false }));
+      }
+    });
+
+    this.loadCenters();
   }
 
   protected openDetail(centerId: string): void {
@@ -486,6 +300,7 @@ export class CentersManagementScreenComponent {
   }
 
   protected openCreateFlow(): void {
+    this.submitError.set('');
     this.formMode.set('create');
     this.editingCenterId.set(null);
     this.screenMode.set('create');
@@ -511,13 +326,52 @@ export class CentersManagementScreenComponent {
     this.onboardingForm.markAsUntouched();
   }
 
-  protected openEditFlow(centerId: string): void {
+  protected openEditCenterFlow(centerId: string): void {
     const center = this.centers().find((record) => record.id === centerId);
     if (!center) {
       return;
     }
 
-    this.formMode.set('edit');
+    this.submitError.set('');
+    this.formMode.set('edit-center');
+    this.editingCenterId.set(centerId);
+    this.selectedCenterId.set(centerId);
+    this.screenMode.set('create');
+    this.onboardingForm.reset({
+      centerName: center.centerName,
+      centerCode: center.centerCode,
+      contactEmail: center.contactEmail,
+      contactPhone: center.contactPhone,
+      addressLine1: center.addressLine1,
+      addressLine2: center.addressLine2 ?? '',
+      city: center.city,
+      state: center.state,
+      pincode: center.pincode,
+      status: center.status,
+      adminName: center.adminName,
+      adminEmail: center.adminEmail,
+      adminPhone: center.adminPhone,
+      role: center.adminRole,
+      inviteMethod: center.inviteMethod,
+      temporaryPassword: ''
+    });
+    this.onboardingForm.markAsPristine();
+    this.onboardingForm.markAsUntouched();
+  }
+
+  protected openEditAdminFlow(centerId: string): void {
+    const center = this.centers().find((record) => record.id === centerId);
+    if (!center) {
+      return;
+    }
+
+    if (!center.adminUserId) {
+      this.submitError.set('No center admin is assigned to this center yet.');
+      return;
+    }
+
+    this.submitError.set('');
+    this.formMode.set('edit-admin');
     this.editingCenterId.set(centerId);
     this.selectedCenterId.set(centerId);
     this.screenMode.set('create');
@@ -549,7 +403,11 @@ export class CentersManagementScreenComponent {
   }
 
   protected closeCreateFlow(): void {
-    if (this.formMode() === 'edit' && this.selectedCenterId()) {
+    this.submitError.set('');
+    if (
+      (this.formMode() === 'edit-center' || this.formMode() === 'edit-admin') &&
+      this.selectedCenterId()
+    ) {
       this.screenMode.set('detail');
       return;
     }
@@ -584,70 +442,101 @@ export class CentersManagementScreenComponent {
       return;
     }
 
+    this.submitError.set('');
+    this.isSaving.set(true);
     const raw = this.onboardingForm.getRawValue();
     const editingId = this.editingCenterId();
-    const existingCenter = editingId
-      ? this.centers().find((record) => record.id === editingId) ?? null
-      : null;
-
-    const today = new Date();
-    const createdStamp = existingCenter?.createdStamp ?? today.toISOString().slice(0, 10);
-    const createdDate =
-      existingCenter?.createdDate ??
-      today.toLocaleDateString('en-GB', {
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric'
-      });
-
-    const center: CenterRecord = {
-      id: existingCenter?.id ?? `CTR-${Math.floor(10000 + Math.random() * 89999)}`,
-      centerName: raw.centerName.trim(),
-      centerCode: raw.centerCode.trim().toUpperCase(),
-      contactEmail: raw.contactEmail.trim(),
-      contactPhone: raw.contactPhone.trim(),
-      addressLine1: raw.addressLine1.trim(),
-      addressLine2: raw.addressLine2.trim(),
-      city: raw.city.trim(),
-      state: raw.state.trim(),
-      pincode: raw.pincode.trim(),
-      status: raw.status as CenterStatus,
-      adminName: raw.adminName.trim(),
-      adminEmail: raw.adminEmail.trim(),
-      adminPhone: raw.adminPhone.trim(),
-      adminRole: raw.role,
-      adminStatus: existingCenter?.adminStatus ?? 'Active',
-      inviteMethod: raw.inviteMethod,
-      createdDate,
-      createdStamp,
-      totalMembers: existingCenter?.totalMembers ?? 0,
-      activeMembers: existingCenter?.activeMembers ?? 0,
-      needsAttentionMembers: existingCenter?.needsAttentionMembers ?? 0,
-      inactiveMembers: existingCenter?.inactiveMembers ?? 0,
-      totalEvaluations: existingCenter?.totalEvaluations ?? 0,
-      recentMembers: existingCenter?.recentMembers ?? [],
-      recentActivity: existingCenter?.recentActivity ?? []
-    };
-
-    if (existingCenter) {
-      this.centers.update((records) =>
-        records.map((record) => (record.id === existingCenter.id ? center : record))
-      );
-      this.saveFeedback.set(`${center.centerName} updated successfully.`);
-      this.selectedCenterId.set(center.id);
-      this.screenMode.set('detail');
-    } else {
-      this.centers.update((records) => [center, ...records]);
-      this.saveFeedback.set(
-        `${center.centerName} created with ${center.adminName} as Center Admin.`
-      );
-      this.screenMode.set('list');
+    if (editingId && this.formMode() === 'edit-center') {
+      this.centersService
+        .updateCenter(editingId, this.toUpdateCenterRequest(raw))
+        .subscribe({
+          next: (response) => {
+            this.centers.update((records) =>
+              records.map((record) =>
+                record.id === response.id ? this.mapCenter(response) : record
+              )
+            );
+            this.selectedCenterId.set(response.id);
+            this.screenMode.set('detail');
+            this.formMode.set('create');
+            this.editingCenterId.set(null);
+            this.saveFeedback.set(`${response.name} updated successfully.`);
+            this.isSaving.set(false);
+            window.setTimeout(() => this.saveFeedback.set(''), 2600);
+          },
+          error: (error: HttpErrorResponse) => {
+            this.isSaving.set(false);
+            this.submitError.set(this.errorMessageFrom(error, 'Unable to update center.'));
+          }
+        });
+      return;
     }
 
-    window.setTimeout(() => this.saveFeedback.set(''), 2600);
+    if (editingId && this.formMode() === 'edit-admin') {
+      const center = this.centers().find((record) => record.id === editingId);
+      if (!center?.adminUserId) {
+        this.isSaving.set(false);
+        this.submitError.set('No center admin is assigned to this center yet.');
+        return;
+      }
 
-    this.formMode.set('create');
-    this.editingCenterId.set(null);
+      this.usersService
+        .updateUser(center.adminUserId, {
+          fullName: raw.adminName.trim(),
+          email: raw.adminEmail.trim().toLowerCase(),
+          phone: digitsOnly(raw.adminPhone),
+          role: 'CENTER_ADMIN',
+          centerId: editingId,
+          status: center.adminStatus === 'Active' ? 'ACTIVE' : 'INACTIVE'
+        })
+        .subscribe({
+          next: (response: import('../users/users.service').UserResponse) => {
+            this.centers.update((records) =>
+              records.map((record) =>
+                record.id === editingId
+                  ? {
+                      ...record,
+                      adminName: response.fullName,
+                      adminEmail: response.email,
+                      adminPhone: response.phone ?? 'Not assigned'
+                    }
+                  : record
+              )
+            );
+            this.selectedCenterId.set(editingId);
+            this.screenMode.set('detail');
+            this.formMode.set('create');
+            this.editingCenterId.set(null);
+            this.saveFeedback.set('Center admin updated successfully.');
+            this.isSaving.set(false);
+            window.setTimeout(() => this.saveFeedback.set(''), 2600);
+          },
+          error: (error: HttpErrorResponse) => {
+            this.isSaving.set(false);
+            this.submitError.set(this.errorMessageFrom(error, 'Unable to update center admin.'));
+          }
+        });
+      return;
+    }
+
+    this.centersService.createCenter(this.toCreateCenterRequest(raw)).subscribe({
+      next: (response) => {
+        this.centers.update((records) => [this.mapCenter(response.center), ...records]);
+        this.selectedCenterId.set(response.center.id);
+        this.screenMode.set('detail');
+        this.formMode.set('create');
+        this.editingCenterId.set(null);
+        this.saveFeedback.set(
+          `${response.center.name} created with ${response.initialAdmin.fullName} as Center Admin.`
+        );
+        this.isSaving.set(false);
+        window.setTimeout(() => this.saveFeedback.set(''), 2600);
+      },
+      error: (error: HttpErrorResponse) => {
+        this.isSaving.set(false);
+        this.submitError.set(this.errorMessageFrom(error, 'Unable to create center.'));
+      }
+    });
   }
 
   protected openDetailMembers(): void {
@@ -694,4 +583,106 @@ export class CentersManagementScreenComponent {
       ? 'bg-[rgba(25,135,84,0.1)] text-[var(--ncm-success)]'
       : 'bg-[rgba(183,121,31,0.12)] text-[var(--ncm-warning)]';
   }
+
+  private loadCenters(): void {
+    this.centersService.listCenters().subscribe({
+      next: (centers) => this.centers.set(centers.map((center) => this.mapCenter(center)))
+    });
+  }
+
+  private errorMessageFrom(error: HttpErrorResponse, fallback: string): string {
+    const message = error.error?.message;
+
+    if (Array.isArray(message) && message.length > 0) {
+      return String(message[0]);
+    }
+
+    if (typeof message === 'string' && message.trim()) {
+      return message;
+    }
+
+    return fallback;
+  }
+
+  private mapCenter(center: CenterResponse): CenterRecord {
+    const admin = center.centerAdmins[0];
+
+    return {
+      id: center.id,
+      centerName: center.name,
+      centerCode: center.code,
+      contactEmail: center.contactEmail,
+      contactPhone: center.contactPhone,
+      addressLine1: center.addressLine1,
+      addressLine2: center.addressLine2 ?? undefined,
+      city: center.city,
+      state: center.state,
+      pincode: center.pincode,
+      status: center.status === 'ACTIVE' ? 'Active' : 'Inactive',
+      adminName: admin?.fullName ?? 'Unassigned',
+      adminEmail: admin?.email ?? 'Not assigned',
+      adminPhone: admin?.phone ?? 'Not assigned',
+      adminRole: 'Center Admin',
+      adminStatus: admin ? 'Active' : 'Invite pending',
+      inviteMethod: admin ? 'Temporary password' : 'Invite setup later',
+      createdDate: new Date(center.createdAt).toLocaleDateString('en-GB', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric'
+      }),
+      createdStamp: center.createdAt.slice(0, 10),
+      totalMembers: 0,
+      activeMembers: 0,
+      needsAttentionMembers: 0,
+      inactiveMembers: 0,
+      totalEvaluations: 0,
+      recentMembers: [],
+      recentActivity: [],
+      adminUserId: admin?.id ?? null
+    };
+  }
+
+  private toCreateCenterRequest(
+    raw: ReturnType<typeof this.onboardingForm.getRawValue>
+  ): CreateCenterOnboardingRequest {
+    return {
+      center: {
+        name: raw.centerName.trim(),
+        code: raw.centerCode.trim().toUpperCase(),
+        contactEmail: raw.contactEmail.trim().toLowerCase(),
+        contactPhone: digitsOnly(raw.contactPhone),
+        addressLine1: raw.addressLine1.trim(),
+        addressLine2: raw.addressLine2.trim() || undefined,
+        city: raw.city.trim(),
+        state: raw.state.trim(),
+        pincode: digitsOnly(raw.pincode),
+        status: raw.status === 'Active' ? 'ACTIVE' : 'INACTIVE'
+      },
+      admin: {
+        fullName: raw.adminName.trim(),
+        email: raw.adminEmail.trim().toLowerCase(),
+        phone: digitsOnly(raw.adminPhone)
+      }
+    };
+  }
+
+  private toUpdateCenterRequest(
+    raw: ReturnType<typeof this.onboardingForm.getRawValue>
+  ): UpdateCenterRequest {
+    return {
+      name: raw.centerName.trim(),
+      contactEmail: raw.contactEmail.trim().toLowerCase(),
+      contactPhone: digitsOnly(raw.contactPhone),
+      addressLine1: raw.addressLine1.trim(),
+      addressLine2: raw.addressLine2.trim() || undefined,
+      city: raw.city.trim(),
+      state: raw.state.trim(),
+      pincode: digitsOnly(raw.pincode),
+      status: raw.status === 'Active' ? 'ACTIVE' : 'INACTIVE'
+    };
+  }
+}
+
+function digitsOnly(value: string): string {
+  return value.replace(/\D/g, '');
 }

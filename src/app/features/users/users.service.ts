@@ -19,6 +19,15 @@ export interface UserResponse {
   center: { id: string; name: string; code: string } | null;
 }
 
+export interface UpdateUserRequest {
+  fullName?: string;
+  email?: string;
+  phone?: string;
+  role?: 'SUPER_ADMIN' | 'CENTER_ADMIN' | 'COACH';
+  centerId?: string;
+  status?: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class UsersService {
   constructor(
@@ -31,5 +40,9 @@ export class UsersService {
     return this.http.get<PaginatedResponse<UserResponse>>(`${this.apiConfig.baseUrl}/users`, {
       params: toHttpParams(query)
     });
+  }
+
+  updateUser(userId: string, payload: UpdateUserRequest): Observable<UserResponse> {
+    return this.http.patch<UserResponse>(`${this.apiConfig.baseUrl}/users/${userId}`, payload);
   }
 }

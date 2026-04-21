@@ -7,6 +7,14 @@
     </div>
   }
 
+  @if (submitError()) {
+    <div class="fixed right-4 top-40 z-30 sm:right-6 lg:right-8">
+      <div class="rounded-2xl border border-rose-100 bg-white px-4 py-3 text-sm font-semibold text-rose-700 shadow-[0_18px_34px_rgba(15,23,42,0.08)]">
+        {{ submitError() }}
+      </div>
+    </div>
+  }
+
   @if (screenMode() === 'list') {
     <section class="px-1 py-2">
       <div class="rounded-[22px] border border-[color:var(--ncm-border)] bg-white px-4 py-4 shadow-sm">
@@ -161,7 +169,7 @@
                 <button
                   type="button"
                   class="inline-flex h-9 items-center justify-center rounded-[14px] bg-[var(--ncm-primary)] px-3 text-sm font-semibold text-white transition duration-200 hover:bg-[var(--ncm-primary-strong)]"
-                  (click)="openEditFlow(center.id)"
+                  (click)="openEditCenterFlow(center.id)"
                 >
                   Edit
                 </button>
@@ -215,7 +223,7 @@
           <button
             type="button"
             class="inline-flex items-center justify-center rounded-[14px] bg-[var(--ncm-primary)] px-4 py-2 text-sm font-semibold text-white transition duration-200 hover:bg-[var(--ncm-primary-strong)]"
-            (click)="openEditFlow(center.id)"
+            (click)="openEditCenterFlow(center.id)"
           >
             Edit Center
           </button>
@@ -401,7 +409,7 @@
               <button
                 type="button"
                 class="inline-flex items-center justify-center rounded-[12px] border border-[color:var(--ncm-border)] bg-[var(--ncm-surface-soft)] px-3 py-2 text-sm font-semibold text-[var(--ncm-text)] transition duration-200 hover:bg-white"
-                (click)="openEditFlow(center.id)"
+                (click)="openEditAdminFlow(center.id)"
               >
                 Edit Admin
               </button>
@@ -781,10 +789,11 @@
           </button>
           <button
             type="button"
-            class="inline-flex items-center justify-center rounded-[14px] bg-[var(--ncm-primary)] px-4 py-2.5 text-sm font-semibold text-white transition duration-200 hover:bg-[var(--ncm-primary-strong)]"
+            class="inline-flex items-center justify-center rounded-[14px] bg-[var(--ncm-primary)] px-4 py-2.5 text-sm font-semibold text-white transition duration-200 hover:bg-[var(--ncm-primary-strong)] disabled:cursor-not-allowed disabled:opacity-70"
+            [disabled]="isSaving()"
             (click)="submit()"
           >
-            {{ formSubmitLabel() }}
+            {{ isSaving() ? 'Saving...' : formSubmitLabel() }}
           </button>
         </div>
       </div>
