@@ -1,99 +1,85 @@
-<div class="space-y-5">
-  <section class="rounded-[24px] border border-[color:var(--ncm-border)] bg-white px-5 py-5 shadow-sm">
-    <div class="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
-      <div class="flex min-w-0 items-start gap-4">
+<div class="member-detail-screen">
+  <section class="member-hero">
+    <div class="member-hero__layout">
+      <div class="member-hero__identity">
         <button
           type="button"
-          class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[14px] border border-[color:var(--ncm-border)] bg-white text-[var(--ncm-text)] transition duration-200 hover:bg-[var(--ncm-surface-soft)]"
+          class="member-hero__back"
           aria-label="Back to members list"
           (click)="goBack()"
         >
           <ncm-icon name="chevron-left" [size]="18" />
         </button>
 
-        <div
-          class="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-[linear-gradient(180deg,#e8f5ee_0%,#d5eadc_100%)] text-lg font-bold text-[var(--ncm-primary-strong)]"
-        >
+        <div class="member-hero__avatar">
           {{ member().name.charAt(0) }}
         </div>
 
-        <div class="min-w-0">
-          <div class="flex flex-wrap items-center gap-3">
-            <h2 class="truncate text-[1.7rem] font-extrabold tracking-[-0.05em] text-[var(--ncm-text)]">
-              {{ member().name }}
-            </h2>
-            <span class="text-sm text-[var(--ncm-text-soft)]">{{ member().joinedOn }}</span>
+        <div class="member-hero__copy">
+          <div class="member-hero__headline">
+            <div class="member-hero__title-block">
+              <h1 class="member-hero__name">{{ member().name }}</h1>
+              <p class="member-hero__joined">{{ member().joinedOn }}</p>
+            </div>
+
+            <div class="member-hero__tags">
+              <span class="member-hero__tag member-hero__tag--program">{{ member().program }}</span>
+              <span class="member-hero__tag member-hero__tag--status">{{ member().status }}</span>
+            </div>
           </div>
 
-          <div class="mt-2 flex flex-wrap items-center gap-2">
-            <span
-              class="inline-flex items-center rounded-full bg-[var(--ncm-primary-soft)] px-3 py-1 text-xs font-semibold text-[var(--ncm-primary-strong)]"
-            >
-              {{ member().program }}
-            </span>
-            <span
-              class="inline-flex items-center rounded-full bg-[rgba(183,121,31,0.12)] px-3 py-1 text-xs font-semibold text-[var(--ncm-warning)]"
-            >
-              {{ member().status }}
-            </span>
-          </div>
+          <div class="member-hero__facts">
+            <article class="member-hero__fact">
+              <span class="member-hero__fact-label">Goal</span>
+              <span class="member-hero__fact-value">{{ member().goal }}</span>
+            </article>
 
-          <div class="mt-4 grid gap-x-5 gap-y-3 sm:grid-cols-2 xl:grid-cols-4">
-            <div>
-              <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--ncm-text-soft)]">
-                Goal
-              </p>
-              <p class="mt-1 text-sm font-semibold text-[var(--ncm-text)]">{{ member().goal }}</p>
-            </div>
-            <div>
-              <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--ncm-text-soft)]">
-                Contact
-              </p>
-              <p class="mt-1 text-sm font-semibold text-[var(--ncm-text)]">{{ member().phone }}</p>
-            </div>
-            <div>
-              <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--ncm-text-soft)]">
-                Assigned Coach
-              </p>
-              <p class="mt-1 text-sm font-semibold text-[var(--ncm-text)]">{{ member().coach }}</p>
-            </div>
-            <div>
-              <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--ncm-text-soft)]">
-                Age / Gender
-              </p>
-              <p class="mt-1 text-sm font-semibold text-[var(--ncm-text)]">
-                {{ member().age }} · {{ member().gender }}
-              </p>
-            </div>
+            <article class="member-hero__fact">
+              <span class="member-hero__fact-label">Contact</span>
+              <span class="member-hero__fact-value">{{ member().phone }}</span>
+            </article>
+
+            <article class="member-hero__fact">
+              <span class="member-hero__fact-label">Assigned coach</span>
+              <span class="member-hero__fact-value">{{ member().coach }}</span>
+            </article>
+
+            <article class="member-hero__fact">
+              <span class="member-hero__fact-label">Age / Gender</span>
+              <span class="member-hero__fact-value">{{ member().age }} · {{ member().gender }}</span>
+            </article>
           </div>
         </div>
       </div>
 
-      <div class="flex flex-wrap items-center gap-2">
+      <div class="member-hero__actions">
+        <div class="member-hero__utility-actions">
+          <button
+            type="button"
+            class="member-hero__button member-hero__button--ghost"
+            (click)="openEditMember()"
+          >
+            Edit Member
+          </button>
+          <button
+            type="button"
+            class="member-hero__button member-hero__button--ghost"
+          >
+            <ncm-icon name="chat" [size]="16" />
+            <span>Message</span>
+          </button>
+          <button
+            type="button"
+            class="member-hero__button member-hero__button--ghost"
+          >
+            <ncm-icon name="phone" [size]="16" />
+            <span>Call</span>
+          </button>
+        </div>
+
         <button
           type="button"
-          class="inline-flex items-center justify-center rounded-[14px] border border-[color:var(--ncm-border)] bg-white px-4 py-2.5 text-sm font-semibold text-[var(--ncm-text)] transition duration-200 hover:bg-[var(--ncm-surface-soft)]"
-          (click)="openEditMember()"
-        >
-          Edit Member
-        </button>
-        <button
-          type="button"
-          class="inline-flex items-center justify-center rounded-[14px] border border-[color:var(--ncm-border)] bg-white px-4 py-2.5 text-sm font-semibold text-[var(--ncm-text)] transition duration-200 hover:bg-[var(--ncm-surface-soft)]"
-        >
-          <ncm-icon name="chat" [size]="16" />
-          <span class="ml-2">Message</span>
-        </button>
-        <button
-          type="button"
-          class="inline-flex items-center justify-center rounded-[14px] border border-[color:var(--ncm-border)] bg-white px-4 py-2.5 text-sm font-semibold text-[var(--ncm-text)] transition duration-200 hover:bg-[var(--ncm-surface-soft)]"
-        >
-          <ncm-icon name="phone" [size]="16" />
-          <span class="ml-2">Call</span>
-        </button>
-        <button
-          type="button"
-          class="inline-flex items-center justify-center rounded-[14px] bg-[var(--ncm-primary)] px-4 py-2.5 text-sm font-semibold text-white transition duration-200 hover:bg-[var(--ncm-primary-strong)]"
+          class="member-hero__button member-hero__button--primary"
           (click)="openAddEvaluation()"
         >
           + Add Evaluation
@@ -102,44 +88,47 @@
     </div>
   </section>
 
-  <section class="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-    @for (card of metricCards(); track card.label) {
-      <article class="rounded-[20px] border border-[color:var(--ncm-border)] bg-white px-4 py-4 shadow-sm">
-        <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--ncm-text-soft)]">
-          {{ card.label }}
-        </p>
-        <p class="mt-2 text-[1.85rem] font-extrabold tracking-[-0.05em] text-[var(--ncm-text)]">
-          {{ card.value }}
-        </p>
-        <span
-          class="mt-3 inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-semibold"
-          [ngClass]="badgeClass(card.trendType)"
-        >
-          {{ card.trend }}
-        </span>
+  <section class="member-summary">
+    @for (card of metricCards(); track card.label; let index = $index) {
+      <article
+        class="member-summary-card"
+        [ngClass]="{
+          'member-summary-card--primary': index < 2,
+          'member-summary-card--secondary': index >= 2
+        }"
+      >
+        <div class="member-summary-card__header">
+          <span class="member-summary-card__label">{{ card.label }}</span>
+        </div>
+
+        <div class="member-summary-card__body">
+          <p class="member-summary-card__value">{{ card.value }}</p>
+
+          <span
+            class="member-summary-card__trend"
+            [ngClass]="badgeClass(card.trendType)"
+          >
+            {{ card.trend }}
+          </span>
+        </div>
       </article>
     }
   </section>
 
-  <section class="rounded-[24px] border border-[color:var(--ncm-border)] bg-white px-5 py-5 shadow-sm">
-    <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+  <section class="member-visuals">
+    <div class="member-section-heading">
       <div>
-        <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--ncm-text-soft)]">
-          Progress visuals
-        </p>
-        <h3 class="mt-2 text-xl font-extrabold text-[var(--ncm-text)]">Weight and body fat trend</h3>
+        <p class="member-section-heading__eyebrow">Progress visuals</p>
+        <h2 class="member-section-heading__title">Weight and body fat trend</h2>
       </div>
 
-      <div class="flex flex-wrap gap-2">
+      <div class="member-range-picker">
         @for (range of rangeOptions; track range) {
           <button
             type="button"
-            class="inline-flex items-center rounded-full border px-3.5 py-2 text-sm font-medium transition duration-200"
+            class="member-range-picker__button"
             [ngClass]="{
-              'border-[rgba(36,122,82,0.14)] bg-[var(--ncm-primary-soft)] text-[var(--ncm-primary-strong)]':
-                selectedRange() === range,
-              'border-[color:var(--ncm-border)] bg-white text-[var(--ncm-text-muted)] hover:bg-[var(--ncm-surface-soft)]':
-                selectedRange() !== range
+              'member-range-picker__button--active': selectedRange() === range
             }"
             (click)="setRange(range)"
           >
@@ -149,20 +138,21 @@
       </div>
     </div>
 
-    <div class="mt-5 grid gap-4 xl:grid-cols-2">
-      <article class="rounded-[20px] border border-[color:var(--ncm-border)] bg-[var(--ncm-surface-soft)] p-4">
-        <div class="flex items-center justify-between gap-3">
+    <div class="member-chart-grid">
+      <article class="member-chart-card">
+        <div class="member-chart-card__header">
           <div>
-            <p class="text-sm font-semibold text-[var(--ncm-text)]">Weight trend</p>
-            <p class="mt-1 text-xs text-[var(--ncm-text-soft)]">Selected range</p>
+            <p class="member-chart-card__title">Weight trend</p>
+            <p class="member-chart-card__subtitle">Selected range</p>
           </div>
-          <span class="inline-flex items-center rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-100">
+
+          <span class="member-chart-card__summary">
             {{ weightTrendSummary() }}
           </span>
         </div>
 
-        <div class="mt-4 overflow-hidden rounded-[18px] border border-[rgba(24,24,27,0.05)] bg-white px-3 py-3">
-          <svg viewBox="0 0 360 140" class="h-36 w-full">
+        <div class="member-chart-card__plot">
+          <svg viewBox="0 0 360 140" class="member-chart-card__svg">
             <line x1="0" y1="24" x2="360" y2="24" stroke="rgba(24,24,27,0.04)" />
             <line x1="0" y1="72" x2="360" y2="72" stroke="rgba(24,24,27,0.04)" />
             <line x1="0" y1="120" x2="360" y2="120" stroke="rgba(24,24,27,0.08)" />
@@ -178,7 +168,8 @@
               <circle [attr.cx]="point.x" [attr.cy]="point.y" r="4" fill="white" stroke="var(--ncm-primary)" stroke-width="2.5" />
             }
           </svg>
-          <div class="mt-2 grid grid-cols-4 gap-2 text-xs text-[var(--ncm-text-soft)]">
+
+          <div class="member-chart-card__axis">
             @for (point of weightPoints(); track point.label) {
               <span>{{ point.label }}</span>
             }
@@ -186,19 +177,20 @@
         </div>
       </article>
 
-      <article class="rounded-[20px] border border-[color:var(--ncm-border)] bg-[var(--ncm-surface-soft)] p-4">
-        <div class="flex items-center justify-between gap-3">
+      <article class="member-chart-card">
+        <div class="member-chart-card__header">
           <div>
-            <p class="text-sm font-semibold text-[var(--ncm-text)]">Body fat trend</p>
-            <p class="mt-1 text-xs text-[var(--ncm-text-soft)]">Selected range</p>
+            <p class="member-chart-card__title">Body fat trend</p>
+            <p class="member-chart-card__subtitle">Selected range</p>
           </div>
-          <span class="inline-flex items-center rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-100">
+
+          <span class="member-chart-card__summary">
             {{ bodyFatTrendSummary() }}
           </span>
         </div>
 
-        <div class="mt-4 overflow-hidden rounded-[18px] border border-[rgba(24,24,27,0.05)] bg-white px-3 py-3">
-          <svg viewBox="0 0 360 140" class="h-36 w-full">
+        <div class="member-chart-card__plot">
+          <svg viewBox="0 0 360 140" class="member-chart-card__svg">
             <line x1="0" y1="24" x2="360" y2="24" stroke="rgba(24,24,27,0.04)" />
             <line x1="0" y1="72" x2="360" y2="72" stroke="rgba(24,24,27,0.04)" />
             <line x1="0" y1="120" x2="360" y2="120" stroke="rgba(24,24,27,0.08)" />
@@ -214,7 +206,8 @@
               <circle [attr.cx]="point.x" [attr.cy]="point.y" r="4" fill="white" stroke="#4f8f6b" stroke-width="2.5" />
             }
           </svg>
-          <div class="mt-2 grid grid-cols-4 gap-2 text-xs text-[var(--ncm-text-soft)]">
+
+          <div class="member-chart-card__axis">
             @for (point of bodyFatPoints(); track point.label) {
               <span>{{ point.label }}</span>
             }
@@ -224,78 +217,73 @@
     </div>
   </section>
 
-  <section class="rounded-[24px] border border-[color:var(--ncm-border)] bg-white px-5 py-5 shadow-sm">
-    <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+  <section class="member-history">
+    <div class="member-section-heading member-section-heading--history">
       <div>
-        <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--ncm-text-soft)]">
-          Evaluation history
-        </p>
-        <h3 class="mt-2 text-xl font-extrabold text-[var(--ncm-text)]">Latest records first</h3>
+        <p class="member-section-heading__eyebrow">Evaluation history</p>
+        <h2 class="member-section-heading__title">Latest records first</h2>
       </div>
-      <span
-        class="inline-flex items-center rounded-full bg-[var(--ncm-surface-soft)] px-3 py-1.5 text-xs font-semibold text-[var(--ncm-text-muted)]"
-      >
-        {{ history().length }} records
-      </span>
+
+      <span class="member-history__count">{{ history().length }} records</span>
     </div>
 
-    <div class="mt-5 space-y-3">
+    <div class="member-history__list">
       @for (item of history(); track item.id) {
         <article
-          class="rounded-[18px] border px-4 py-4 transition duration-200 hover:border-[rgba(36,122,82,0.18)] hover:bg-[rgba(255,255,255,0.98)]"
+          class="member-history-card"
           [ngClass]="{
-            'border-[rgba(36,122,82,0.16)] bg-[linear-gradient(180deg,#ffffff_0%,#f4fbf7_100%)]':
-              item.highlighted,
-            'border-[color:var(--ncm-border)] bg-white': !item.highlighted
+            'member-history-card--highlighted': item.highlighted
           }"
         >
-          <div class="grid gap-4 xl:grid-cols-[minmax(0,1.3fr)_minmax(320px,1fr)_auto] xl:items-start">
-            <div class="min-w-0">
-              <div class="flex flex-wrap items-center gap-2">
-                <h4 class="text-sm font-bold text-[var(--ncm-text)]">{{ item.date }}</h4>
-                <span class="inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-semibold" [ngClass]="badgeClass(item.trendType)">
-                  {{ item.trend }}
-                </span>
-                @if (item.highlighted) {
-                  <span class="inline-flex items-center rounded-full bg-[var(--ncm-primary-soft)] px-2.5 py-1 text-[11px] font-semibold text-[var(--ncm-primary-strong)]">
-                    Latest
+          <div class="member-history-card__main">
+            <div class="member-history-card__meta">
+              <div class="member-history-card__headline">
+                <h3 class="member-history-card__date">{{ item.date }}</h3>
+
+                <div class="member-history-card__badges">
+                  <span
+                    class="member-history-card__badge"
+                    [ngClass]="badgeClass(item.trendType)"
+                  >
+                    {{ item.trend }}
                   </span>
-                }
+
+                  @if (item.highlighted) {
+                    <span class="member-history-card__badge member-history-card__badge--latest">
+                      Latest
+                    </span>
+                  }
+                </div>
               </div>
 
-              <p class="mt-2 text-sm leading-6 text-[var(--ncm-text-muted)]">
-                {{ item.notes }}
-              </p>
+              <p class="member-history-card__notes">{{ item.notes }}</p>
             </div>
 
-            <div class="grid gap-x-5 gap-y-2 sm:grid-cols-3">
-              <div>
-                <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--ncm-text-soft)]">
-                  Weight
-                </p>
-                <p class="mt-1 text-sm font-semibold text-[var(--ncm-text)]">{{ item.weight }}</p>
+            <div class="member-history-card__metrics">
+              <div class="member-history-card__metric">
+                <span class="member-history-card__metric-label">Weight</span>
+                <span class="member-history-card__metric-value">{{ item.weight }}</span>
               </div>
-              <div>
-                <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--ncm-text-soft)]">
-                  Body fat
-                </p>
-                <p class="mt-1 text-sm font-semibold text-[var(--ncm-text)]">{{ item.bodyFat }}</p>
+
+              <div class="member-history-card__metric">
+                <span class="member-history-card__metric-label">Body fat</span>
+                <span class="member-history-card__metric-value">{{ item.bodyFat }}</span>
               </div>
-              <div>
-                <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--ncm-text-soft)]">
-                  Visceral fat
-                </p>
-                <p class="mt-1 text-sm font-semibold text-[var(--ncm-text)]">{{ item.visceralFat }}</p>
+
+              <div class="member-history-card__metric">
+                <span class="member-history-card__metric-label">Visceral fat</span>
+                <span class="member-history-card__metric-value">{{ item.visceralFat }}</span>
               </div>
             </div>
 
-            <div class="flex flex-col items-start gap-2 xl:items-end">
-              <div class="rounded-[14px] bg-[var(--ncm-surface-soft)] px-3 py-2 text-sm text-[var(--ncm-text-muted)]">
-                Entered by <span class="font-semibold text-[var(--ncm-text)]">{{ item.enteredBy }}</span>
+            <div class="member-history-card__side">
+              <div class="member-history-card__entered-by">
+                Entered by <span>{{ item.enteredBy }}</span>
               </div>
+
               <button
                 type="button"
-                class="inline-flex items-center justify-center rounded-[14px] border border-[color:var(--ncm-border)] bg-white px-4 py-2.5 text-sm font-semibold text-[var(--ncm-text)] transition duration-200 hover:bg-[var(--ncm-surface-soft)]"
+                class="member-history-card__action"
               >
                 View full record
               </button>

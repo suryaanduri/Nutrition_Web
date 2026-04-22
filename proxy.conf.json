@@ -1,6 +1,6 @@
 {
   "/api": {
-    "target": "https://ncmbackend-1065621125925.asia-south1.run.app",
+    "target": "http://localhost:3000",
     "secure": false,
     "changeOrigin": false
   }
